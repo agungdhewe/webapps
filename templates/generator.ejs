@@ -39,9 +39,7 @@
 
 
 		
-		<% if (cssExists) { %>
-		<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${moduleName}.css` %>" />
-		<% } %>
+		<link rel="stylesheet" href="generator/generator.css" />
 
 		<style>
 			#loadingindicator {
@@ -82,13 +80,20 @@
 
 		<!-- <%= moduleName %> -->
 		<main id="mainapp"> 
-		<%- include(ejsPath) %>
+
+			<section id="generatorList-section" class="fgta5-carousell" data-title="Daftar Program">
+			<%- include(generatorListPath) %>
+			</section>
+
+			<section id="generatorEdit-section" class="fgta5-carousell" data-title="View Program Design">
+			<%- include(generatorEditPath) %>
+			</section>
+
+			<div id="DESIGNTEMPLATE" class="hidden">
+			<%- include(generatorDesignPath) %>
+			</div>
+
 		</main>
-		<div id="extender-templates" style="display: none;">
-			<% if (htmlExtenderExists) { %>
-			<%- include(htmlExtender) %>
-			<% } %>
-		</div>
 	</body>
 
 	<script type="module">
@@ -106,31 +111,10 @@
 			}, 50)
 		}
 
-		async function preRender() {
-			// loading  prerender mjs...  <% if (mjsPrerenderExists) { %> 
-			const Prerenderer = await import('./public/modules/<%= `${moduleName}/${moduleName}-prerender.mjs` %>')
-			await Prerenderer.prerender()
-			// <% } else { %>
-			// prerender does not exist
-			// if you need to prerender page before processing,
-			// you can create file <%= `${moduleName}-prerender.mjs` %>
-			// and export function prerender()
-			// <% } %>
-		}
-
 		async function Start() {
-			// loading mjs...  <% if (!mjsExists) { %> 
-			// Module belum didefinisikan
-			console.warn("empty module: './public/modules/<%= `${moduleName}/${mjsFileName}` %>' not found!")
-			removeLoadingIndicator()
-			return
-			// <% } %>
-
 			window.addEventListener("load", async (event) => {
 				try {
-					await preRender()
-
-					const Application = await import('./public/modules/<%= `${moduleName}/${mjsFileName}` %>'	)
+					const Application = await import('./generator/generator.mjs'	)
 					const $app = new Application.default();
 					await $app.main();
 				} catch (err) {

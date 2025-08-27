@@ -1,0 +1,31 @@
+<div class="search-container">
+	<div id="generatorList-pnl_search" class="search-parameters">
+		<input id="generatorList-txt_searchtext" fgta5-component="Textbox" placeholder="search" autocomplete="off" spellcheck="false" binding="searchtext">
+	</div>
+	<button id="generatorList-btn_gridload">Load</button>
+</div>
+
+<table id="generatorList-tbl" fgta5-component="Gridview">
+	<thead>
+		<tr data-header key="generator_id">
+			<th data-name="generator_id" binding="generator_id">ID</th>
+			<th data-name="generator_modulename" binding="generator_modulename">Module</th>
+			<th data-name="generator_appname" binding="generator_appname" sorting="true">Application</th>
+		</tr>
+	</thead>
+</table>
+
+
+
+
+
+
+
+
+<div class="footer-buttons-container">
+	<div></div>
+	<div>
+		<button id="generatorList-btn_new" data-action="generator-new" data-sectionsource="generatorList-section">New</button>
+	</div>
+	<div></div>
+</div>

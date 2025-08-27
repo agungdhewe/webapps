@@ -1,0 +1,184 @@
+<!-- 
+* Designer Editor
+* nama program, deskripsi, table utama
+* data2 detil related ke data utama
+* drag and drop componen-component ke masing2 header / detail, kemudian dikonfigurasi
+* -->
+<div id="appgen-datadesign-layout">
+	<div id="layout-definition">
+		<div class="subtitle" style="grid-column: span 3;">Program Definition</div>
+		
+		<label for="obj_programid">ID</label>
+		<input type="text" id="obj_programid" placeholder="[auto-id]"  disabled>
+
+		<!-- kalau mau nambah baru, row span harus disesuaikan  -->
+		<div id="upload-icon" style="grid-row: span 6;">
+			<label>
+				change
+				<input id="btn_IconUpload" type="file" accept=".svg,.png" style="display: none;" />
+			</label>
+		</div>
+
+		<label for="obj_appname">App Name</label>
+		<input type="text" id="obj_appname">
+
+		<label for="obj_programname">Program Name</label>
+		<input type="text" id="obj_programname">
+
+		<label for="obj_programname">Title</label>
+		<input type="text" id="obj_programtitle">
+
+		<label for="obj_directory">Directory</label>
+		<input type="text" id="obj_directory">
+		
+		<label for="obj_programdescription">Description</label>
+		<input type="text" id="obj_programdescription">
+	
+	</div>
+	
+	<div id="layout-action">
+		<div class="subtitle">Actions</div>
+		<table cellpadding="0" cellspacing="0">
+			<tbody id="action-lists">
+			</tbody>
+			<tfoot>
+				<tr>
+					<td>
+						<input type="textbox" placeholder="action name" id="txt_action_name" class="action-input  action-name">
+					</td>
+					<td>
+						<input type="textbox" placeholder="title" id="txt_action_title" class="action-input action-title">
+					</td>
+					<td>
+						<input type="textbox" placeholder="permission" id="txt_action_permission" class="action-input action-permission">
+					</td>					
+					<td>
+						<button id="btn_action_add" class="action-button-add">Add</button>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	<!-- Definisi Header Detil -->
+	<div id="layout-entity">
+		<div class="subtitle">Entites</div>
+		<table id="tbl_entity" cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th name="col_name">Name</th>
+					<th name="col_title">Title</th>
+					<th name="col_table">Table</th>
+					<th name="col_pk">PK</th>
+					<th name="col_btndesign"></th>
+					<th name="col_btnremove"></th>
+					<th name="col_id">ID</th>
+				</tr>
+			</thead>
+			<tbody id="data-entities">
+
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="7" style="padding-left: 0;"><button id="btn_addentity">Add Entity</button></td>
+				</tr>
+			</tfoot>
+
+		</table>
+		
+	</div>
+
+	<!-- Table Editor, menerima drag and drop dari component -->
+	<div id="layout-editor" class="hidden">
+		<div class="subtitle">Data Editor</div>
+		<div id="entities-design"></div>
+	</div>
+
+	<!-- Side Bar, untuk daftar komponen yang bisa di drag and drop, dan lain2 -->
+	<div id="layout-sidebar" class="hidden">
+		<div >
+			<div class="subtitle">Components</div>
+			<div id="crud-component-list">
+			</div>
+			<div class="subtitle">Design</div>
+			<div class="design-tools-container">
+				<a id="btn_ShowSummary" class="design-button">
+					<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+					<g fill="#e6e6e6" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+					<path d="m3 40h42v5h-42z"/>
+					<path d="m3 31.5h42v5h-42z"/>
+					<path d="m3 22h42v5h-42z"/>
+					<path d="m3 12.5h42v5h-42z"/>
+					<path d="m3 3h42v5h-42z"/>
+					</g>
+					</svg>
+				</a>
+				<a id="btn_ShowDetail" class="design-button">
+					<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+					<g fill="#e6e6e6" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+					<path d="m3 3h42v16h-42z"/>
+					<path d="m3 23h42v10h-42z"/>
+					<path d="m3 37h42v8h-42z"/>
+					</g>
+					</svg>
+				</a>
+			</div>
+			<div class="design-tools-container" style="margin-top: 30px">
+				<a id="btn_ShowFields" class="design-button">
+					<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+					<rect x="5" y="11" width="39" height="25" fill="#e6e6e6"/>
+					<path d="m20.5 10.25h-16.5v27h16.5" fill="none" stroke="#000" stroke-linecap="square" stroke-width="3"/>
+					<path d="m38 10.25h6v27h-6" fill="none" stroke="#000" stroke-linecap="square" stroke-width="3"/>
+					<path d="m30 3.4251v41.15" fill="none" stroke="#000" stroke-linecap="square" stroke-width="3"/>
+					<path d="m25 3.0239h10" fill="none" stroke="#000" stroke-linecap="square" stroke-width="3"/>
+					<path d="m25 44.575h10" fill="none" stroke="#000" stroke-linecap="square" stroke-width="3"/>
+					<path d="m21.791 30.263h-2.2408l-1.5505-4.2631h-6.8392l-1.5505 4.2631h-2.1346l5.7559-15.296h2.8036zm-4.4391-6.0094-2.7718-7.5091-2.7824 7.5091z" fill="#1a1a1a" stroke-linecap="square" stroke-width="3" aria-label="A"/>
+					</svg>
+				</a>
+
+				<a id="btn_ShowUniq" class="design-button">
+					<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+					<g fill="#1a1a1a">
+					<ellipse cx="24.5" cy="11" rx="16.5" ry="8"/>
+					<path d="m18.25 6.4615v30.462l5 5.5385 8.3333-6.9231v-2.7692l-5-2.7692 6.6667-4.1538-6.6667-4.1538 5.4167-4.1538v-11.077z"/>
+					</g>
+					</svg>
+				</a>
+
+				<a id="btn_ShowSearch" class="design-button">
+					<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+					<g fill="#e6e6e6" stroke="#000" stroke-linecap="square">
+					<circle cx="29.75" cy="18.75" r="13.25" stroke-width="3"/>
+					<path d="m15 32-8 7" stroke-width="6"/>
+					</g>
+					</svg>
+				</a>
+			</div>
+		</div>
+	</div>
+
+</div>
+<div style="margin-top: 100px" class="hidden">
+	
+	
+</div>
+
+
+
+
+<div class="footer-buttons-container hidden">
+	<div></div>
+	<div>
+		<button id="generatorEdit-btn_save">Save</button>
+		<button id="generatorEdit-btn_new" data-action="generator-new">New</button>
+
+		<button id="btnAppGenLoad">
+			Import<input id="input-file" type="file" style="display: none;">
+		</button>
+
+		<button id="btnAppGenSave">Export</button>
+
+		<button id="generatorEdit-btn_generate">Generate</button>
+	</div>
+	<div></div>
+</div>

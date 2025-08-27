@@ -1,7 +1,8 @@
 import ExpressServer from 'express';
 import { createSession } from './session.js'
 import context from './context.js'
-import { createBasicRouter, uploader, handleModuleNotfound } from './router.js'
+import { createBasicRouter, uploader } from './router.js'
+import { handleModuleNotfound } from './routers/handleModuleNotfound.js'
 import { fileURLToPath } from 'node:url';
 import cors from 'cors';
 import favicon from 'serve-favicon';

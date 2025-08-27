@@ -1,0 +1,43 @@
+import context from '../context.js'
+import fs from 'fs/promises';
+import path from 'node:path';
+import * as helper from '../helper.js'
+
+import { handleError } from './handleError.js';
+
+export async function generatorPage(req, res, next) {
+	const __dirname = context.getMyDirectory()
+
+	try {
+
+		const generatorListPath = path.join(__dirname, 'modules', 'generator', 'generatorList.html')
+		const generatorEditPath = path.join(__dirname, 'modules', 'generator', 'generatorEdit.html')
+		const generatorDesignPath = path.join(__dirname, 'modules', 'generator', 'generator-designtemplate.html')
+
+		// load halaman html-nya
+		const variables	= {
+			...helper.createDefaultEjsVariable(req),
+			...{
+				generatorListPath,
+				generatorEditPath,
+				generatorDesignPath
+			}
+		}
+
+		const tplFilePath = path.join(context.getMyDirectory(), 'templates', 'generator.ejs')
+		const content = await helper.parseTemplate(tplFilePath, variables)
+
+		res.status(200).send(content)
+	} catch (err) {
+		handleError(err, req, res)
+	}	
+
+}
+
+
+export async function generatorAsset(req, res, next) {
+	const __dirname = context.getMyDirectory()
+	const requestedFile = req.params.requestedAsset;
+	const filePath = path.join(__dirname, 'modules', 'generator', requestedFile)
+	res.sendFile(filePath);
+}

@@ -1,0 +1,1480 @@
+
+<!-- DESIGNER INFO -->
+<div name="designer-info" class="designer-info">
+	<div name="col_title" data-tag="content">
+		{title}
+	</div>
+
+	<div data-tag="label" style="margin-top: 8px">Name</div>
+	<div data-tag="content" name="col_name" style="margin-top: 8px">{name}</div>
+
+	<div data-tag="label" style="margin-top: 15px">Table</div>
+	<div data-tag="content" name="col_table" style="margin-top: 15px">{table}</div>
+	
+	<div data-tag="label">PK</div>
+	<div data-tag="content" name="col_pk">{pk}</div>
+
+	<div data-tag="label" style="margin-top: 15px">Table Desc</div>
+	<div data-tag="content" style="border: 0; margin-top: 15px">
+		<input name="table-descr" type="text" style="padding: 3px 0 3px 3px; width: 100%;">
+	</div>
+
+	<div data-tag="label" style="margin-top: 15px" data-control>Data Control</div>
+	<div data-tag="content" style="border: 0;  margin-top: 15px; display: flex; gap: 20px" data-control>
+		<label>
+			<input type="checkbox" name="allow-row-add">
+			Allow Add Row
+		</label>
+		<label>
+			<input type="checkbox" name="allow-row-remove">
+			Allow Remove Row
+		</label>
+
+	</div>
+
+	<div data-tag="label" style="margin-top: 15px" data-autoid>Row Identifier</div>
+	<div data-tag="content" style="border: 0;  margin-top: 15px; display: flex; gap: 20px" data-autoid>
+		<div>
+			<select name="identifier-method">
+				<option value="manual" selected>Manual</option>
+				<option value="auto-by-default">Auto By Default (Numeric)</option>
+				<option value="auto-always">Auto Always (Numeric)</option>
+				<option value="auto-yearly">Auto Yearly (String)</option>
+				<option value="auto-monthly">Auto Monthly (String)</option>
+				<option value="custom">Custom</option>
+			</select>
+
+			<label style="margin-left: 40px; margin-right: 5px;">Prefix</label>
+			<input name="identifier-prefix" type="text" style="width: 30px; padding: 3px 0 3px 3px;">
+
+			<label style="margin-left: 15px; margin-right: 5px;">Block</label>
+			<input name="identifier-block" type="text" style="width: 30px; padding: 3px 0 3px 3px;">
+
+			<label style="margin-left: 15px; margin-right: 5px;">Length</label>
+			<input name="identifier-length" type="number" style="width: 30px; padding: 3px 0 3px 3px;" value="6">
+		</div>
+
+
+	</div>
+
+</div>
+
+
+<!-- UNIQUE-DESIGN -->
+<div name="designer-unique" class="designer-unique hidden">
+	<table name="tbl-unique">
+		<tr>
+			<td style="vertical-align: top;">
+				<input name="unique_name" class="action-input" placeholder="unique name">
+			</td>
+			<td style="vertical-align: top;">
+				<div>
+					<input name="unique_fields" class="action-input" style="width: 400px" placeholder="fields">
+				</div>
+				<div style="font-size: 0.8em; font-style: italic; padding-left: 5px;">
+					untuk multiple fields, pisahkan dengan koma (,)
+				</div>
+				
+			</td>
+			<td style="vertical-align: top;">
+				<button name="btnAdd" class="action-button-add">Add</button>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+<!-- SEARCH-DESIGN -->
+<div name="designer-search" class="designer-search hidden">
+	Jika search tidak didefinisikan, akan otomatis ditambahkan search criteria exact berdasarkan id<br><br>
+	<table name="tbl-search">
+		<tr>
+			<td style="vertical-align: top;">
+				<input name="criteria_name" class="action-input" placeholder="criteria name">
+			</td>
+			<td style="vertical-align: top;">
+				<input name="criteria_label" class="action-input" placeholder="criteria label">
+			</td>			
+			<td style="vertical-align: top;">
+				<div>
+					<input name="criteria_fields" class="action-input" style="width: 400px" placeholder="fields">
+				</div>
+				<div style="font-size: 0.8em; font-style: italic; padding-left: 5px;">
+					untuk multiple fields, pisahkan dengan koma (,)<br>
+					ketikkan <b>namafield</b> untuk exact search,<br>
+					atau ketikkan <b>%namafield</b> untuk search like
+				</div>
+				
+			</td>
+			<td style="vertical-align: top;">
+				<button name="btnAdd" class="action-button-add">Add</button>
+			</td>
+		</tr>
+
+	</table>
+</div>
+
+
+<!-- DROP TARGET -->
+<div name="drop-target" class="drop-target">
+	drag and drop component here
+</div>
+
+<!-- ICON TOOL -->
+	<div name="component-icon-tool" class="component-icon-tool" draggable="true">
+	<div data-icon></div>
+	<div data-label>Textbox</div>
+</div>
+
+<!--
+fieldname
+datatype
+defaultvalue
+datalength
+dataprecission
+description
+objectname
+labeltext
+placeholder
+isrequired
+isbatasmin
+isbatasmax
+minimum
+maximum
+msg_invalid_default
+msg_invalid_required
+msg_invalid_minimum
+msg_invalid_maximum
+
+ishandlechanged
+ishandleinput
+ishandlekeydown
+-->
+
+
+<!-- FIELD EDITOR -->
+
+
+<!-- TEXTBOX -->
+<div name="design-data-field" class="design-data-field" data-template="textbox">
+	<div name="component-type" data-detil data-fieldtitle>
+		<div style="display: flex; justify-content: left; align-items: center; gap: 5px;" field-handle-bar class="field-handle-bar">
+			<div name="icon-pk" class="design-data-field-icon-pk"></div>
+			<div name="icon" class="design-data-field-icon">
+				<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48">
+					<path d="M3 8h42v32H3z" style="fill:#fff;stroke:#000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/>
+					<g style="stroke-width:1.20933">
+						<path d="M25.87 12.666V39.14h3.043l.207-.886q1.194.647 2.423 1.023 1.228.39 2.87.39 1.764 0 3.233-.664 1.47-.681 2.698-2.025 1.159-1.292 1.833-3.198.692-1.904.693-4.286 0-4.713-1.99-7.3-1.971-2.586-5.396-2.586-1.92 0-3.458.715a13.4 13.4 0 0 0-2.906 1.803v-9.459zm8.82 9.986q2.542 0 3.683 1.77 1.14 1.752 1.14 5.155 0 3.726-1.538 5.478-1.521 1.735-4.219 1.735-1.263 0-2.266-.237-.986-.24-2.37-.852V24.814a11.8 11.8 0 0 1 2.698-1.548q1.453-.613 2.871-.614M14.414 19.701a22.6 22.6 0 0 0-3.672.306q-1.863.307-2.848.562v3.252h.178q1.738-.63 3.368-.954 1.63-.34 2.957-.34 1.093 0 2.097.136 1.002.137 1.717.528.753.408 1.148 1.123.413.715.413 1.804v.494a93 93 0 0 0-5.5.408q-2.563.273-4.39 1.04-1.81.765-2.795 2.11-.967 1.328-.967 3.489Q6.12 36.298 8 38q1.882 1.702 4.587 1.701 1.47 0 2.561-.271a10 10 0 0 0 1.935-.649 8.8 8.8 0 0 0 1.47-.815q.77-.528 1.219-.818v2.026h3.348V26.27q.001-1.838-.59-3.08a5.1 5.1 0 0 0-1.72-2.026q-1.145-.8-2.722-1.123-1.56-.34-3.674-.34m5.358 9.498v5.293a15 15 0 0 1-2.725 1.583q-1.47.647-3.242.648-2.132 0-3.172-.817-1.038-.835-1.039-2.469 0-1.446.897-2.263.896-.834 2.348-1.226 1.218-.324 3.295-.493a144 144 0 0 1 3.638-.256" style="font-size:33.7393px;font-family:Sans;-inkscape-font-specification:&quot;Sans, Normal&quot;;stroke-width:2.41864;stroke-linecap:round;stroke-linejoin:round" transform="matrix(.90413 0 0 .75628 1.466 4.42)"/>
+					</g>
+				</svg>
+			</div>
+			<div name="title">
+				Textbox
+			</div>
+			<div class="field-remove-button">
+			</div>
+		</div>
+	</div>
+	
+	<div data-detil data-fieldform>
+	<!--     1                    2                        3              4                  5                6  -->
+		<label>Field name</label><div>
+		<input type="text" name="fieldname"></div>  
+		
+		<label>Type</label>
+		<div>
+			<select name="datatype">
+				<option value="varchar" selected>varchar</option>
+				<option value="char">char</option>
+				<option value="text">text</option>
+				<option value="int" selected>integer</option>
+				<option value="bigint">big integer</option>
+			</select>
+		</div>  
+		
+		<label>Length</label>
+		<div>
+			<input type="number" name="datalength" value="30">
+			<input type="hidden" name="dataprecission" value="0">
+		</div>
+
+
+
+		<label>Default Value</label>
+		<div>
+			<input name="defaultvalue" type="text" >
+		</div>
+		<div></div>
+		<label >
+			<input name="allownull" type="checkbox" value="1" style="transform: translateY(2px);" checked>
+			Allow Null
+		</label>
+		<div></div>
+		<div></div>
+
+		<label>Description</label>
+		<div style="grid-column: span 5;">
+			<input name="description" type="text" >
+		</div>
+
+
+		<div>
+			<input type="text" style="visibility: hidden;"> <!-- agar tinggi baris tidak terlihat sempet, karena di baris ini hanya checkbox-->
+		</div>
+		<div style="grid-column: span 5; display: flex; align-items: center;">
+			<label>
+				<input type="checkbox" name="showingrid" style="transform: translateY(2px);" checked >
+				Show in GridView
+			</label>
+			<label style="margin-left: 40px">
+				<input type="checkbox" name="showinform" style="transform: translateY(2px);" checked>
+				Show in Form
+			</label>
+			<label style="margin-left: 20px">
+				<input type="checkbox" name="disabledinform" style="transform: translateY(2px);">
+				Disabled
+			</label>
+		</div>
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+
+
+
+		<label>Object Name</label><div>
+		<input type="text" name="objectname"></div>  
+		<div></div>	
+		<div></div>
+		<div></div>	
+		<div></div>	
+
+		<label>Label Text</label><div>
+		<input type="text" name="labeltext"></div> 
+		
+		<label>Placeholder</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="placeholder">
+		</div> 
+
+
+		<label>Char Case</label>
+		<div>
+			<select name="charcasing">
+				<option value="normal" selected>Normal</option>
+				<option value="lowercase">lowercase</option>
+				<option value="uppercase">UPPERCASE</option>
+			</select>
+		</div> 
+		<div style="grid-column: span 4;"></div>
+
+
+
+		<label>Information</label>
+		<div style="grid-column: span 5;">
+			<input name="information" type="text" >
+		</div>		
+
+
+		<label>Container CSS</label><div>
+		<input type="text" name="input-containercss"></div> 
+		
+		<label>InLine Style</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="input-inlinestyle">
+		</div> 
+
+
+
+
+
+
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Grid</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
+			<input name="gridformatter" type="text">
+		
+			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
+			<input name="gridcss" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
+			<input name="gridinlinestyle" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
+			<label>
+				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Sorting
+			</label>
+
+		</div>	
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Validation</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<div name="defaultinvalidmessage" style="grid-column: span 2;">Default Invalid Message</div>
+			<input type="text" name="msg_invalid_default" placeholder="invalid message">
+
+			<label>
+				<input name="isrequired" type="checkbox" value="1" style="transform: translateY(2px);">
+				Required
+			</label>
+			<div></div>
+			<input name="msg_invalid_required" type="text" placeholder="invalid message">
+
+			<label>
+				<input name="isbatasmin" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Min Length
+			</label>
+			<input type="number" name="minimum">
+			<input type="text" name="msg_invalid_minimum" placeholder="invalid message">
+
+			<label>
+				<input name="isbatasmax" type="checkbox" value="1" checked disabled style="transform: translateY(2px);" >
+				Max Length
+			</label>
+			<input type="number" name="maximum" disabled>
+			<input type="text" name="msg_invalid_maximum" placeholder="invalid message">
+
+			<label style="grid-column: span 2;">
+				<input name="hascustomvalidator" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Custom Validator
+			</label>
+			<input name="validator" type="text" >
+		
+		</div>
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Reference</label>
+		<input type="text" name="ref_table" placeholder="table">
+		<label>PK</label>
+		<div style="grid-column: span 3; display: flex; gap: 10px" >
+			<div><input type="text" name="ref_id" placeholder="fieldname"></div>
+		</div>
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label name="validation" style="transform: translateY(10px);">Handle Event</label>
+		<div style="grid-column: span 5; padding-left: 10px; display: flex; gap: 30px; flex-wrap: wrap;" >
+
+			<label>
+				<input name="ishandlechanged" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Changed
+			</label>
+
+			<label>
+				<input name="ishandleinput" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Input
+			</label>
+
+			<label>
+				<input name="ishandlekeydown" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Keydown
+			</label>				
+		</div>	
+	</div>
+	<div name="component-summary" data-summary style="display: none;" draggable="true" field-handle-bar class="field-handle-bar">
+		<div name="icon-pk" class="design-data-field-icon-pk"></div>
+		<div name="icon" class="design-data-field-icon"></div>
+		<div name="title">
+			<input type="text" name="fieldname-summary" placeholder="text field name">
+		</div>
+		<div class="field-remove-button">
+		</div>
+	</div>
+</div>
+
+
+<!-- NUMBERBOX  -->
+<div name="design-data-field" class="design-data-field" data-template="numberbox">
+	<div name="component-type" data-detil data-fieldtitle>
+		<div style="display: flex; justify-content: left; align-items: center; gap: 5px;" field-handle-bar class="field-handle-bar">
+			<div name="icon-pk" class="design-data-field-icon-pk"></div>
+			<div name="icon" class="design-data-field-icon">
+				<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+					<g stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+					<path transform="scale(.87733 1.1398)" d="m42.141 16.959-4.9275-0.88311q0.61434-2.355 2.355-3.6092 1.7534-1.2543 4.9531-1.2543 3.6732 0 5.3115 1.3695t1.6382 3.4428q0 1.2159-0.66553 2.2014-0.66553 0.9855-2.0094 1.7278 1.0879 0.26877 1.6638 0.62714 0.9343 0.57594 1.4463 1.523 0.52475 0.9343 0.52475 2.2398 0 1.6382-0.85751 3.1485-0.85751 1.4974-2.4701 2.3166-1.6126 0.80632-4.2364 0.80632-2.5597 0-4.0444-0.60154-1.4718-0.60154-2.4317-1.7534-0.9471-1.1647-1.459-2.9181l5.2091-0.69113q0.30717 1.5742 0.9471 2.1886 0.65273 0.60154 1.651 0.60154 1.0495 0 1.7406-0.76792 0.70393-0.76792 0.70393-2.0478 0-1.3055-0.67833-2.0222-0.66553-0.71673-1.8174-0.71673-0.61434 0-1.6894 0.30717l0.26877-3.7244q0.43516 0.06399 0.67833 0.06399 1.0239 0 1.7022-0.65273 0.69113-0.65273 0.69113-1.5486 0-0.85751-0.51195-1.3695-0.51195-0.51195-1.4079-0.51195-0.9215 0-1.4974 0.56314-0.57594 0.55034-0.78072 1.9454z"/>
+					<path transform="scale(.87733 1.1398)" d="m34.859 30.296h-15.64q0.26877-2.3166 1.6254-4.3516 1.3695-2.0478 5.1195-4.8251 2.291-1.7022 2.9309-2.5853t0.63993-1.6766q0-0.85751-0.63993-1.459-0.62714-0.61434-1.587-0.61434-0.9983 0-1.6382 0.62714-0.62714 0.62714-0.84471 2.2142l-5.2219-0.42236q0.30717-2.2014 1.1263-3.43 0.81912-1.2415 2.3038-1.8942 1.4974-0.66553 4.134-0.66553 2.7517 0 4.2748 0.62714 1.5358 0.62714 2.4062 1.9326 0.88311 1.2927 0.88311 2.9053 0 1.715-1.0111 3.2765-0.9983 1.5614-3.6476 3.43-1.5742 1.0879-2.1118 1.523-0.52474 0.43516-1.2415 1.1391h8.14z"/>
+					<path transform="scale(.87733 1.1398)" d="m13.933 11.213v19.083h-5.2731v-12.504q-1.2799 0.9727-2.4829 1.5742-1.1903 0.60154-2.9949 1.1519v-4.2748q2.6621-0.85751 4.134-2.0606t2.3038-2.9693z"/>
+					</g>
+				</svg>
+			</div>
+			<div name="title">
+				Numberbox
+			</div>
+			<div class="field-remove-button">
+			</div>
+		</div>
+	</div>
+
+
+	<div data-detil data-fieldform>
+	<!--     1                    2                        3              4                  5                6  -->
+		<label>Field name</label><div>
+		<input type="text" name="fieldname"></div>  
+		
+		<label>Type</label>
+		<div>
+			<select name="datatype">
+				<option value="int" selected>integer</option>
+				<option value="bigint">big integer</option>
+				<option value="decimal">decimal</option>
+			</select>
+		</div>  
+		
+		<label>Length</label>
+		<div>
+			<input type="number" name="datalength" value="9">
+			<input type="number" name="dataprecission" value="0">
+		</div>
+
+
+		<label>Default Value</label>
+		<div>
+			<input name="defaultvalue" type="number" value="0">
+		</div>
+		<div></div>
+		<label >
+			<input name="allownull" type="checkbox" value="1" style="transform: translateY(2px);">
+			Allow Null
+		</label>
+		<div></div>
+		<div></div>
+
+
+
+		<label>Description</label>
+		<div style="grid-column: span 5;">
+			<input type="text" name="description">
+		</div>
+
+
+		<div>
+			<input type="text" style="visibility: hidden;"> <!-- agar tinggi baris tidak terlihat sempet, karena di baris ini hanya checkbox-->
+		</div>
+		<div style="grid-column: span 5; display: flex; align-items: center;">
+			<label>
+				<input type="checkbox" name="showingrid" style="transform: translateY(2px);" checked >
+				Show in GridView
+			</label>
+			<label style="margin-left: 40px">
+				<input type="checkbox" name="showinform" style="transform: translateY(2px);" checked>
+				Show in Form
+			</label>
+			<label style="margin-left: 20px">
+				<input type="checkbox" name="disabledinform" style="transform: translateY(2px);">
+				Disabled
+			</label>
+		</div>
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+
+
+		<label>Object Name</label><div>
+		<input type="text" name="objectname"></div>  
+		<div style="grid-column: span 4;"></div>
+
+
+		<label>Label Text</label><div>
+		<input type="text" name="labeltext"></div> 
+		
+		<label>Placeholder</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="placeholder">
+		</div> 
+
+		<label>Information</label>
+		<div style="grid-column: span 5;">
+			<input name="information" type="text" >
+		</div>
+
+
+		<label>Container CSS</label><div>
+		<input type="text" name="input-containercss"></div> 
+		
+		<label>InLine Style</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="input-inlinestyle">
+		</div> 
+
+		
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Grid</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
+			<input name="gridformatter" type="text">
+			
+			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
+			<input name="gridcss" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
+			<input name="gridinlinestyle" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
+			<label>
+				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Sorting
+			</label>
+
+		</div>	
+
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Validation</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<div name="defaultinvalidmessage" style="grid-column: span 2;">Default Invalid Message</div>
+			<input type="text" name="msg_invalid_default" placeholder="invalid message">
+
+			<label>
+				<input name="isbatasmin" type="checkbox" value="1" style="transform: translateY(2px);">
+				Min Value
+			</label>
+			<input type="number" name="minimum">
+			<input type="text" name="msg_invalid_minimum" placeholder="invalid message">
+
+			<label name="max">
+				<input name="isbatasmax" type="checkbox" value="1" style="transform: translateY(2px);">
+				Maximum
+			</label>
+			<input type="number" name="maximum">
+			<input type="text" name="msg_invalid_maximum" placeholder="invalid message">
+
+			<label style="grid-column: span 2;">
+				<input name="hascustomvalidator" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Custom Validator
+			</label>
+			<input name="validator" type="text" >
+
+		</div>
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label name="validation" style="transform: translateY(10px);">Handle Event</label>
+		<div style="grid-column: span 5; padding-left: 10px; display: flex; gap: 30px; flex-wrap: wrap;" >
+
+			<label>
+				<input name="ishandlechanged" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Changed
+			</label>
+
+			<label>
+				<input name="ishandleinput" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Input
+			</label>
+
+			<label>
+				<input name="ishandlekeydown" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Keydown
+			</label>				
+		</div>	
+		
+		
+	</div>
+	<div name="component-summary" data-summary style="display: none;" draggable="true" field-handle-bar class="field-handle-bar">
+		<div name="icon-pk" class="design-data-field-icon-pk"></div>
+		<div name="icon" class="design-data-field-icon">
+		</div>
+		<div name="title">
+			<input type="text" name="fieldname-summary" placeholder="number field name">
+		</div>
+		<div class="field-remove-button">
+		</div>
+	</div>
+</div>
+
+<!-- CHECKBOX  -->
+<div name="design-data-field" class="design-data-field" data-template="checkbox">
+	<div name="component-type" data-detil data-fieldtitle>
+		<div style="display: flex; justify-content: left; align-items: center; gap: 5px;" field-handle-bar class="field-handle-bar">
+			<div name="icon-pk" class="design-data-field-icon-pk"></div>
+			<div name="icon" class="design-data-field-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M3 8h42v32H3z" style="fill:#fff;stroke:#000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/><path d="m12 24.5 8 9.5 16-19" style="fill:none;stroke:#000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"/></svg>
+			</div>
+			<div name="title">
+				Checkbox
+			</div>
+			<div class="field-remove-button">
+			</div>
+		</div>
+	</div>
+	<div data-detil data-fieldform>
+	<!--     1                    2                        3              4                  5                6  -->
+		<label>Field name</label><div>
+		<input type="text" name="fieldname"></div>  
+		
+		<label>Type</label>
+		<div>
+			<select name="datatype">
+				<option value="boolean" selected>boolean</option>
+			</select>
+		</div>  
+		
+		<div></div>
+		<div></div>
+
+
+
+		<label>Default Value</label>
+		<div>
+			<label>
+				<input name="defaultvalue" type="checkbox" value="1">
+				Checked
+			</label>
+		</div>
+		<div></div>
+		<div></div>
+		<div>
+			<input name="allownull" type="checkbox" value="1" style="transform: translateY(2px); visibility: hidden;" disabled> <!-- AllowNull-->
+		</div>
+		<div>
+			<input type="text" style="visibility: hidden;">
+		</div>
+
+
+		<label>Description</label>
+		<div style="grid-column: span 5;"><input type="text" name="description"></div>
+
+
+
+
+		<div>
+			<input type="text" style="visibility: hidden;"> <!-- agar tinggi baris tidak terlihat sempet, karena di baris ini hanya checkbox-->
+		</div>
+		<div style="grid-column: span 5; display: flex; align-items: center;">
+			<label>
+				<input type="checkbox" name="showingrid" style="transform: translateY(2px);" checked >
+				Show in GridView
+			</label>
+			<label style="margin-left: 40px">
+				<input type="checkbox" name="showinform" style="transform: translateY(2px);" checked>
+				Show in Form
+			</label>
+			<label style="margin-left: 20px">
+				<input type="checkbox" name="disabledinform" style="transform: translateY(2px);">
+				Disabled
+			</label>
+		</div>
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+
+
+		<label>Object Name</label><div>
+		<input type="text" name="objectname"></div>  
+
+		<label>Text</label><div>
+		<input type="text" name="labeltext"></div> 
+		
+		<label>Caption</label><div>
+		<input type="text" name="caption"></div> 
+
+
+		<label>Information</label>
+		<div style="grid-column: span 5;">
+			<input name="information" type="text" >
+		</div>
+
+
+		<label>Container CSS</label><div>
+		<input type="text" name="input-containercss"></div> 
+		
+		<label>InLine Style</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="input-inlinestyle">
+		</div> 
+	
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Grid</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
+			<input name="gridformatter" type="text" value="checkmark(value)">
+			
+			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
+			<input name="gridcss" type="text">
+						
+			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
+			<input name="gridinlinestyle" type="text" value="text-align: center">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
+			<label>
+				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Sorting
+			</label>
+
+		</div>	
+
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Validation</label>
+		<div style="grid-column: span 5;" name="validation">
+			<div name="defaultinvalidmessage" style="grid-column: span 2;">Default Invalid Message</div>
+			<input type="text" name="msg_invalid_default" placeholder="invalid message">
+
+			<label style="grid-column: span 2;">
+				<input name="hascustomvalidator" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Custom Validator
+			</label>
+			<input name="validator" type="text" >
+
+		</div>	
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label name="validation" style="transform: translateY(10px);">Handle Event</label>
+		<div style="grid-column: span 5; padding-left: 10px; display: flex; gap: 30px; flex-wrap: wrap;" >
+			<label>
+				<input name="ishandlechecked" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Checked
+			</label>
+		</div>	
+
+	</div>
+
+
+	
+	<div name="component-summary" data-summary style="display: none;" draggable="true" field-handle-bar class="field-handle-bar">
+		<div name="icon-pk" class="design-data-field-icon-pk"></div>
+		<div name="icon" class="design-data-field-icon">
+		</div>
+		<div name="title">
+			<input type="text" name="fieldname-summary" placeholder="checkbox field name">
+		</div>
+		<div class="field-remove-button">
+		</div>
+	</div>
+
+</div>
+
+
+<!-- COMBOBOX -->
+<div name="design-data-field" class="design-data-field" data-template="combobox">
+	<div name="component-type" data-detil data-fieldtitle>
+		<div style="display: flex; justify-content: left; align-items: center; gap: 5px;" field-handle-bar class="field-handle-bar">
+			<div name="icon-pk" class="design-data-field-icon-pk"></div>
+			<div name="icon" class="design-data-field-icon">
+				<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+					<rect x="3" y="8" width="42" height="32" fill="#fff" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+					<path d="m8.4 13 15.591 22 17.009-22z"/>
+				</svg>
+			</div>
+			<div name="title">
+				Combobox
+			</div>
+			<div class="field-remove-button">
+			</div>
+		</div>
+	</div>
+	
+	<div data-detil data-fieldform>
+	<!--     1                    2                        3              4                  5                6  -->
+		<label>Field name</label><div>
+		<input type="text" name="fieldname"></div>  
+		
+		<label>Type</label>
+		<div>
+			<select name="datatype">
+				<option value="varchar" selected>varchar</option>
+				<option value="char">char</option>
+				<option value="text">text</option>
+				<option value="int">integer</option>
+				<option value="bigint">bigint</option>
+			</select>
+		</div>  
+		
+		<label>Length</label>
+		<div>
+			<input type="number" name="datalength" value="30">
+			<input type="hidden" name="dataprecission" value="0">
+		</div>
+
+
+
+		<label>Default Value</label>
+		<div>
+			<input name="defaultvalue" type="text" >
+		</div>
+		<div></div>
+		<label >
+			<input name="allownull" type="checkbox" value="1" style="transform: translateY(2px);" checked>
+			Allow Null
+		</label>
+		<div></div>
+		<div></div>
+
+
+		<label>Description</label>
+		<div style="grid-column: span 5;">
+			<input name="description" type="text" >
+		</div>
+
+		
+		<div>
+			<input type="text" style="visibility: hidden;"> <!-- agar tinggi baris tidak terlihat sempet, karena di baris ini hanya checkbox-->
+		</div>
+		<div style="grid-column: span 5; display: flex; align-items: center;">
+			<label>
+				<input type="checkbox" name="showingrid" style="transform: translateY(2px);" checked >
+				Show in GridView
+			</label>
+			<label style="margin-left: 40px">
+				<input type="checkbox" name="showinform" style="transform: translateY(2px);" checked>
+				Show in Form
+			</label>
+			<label style="margin-left: 20px">
+				<input type="checkbox" name="disabledinform" style="transform: translateY(2px);">
+				Disabled
+			</label>
+		</div>
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+
+
+		<label>Object Name</label><div>
+		<input type="text" name="objectname"></div>  
+		<div style="grid-column: span 4;"></div>	
+
+
+		<label>Label Text</label><div>
+		<input type="text" name="labeltext"></div> 
+		
+		<label>Placeholder</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="placeholder">
+		</div> 
+
+		<label>Information</label>
+		<div style="grid-column: span 5;">
+			<input name="information" type="text" >
+		</div>
+
+
+		<label>Container CSS</label><div>
+		<input type="text" name="input-containercss"></div> 
+		
+		<label>InLine Style</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="input-inlinestyle">
+		</div> 
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Grid</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
+			<input name="gridformatter" type="text">
+			
+			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
+			<input name="gridcss" type="text">
+						
+			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
+			<input name="gridinlinestyle" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
+			<label>
+				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Sorting
+			</label>
+
+		</div>	
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Validation</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<div name="defaultinvalidmessage" style="grid-column: span 2;">Default Invalid Message</div>
+			<input type="text" name="msg_invalid_default" placeholder="invalid message">
+
+			<label>
+				<input name="isrequired" type="checkbox" value="1" style="transform: translateY(2px);">
+				Required
+			</label>
+			<div></div>
+			<input name="msg_invalid_required" type="text" placeholder="invalid message">
+
+			<label style="grid-column: span 2;">
+				<input name="hascustomvalidator" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Custom Validator
+			</label>
+			<input name="validator" type="text" >
+		</div>
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Reference</label>
+		<input type="text" name="ref_table" placeholder="table">
+		<label>Binding</label>
+		<div style="grid-column: span 3; display: flex; gap: 10px" >
+			<div><input type="text" name="ref_id" placeholder="value fieldname"></div>
+			<div><input type="text" name="ref_text" placeholder="text fieldname"></div>
+			<div><input type="text" name="ref_display" placeholder="display as"></div>
+		</div>
+
+		<label>Loader API</label>
+		<input type="text" name="loaderapimodule" placeholder="apps name">
+		<div style="grid-column: span 4;" >
+			<input type="text" name="loaderapipath" placeholder="path">
+		</div>
+
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label name="validation" style="transform: translateY(10px);">Handle Event</label>
+		<div style="grid-column: span 5; padding-left: 10px; display: flex; gap: 30px; flex-wrap: wrap;" >
+
+			<label>
+				<input name="ishandleselecting" type="checkbox" value="1" style="transform: translateY(2px);" value="1" checked disabled>
+				Selecting
+			</label>
+
+			<label>
+				<input name="ishandleselected" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Selected
+			</label>
+
+			<label>
+				<input name="ishandlepopulating" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Populating
+			</label>
+
+			<label>
+				<input name="ishandleloadingdata" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				LoadingData
+			</label>				
+		</div>	
+	</div>
+	<div name="component-summary" data-summary style="display: none;" draggable="true" field-handle-bar class="field-handle-bar">
+		<div name="icon-pk" class="design-data-field-icon-pk"></div>
+		<div name="icon" class="design-data-field-icon"></div>
+		<div name="title">
+			<input type="text" name="fieldname-summary" placeholder="texcomboboxt field name">
+		</div>
+		<div class="field-remove-button">
+		</div>
+	</div>
+</div>
+
+
+<!-- DATEPICKER -->
+<div name="design-data-field" class="design-data-field" data-template="datepicker">
+	<div name="component-type" data-detil data-fieldtitle>
+		<div style="display: flex; justify-content: left; align-items: center; gap: 5px;" field-handle-bar class="field-handle-bar">
+			<div name="icon-pk" class="design-data-field-icon-pk"></div>
+			<div name="icon" class="design-data-field-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+					<path d="M3 8h42v32H3z" style="fill:#fff;stroke:#000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/>
+					<path d="M9 13h30v5H9z" style="fill:#000;stroke:#000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"/>
+					<path d="M17.741 24.561v15.263h-4.217V29.823q-1.024.778-1.986 1.26-.952.48-2.396.92v-3.419q2.13-.686 3.307-1.648t1.842-2.375zm4.607.256h12.171v2.815q-1.586 1.433-2.65 3.102-1.29 2.027-2.038 4.515-.594 1.934-.798 4.575h-4.157q.492-3.675 1.546-6.162t3.337-5.323h-7.411z" aria-label="17" style="font-size:20.9652px;font-family:&quot;Arial Black&quot;;-inkscape-font-specification:&quot;Arial Black, Normal&quot;;stroke-width:4;stroke-linecap:round;stroke-linejoin:round" transform="scale(1.07634 .92908)"/>
+				</svg>
+			</div>
+			<div name="title">
+				Datepicker
+			</div>
+			<div class="field-remove-button">
+			</div>
+		</div>
+	</div>
+	
+	<div data-detil data-fieldform>
+	<!--     1                    2                        3              4                  5                6  -->
+		<label>Field name</label><div>
+		<input type="text" name="fieldname"></div>  
+		
+		<label>Type</label>
+		<div>
+			<select name="datatype">
+				<option value="date" selected>date</option>
+			</select>
+		</div>  
+		
+		<label>Length</label>
+		<div>
+			<input type="number" name="datalength" value="8" disabled>
+			<input type="hidden" name="dataprecission" value="0">
+		</div>
+
+
+
+		<label>Default Value</label>
+		<div>
+			<input name="defaultvalue" type="text" disabled value="CurrentDate()">
+		</div>
+		<div></div>
+		<label >
+			<input name="allownull" type="checkbox" value="1" style="transform: translateY(2px);" checked>
+			Allow Null
+		</label>
+		<div></div>
+		<div></div>
+		
+
+
+		<label>Description</label>
+		<div style="grid-column: span 5;">
+			<input name="description" type="text" >
+		</div>
+
+		
+		<div>
+			<input type="text" style="visibility: hidden;"> <!-- agar tinggi baris tidak terlihat sempet, karena di baris ini hanya checkbox-->
+		</div>
+		<div style="grid-column: span 5; display: flex; align-items: center;">
+			<label>
+				<input type="checkbox" name="showingrid" style="transform: translateY(2px);" checked >
+				Show in GridView
+			</label>
+			<label style="margin-left: 40px">
+				<input type="checkbox" name="showinform" style="transform: translateY(2px);" checked>
+				Show in Form
+			</label>
+			<label style="margin-left: 20px">
+				<input type="checkbox" name="disabledinform" style="transform: translateY(2px);">
+				Disabled
+			</label>
+		</div>			
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+
+
+		<label>Object Name</label><div>
+		<input type="text" name="objectname"></div>  
+		<div style="grid-column: span 4;"></div>	
+
+
+		<label>Label Text</label><div>
+		<input type="text" name="labeltext"></div> 
+		
+		<label>Placeholder</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="placeholder">
+		</div> 
+
+
+		<label>Information</label>
+		<div style="grid-column: span 5;">
+			<input name="information" type="text" >
+		</div>
+
+		<label>Container CSS</label><div>
+		<input type="text" name="input-containercss"></div> 
+		
+		<label>InLine Style</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="input-inlinestyle">
+		</div> 
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Grid</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
+			<input name="gridformatter" type="text">
+			
+			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
+			<input name="gridcss" type="text">
+						
+			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
+			<input name="gridinlinestyle" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
+			<label>
+				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Sorting
+			</label>
+
+		</div>	
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Validation</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<div name="defaultinvalidmessage" style="grid-column: span 2;">Default Invalid Message</div>
+			<input type="text" name="msg_invalid_default" placeholder="invalid message">
+
+			<label>
+				<input name="isrequired" type="checkbox" value="1" style="transform: translateY(2px);">
+				Required
+			</label>
+			<div></div>
+			<input name="msg_invalid_required" type="text" placeholder="invalid message">
+
+			<label style="grid-column: span 2;">
+				<input name="hascustomvalidator" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Custom Validator
+			</label>
+			<input name="validator" type="text" >
+
+		</div>
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label name="validation" style="transform: translateY(10px);">Handle Event</label>
+		<div style="grid-column: span 5; padding-left: 10px; display: flex; gap: 30px; flex-wrap: wrap;" >
+			<label>
+				<input name="ishandlechanged" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Changed
+			</label>
+		</div>	
+	</div>
+	<div name="component-summary" data-summary style="display: none;" draggable="true" field-handle-bar class="field-handle-bar">
+		<div name="icon-pk" class="design-data-field-icon-pk"></div>
+		<div name="icon" class="design-data-field-icon"></div>
+		<div name="title">
+			<input type="text" name="fieldname-summary" placeholder="date field name">
+		</div>
+		<div class="field-remove-button">
+		</div>
+	</div>
+</div>
+
+
+<!-- TIMEPICKER -->
+<div name="design-data-field" class="design-data-field" data-template="timepicker">
+	<div name="component-type" data-detil data-fieldtitle>
+		<div style="display: flex; justify-content: left; align-items: center; gap: 5px;" field-handle-bar class="field-handle-bar">
+			<div name="icon-pk" class="design-data-field-icon-pk"></div>
+			<div name="icon" class="design-data-field-icon">
+				<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+				<g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="24" cy="24" r="14" stroke-width="5"/>
+				<path d="m19 21 5 3 8-7" stroke-width="4"/>
+				</g>
+				</svg>
+			</div>
+			<div name="title">
+				Timepicker
+			</div>
+			<div class="field-remove-button">
+			</div>
+		</div>
+	</div>
+	
+	<div data-detil data-fieldform>
+	<!--     1                    2                        3              4                  5                6  -->
+		<label>Field name</label><div>
+		<input type="text" name="fieldname"></div>  
+		
+		<label>Type</label>
+		<div>
+			<select name="datatype">
+				<option value="time" selected>time</option>
+			</select>
+		</div>  
+		
+		<label>Length</label>
+		<div>
+			<input type="number" name="datalength" value="6" disabled>
+			<input type="hidden" name="dataprecission" value="0">
+		</div>
+
+
+
+		<label>Default Value</label>
+		<div>
+			<input name="defaultvalue" type="text" value="00:00">
+		</div>
+		<div></div>
+		<label >
+			<input name="allownull" type="checkbox" value="1" style="transform: translateY(2px);" checked>
+			Allow Null
+		</label>
+		<div></div>
+		<div></div>
+
+
+		<label>Description</label>
+		<div style="grid-column: span 5;">
+			<input name="description" type="text" >
+		</div>
+
+		
+		<div>
+			<input type="text" style="visibility: hidden;"> <!-- agar tinggi baris tidak terlihat sempet, karena di baris ini hanya checkbox-->
+		</div>
+		<div style="grid-column: span 5; display: flex; align-items: center;">
+			<label>
+				<input type="checkbox" name="showingrid" style="transform: translateY(2px);" checked >
+				Show in GridView
+			</label>
+			<label style="margin-left: 40px">
+				<input type="checkbox" name="showinform" style="transform: translateY(2px);" checked>
+				Show in Form
+			</label>
+			<label style="margin-left: 20px">
+				<input type="checkbox" name="disabledinform" style="transform: translateY(2px);">
+				Disabled
+			</label>
+		</div>			
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+
+
+		<label>Object Name</label><div>
+		<input type="text" name="objectname"></div>  
+		<div style="grid-column: span 4;"></div>	
+
+
+
+
+		<label>Label Text</label><div>
+		<input type="text" name="labeltext"></div> 
+		
+		<label>Placeholder</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="placeholder">
+		</div> 
+
+		<label>Information</label>
+		<div >
+			<input name="information" type="text" >
+		</div>
+
+
+		<label>Container CSS</label><div>
+		<input type="text" name="input-containercss"></div> 
+		
+		<label>InLine Style</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="input-inlinestyle">
+		</div> 
+		
+		
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Grid</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
+			<input name="gridformatter" type="text">
+			
+			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
+			<input name="gridcss" type="text">
+						
+			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
+			<input name="gridinlinestyle" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
+			<label>
+				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Sorting
+			</label>
+
+		</div>			
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Validation</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<div name="defaultinvalidmessage" style="grid-column: span 2;">Default Invalid Message</div>
+			<input type="text" name="msg_invalid_default" placeholder="invalid message">
+
+			<label>
+				<input name="isrequired" type="checkbox" value="1" style="transform: translateY(2px);">
+				Required
+			</label>
+			<div></div>
+			<input name="msg_invalid_required" type="text" placeholder="invalid message">
+
+			<label style="grid-column: span 2;">
+				<input name="hascustomvalidator" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Custom Validator
+			</label>
+			<input name="validator" type="text" >
+
+		</div>
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label name="validation" style="transform: translateY(10px);">Handle Event</label>
+		<div style="grid-column: span 5; padding-left: 10px; display: flex; gap: 30px; flex-wrap: wrap;" >
+			<label>
+				<input name="ishandlechanged" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Changed
+			</label>
+		</div>	
+	</div>
+	<div name="component-summary" data-summary style="display: none;" draggable="true" field-handle-bar class="field-handle-bar">
+		<div name="icon-pk" class="design-data-field-icon-pk"></div>
+		<div name="icon" class="design-data-field-icon"></div>
+		<div name="title">
+			<input type="text" name="fieldname-summary" placeholder="time field name">
+		</div>
+		<div class="field-remove-button">
+		</div>
+	</div>
+</div>
+
+
+<!-- FILEBOX -->
+<div name="design-data-field" class="design-data-field" data-template="filebox">
+	<div name="component-type" data-detil data-fieldtitle>
+		<div style="display: flex; justify-content: left; align-items: center; gap: 5px;" field-handle-bar class="field-handle-bar">
+			<div name="icon-pk" class="design-data-field-icon-pk"></div>
+			<div name="icon" class="design-data-field-icon">
+				<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+				<path d="m6 31v6h36v-6" fill="none" stroke="#000" stroke-linecap="square" stroke-width="6"/>
+				<path d="m19 29h10v-7h11l-16-15-16 15h11z"/>
+				</svg>
+			</div>
+			<div name="title">
+				Filebox
+			</div>
+			<div class="field-remove-button">
+			</div>
+		</div>
+	</div>
+	
+	<div data-detil data-fieldform>
+	<!--     1                    2                        3              4                  5                6  -->
+		<label>Field name</label><div>
+		<input type="text" name="fieldname"></div>  
+		
+		<label>Type</label>
+		<div>
+			<select name="datatype">
+				<option value="varchar" selected>varchar</option>
+			</select>
+		</div>  
+		
+		<label>Length</label>
+		<div>
+			<input type="number" name="datalength" value="255">
+			<input type="hidden" name="dataprecission" value="0">
+		</div>
+
+
+
+		<label>Default Value</label>
+		<div>
+			<input name="defaultvalue" type="text" >
+		</div>
+		<div></div>
+		<label >
+			<input name="allownull" type="checkbox" value="1" style="transform: translateY(2px);" checked>
+			Allow Null
+		</label>
+		<div></div>
+		<div></div>
+
+
+		<label>Description</label>
+		<div style="grid-column: span 5;">
+			<input name="description" type="text" >
+		</div>
+
+		
+
+
+		<div>
+			<input type="text" style="visibility: hidden;"> <!-- agar tinggi baris tidak terlihat sempet, karena di baris ini hanya checkbox-->
+		</div>
+		<div style="grid-column: span 5; display: flex; align-items: center;">
+			<label>
+				<input type="checkbox" name="showingrid" style="transform: translateY(2px);" checked >
+				Show in GridView
+			</label>
+			<label style="margin-left: 40px">
+				<input type="checkbox" name="showinform" style="transform: translateY(2px);" checked>
+				Show in Form
+			</label>
+			<label style="margin-left: 20px">
+				<input type="checkbox" name="disabledinform" style="transform: translateY(2px);">
+				Disabled
+			</label>
+		</div>
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+
+
+		<label>Object Name</label><div>
+		<input type="text" name="objectname"></div>  
+		<div style="grid-column: span 4;"></div>	
+
+
+		<label>Label Text</label><div>
+		<input type="text" name="labeltext"></div> 
+		
+		<label>Placeholder</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="placeholder">
+		</div> 
+
+		<label>Information</label>
+		<div style="grid-column: span 5;">
+			<input name="information" type="text" >
+		</div>
+
+		<label>Container CSS</label><div>
+		<input type="text" name="input-containercss"></div> 
+		
+		<label>InLine Style</label>
+		<div style="grid-column: span 3;">
+			<input type="text" name="input-inlinestyle">
+		</div> 
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Grid</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
+			<input name="gridformatter" type="text">
+			
+			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
+			<input name="gridcss" type="text">
+						
+			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
+			<input name="gridinlinestyle" type="text">
+
+			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
+			<label>
+				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Sorting
+			</label>
+
+		</div>	
+
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label>Validation</label>
+		<div style="grid-column: span 5;" name="validation">
+
+			<div name="defaultinvalidmessage" style="grid-column: span 2;">Default Invalid Message</div>
+			<input type="text" name="msg_invalid_default" placeholder="invalid message">
+
+			<label>
+				<input name="isrequired" type="checkbox" value="1" style="transform: translateY(2px);">
+				Required
+			</label>
+			<div></div>
+			<input name="msg_invalid_required" type="text" placeholder="invalid message">
+
+			<label style="grid-column: span 2;">
+				<input name="hascustomvalidator" type="checkbox" value="1" style="transform: translateY(2px);" >
+				Custom Validator
+			</label>
+			<input name="validator" type="text" >			
+		</div>
+
+		<div style="display: block; height: 1rem; grid-column: span 6;"></div>
+		<label name="validation" style="transform: translateY(10px);">Handle Event</label>
+		<div style="grid-column: span 5; padding-left: 10px; display: flex; gap: 30px; flex-wrap: wrap;" >
+			<label>
+				<input name="ishandlechanged" type="checkbox" value="1" style="transform: translateY(2px);" value="1">
+				Changed
+			</label>
+		</div>	
+	</div>
+	<div name="component-summary" data-summary style="display: none;" draggable="true" field-handle-bar class="field-handle-bar">
+		<div name="icon-pk" class="design-data-field-icon-pk"></div>
+		<div name="icon" class="design-data-field-icon"></div>
+		<div name="title">
+			<input type="text" name="fieldname-summary" placeholder="filebox field name">
+		</div>
+		<div class="field-remove-button">
+		</div>
+	</div>
+</div>	
