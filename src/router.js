@@ -36,6 +36,7 @@ export function uploader(req, res, next) {
 
 export function createBasicRouter() {
 	const router = ExpressServer.Router({ mergeParams: true });
+
 	router.get('/', defaultRootIndex)
 	router.post('/upload', fileUploadApi)
 	
@@ -48,6 +49,7 @@ export function createBasicRouter() {
 	
 	router.get('/:modulename', modulePage)
 	router.post('/:modulename/:method', moduleApi)
+
 	return router
 }
 

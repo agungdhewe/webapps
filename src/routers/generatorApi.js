@@ -1,3 +1,26 @@
+import * as helper from './../helper.js'
+import { handleError } from './handleError.js'
+
 export async function generatorApi(req, res, next) {
-	res.status(200).send(`{"code":"1", "message":"api not implemented"}`)
+	// res.status(200).send(`{"code":"1", "message":"api not implemented"}`)
+	const moduleName = 'generator'
+	const methodName = req.params.method
+	const cached = false
+	const ModuleClass = await helper.importModule(moduleName, cached)
+	const method = helper.kebabToCamel(methodName);
+	
+	try {
+		const requestedBody = req.body
+		const module = new ModuleClass(req, res, next)
+		const result = await module.handleRequest(method, requestedBody)
+		const response = {
+			code: 0,
+			result: result
+		}
+		res.json(response)
+	} catch (err) {
+		handleError(err, res, next)
+	}
+
+
 }
