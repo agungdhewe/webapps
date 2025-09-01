@@ -1,0 +1,4 @@
+-- Drop existing unique index <% existingUniques.forEach(uniq => { %>
+alter table <%=schema%>."<%=tablename%>"
+	drop constraint <%= uniq.constraint_name %>;
+<% }); %>	

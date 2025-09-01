@@ -1,0 +1,9 @@
+/* =============================================
+ * CREATE TABLE <%=schema%>."<%=tablename%>"
+ * ============================================*/
+create table <%=schema%>."<%=tablename%>" (
+	<%=fieldname%> <%=type%>,
+	constraint <%=tablename%>_pk primary key (<%=fieldname%>)
+);
+comment on table <%=schema%>."<%=tablename%>" is '<%-tabledescr%>';	
+

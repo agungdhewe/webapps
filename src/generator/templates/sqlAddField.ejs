@@ -1,0 +1,3 @@
+-- ADD <%=fieldname%>
+alter table <%=schema%>."<%=tablename%>" add <%=fieldname%> <%=type%> <%=setnull%> <%-setdefault%>;
+comment on column <%=schema%>."<%=tablename%>".<%=fieldname%> is '<%-description%>';

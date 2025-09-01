@@ -1,0 +1,3 @@
+-- Drop Existing Foreign Key Constraint <% existingFk.forEach(fk => { %>
+ALTER TABLE <%= schema %>."<%= tablename %>" DROP CONSTRAINT <%= fk.constraint_name %>;<% }) %>
+

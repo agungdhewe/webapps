@@ -1,0 +1,6 @@
+-- MODIFY <%=fieldname%>
+alter table <%=schema%>."<%=tablename%>"
+	alter column <%=fieldname%> type <%=type%>,
+	<%-alterdefault%>,
+	<%=alternull%>;
+comment on column <%=schema%>."<%=tablename%>".<%=fieldname%> is '<%-description%>';

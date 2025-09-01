@@ -1,0 +1,6 @@
+-- Add Foreign Key Constraint  <% fkList.forEach(fk => { %>
+ALTER TABLE <%= schema %>."<%= tablename %>"
+	ADD CONSTRAINT <%= fk.ref_name %>
+	FOREIGN KEY (<%= fk.fieldname %>)
+	REFERENCES <%= fk.ref_schema %>."<%= fk.ref_tablename %>"(<%= fk.ref_fieldname %>)
+<% }) %>	

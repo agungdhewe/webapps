@@ -1,0 +1,4 @@
+-- Add unique index <% data.forEach(uniq => { %>
+alter table  <%= schema %>."<%= tablename %>"
+	add constraint <%= uniq.uniquename %> unique (<%- uniq.uniquefields %>); 
+<% }); %>
