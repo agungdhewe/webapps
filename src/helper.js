@@ -25,6 +25,11 @@ export async function importModule(modulename, cached=true) {
 		const mtime = (await fs.stat(fullPath)).mtimeMs;
 		const freshUrl = `${fullPath}?v=${mtime}`;
 		const module = await import(freshUrl);
+
+		if (module.default===undefined) {
+			throw new Error(`modul api '${modulename}' tidak mempunyai default class untuk import`)
+		}
+
 		return module.default;	
 	}
 }

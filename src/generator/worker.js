@@ -1,6 +1,6 @@
 import path from 'path';
 import pgp from 'pg-promise'
-import db from '../app-db.js'
+import db from '../db.js'
 import { workerData, parentPort } from 'worker_threads';
 import { access, mkdir } from 'fs/promises';
 import { constants } from 'fs';

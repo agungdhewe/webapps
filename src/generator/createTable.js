@@ -4,7 +4,7 @@ import * as ddl from './ddl.js'
 import path from 'path'
 import fs from 'fs/promises'
 import pgp from 'pg-promise'
-import db from '../app-db.js'
+import db from '../db.js'
 
 
 const __filename = fileURLToPath(import.meta.url);

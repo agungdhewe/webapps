@@ -6,10 +6,15 @@ export async function generatorApi(req, res, next) {
 	const moduleName = 'generator'
 	const methodName = req.params.method
 	const cached = false
-	const ModuleClass = await helper.importModule(moduleName, cached)
-	const method = helper.kebabToCamel(methodName);
 	
 	try {
+
+		const ModuleClass = await helper.importModule(moduleName, cached)
+		const method = helper.kebabToCamel(methodName);
+		if (ModuleClass===undefined) {
+			throw new Error(`invalid module: '${moduleName}'`)
+		}
+
 		const requestedBody = req.body
 		const module = new ModuleClass(req, res, next)
 		const result = await module.handleRequest(method, requestedBody)
@@ -19,7 +24,7 @@ export async function generatorApi(req, res, next) {
 		}
 		res.json(response)
 	} catch (err) {
-		handleError(err, res, next)
+		handleError(err, req, res)
 	}
 
 

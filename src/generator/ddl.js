@@ -1,5 +1,5 @@
 import pgp from 'pg-promise'
-import db from '../app-db.js'
+import db from '../db.js'
 import path from 'path'
 import fs from 'fs/promises'
 import ejs from 'ejs'
