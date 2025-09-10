@@ -4,6 +4,7 @@ import ejs from 'ejs'
 import context from './context.js'
 
 
+
 export function kebabToCamel(str) {
   return str
     .split('-')
@@ -14,14 +15,19 @@ export function kebabToCamel(str) {
 }
 
 
-export async function importApiModule(modulename, cached=true) {
+export async function importApiModule(modulename, options={}) {
 	// jika mode debug, 
 	// load api akan selalu dilakukan saat request (tanpa caching)
 
+
+	const cached = options.cached===true ? true : false
+	const apiDir = options.apiDir || path.join('.', 'apis')
+	const apiPath = path.join(apiDir, `${modulename}.api.js`)
+
 	if (cached) {
-		return (await import(`./apis/${modulename}.api.js`)).default;
+		return (await import(apiPath)).default;
 	} else {
-		const fullPath = new URL(`./apis/${modulename}.api.js`, import.meta.url).pathname;
+		const fullPath = new URL(apiPath, import.meta.url).pathname;
 		const mtime = (await fs.stat(fullPath)).mtimeMs;
 		const freshUrl = `${fullPath}?v=${mtime}`;
 		const module = await import(freshUrl);
@@ -33,6 +39,9 @@ export async function importApiModule(modulename, cached=true) {
 		return module.default;	
 	}
 }
+
+
+
 
 export async function isFileExists(filepath) {
 	try {
@@ -53,8 +62,8 @@ export async function parseTemplate(tplFilePath, variables={}) {
 export function createDefaultEjsVariable(req) {
 	const appName = req.app.locals.appConfig.appName || ''
 	const moduleName = req.params.modulename
-	const libDebug = path.join(context.getMyDirectory(), 'templates', '_lib_debug.ejs')
-	const libProduction = path.join(context.getMyDirectory(), 'templates', '_lib_production.ejs')
+	const libDebug = path.join(context.getWebappsDirectory(), 'templates', '_lib_debug.ejs')
+	const libProduction = path.join(context.getWebappsDirectory(), 'templates', '_lib_production.ejs')
 	const fgta5jsDebugMode = req.app.locals.appConfig.appDebugMode
 	const fgta5jsVersion = req.app.locals.appConfig.fgta5jsVersion
 	const appDebugMode = req.app.locals.appConfig.appDebugMode

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import cors from 'cors';
 import favicon from 'serve-favicon';
 import * as path from 'node:path';
+import * as helper from './helper.js'
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -44,11 +45,13 @@ export default class WebApplication {
 
 	#__rootDirectory
 	get __rootDirectory() { return this.#__rootDirectory }
-	setRootDirectory(v) { this.#__rootDirectory = v}
+	setRootDirectory(v) { 
+		this.#__rootDirectory = v
+	}
 
 
 	constructor() {
-		context.setMyDirectory(path.join(__dirname, '..'))
+		context.setWebappsDirectory(path.join(__dirname, '..'))
 	}
 
 	start(options) {
@@ -97,13 +100,7 @@ async function main(self, options) {
 
 
 	// setup variabel konfigurasi local, nanti bisa diakses dari router/api
-	app.locals.appConfig = {
-		...{
-			notifierSocket,
-			notifierServer
-		},
-		...appConfig
-	};
+	app.locals.appConfig = appConfig
 
 
 
@@ -112,12 +109,12 @@ async function main(self, options) {
 	app.set("view engine", "ejs");
 	app.set("views", [
 		path.join(__rootDirectory, "views"),
-		path.join(__rootDirectory, "..", 'public', 'modules')
+		path.join(__rootDirectory, 'public', 'modules')
 	]);
 
 	// setup middleware
 	app.use(cors());
-	app.use(favicon(path.join(__rootDirectory, '..', 'public', 'favicon.ico')));
+	app.use(favicon(path.join(__rootDirectory, 'public', 'favicon.ico')));
 	app.use(ExpressServer.json());
 	app.use(ExpressServer.urlencoded({ extended: true }));
 	app.use(session);
@@ -126,7 +123,7 @@ async function main(self, options) {
 	// Routing /public  untuk serve halaman-halaman static
 	
 	app.use('/public', rejectEjsFiles);
-	app.use('/public', ExpressServer.static(path.join(__rootDirectory, '..', 'public')));
+	app.use('/public', ExpressServer.static(path.join(__rootDirectory, 'public')));
 	app.use('/', router)
 	app.use(handleModuleNotfound)
 	

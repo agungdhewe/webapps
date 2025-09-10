@@ -35,7 +35,7 @@ export async function handleError(err, req, res) {
 				message: err.message
 			}
 		}
-		const tplFilePath = path.join(context.getMyDirectory(), 'templates', 'moduleError.ejs')
+		const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'moduleError.ejs')
 		const content = await helper.parseTemplate(tplFilePath, variables)
 		res.status(status).send(content)
 

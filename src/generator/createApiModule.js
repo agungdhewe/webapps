@@ -11,7 +11,7 @@ export async function createApiModule(context, options) {
 	const overwrite = options.overwrite===true
 	const moduleName = context.moduleName
 	const title = context.title
-	const targetFile = path.join(context.apiDir, `${moduleName}.js`)
+	const targetFile = path.join(context.apiDir, `${moduleName}.api.js`)
 
 	try {
 		// cek dulu apakah file ada

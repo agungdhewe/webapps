@@ -21,7 +21,7 @@ export default class extends Api {
 
 
 async function login_init(self, body) {
-
+	return {}
 }
 
 async function login_doLogin(self, body) {

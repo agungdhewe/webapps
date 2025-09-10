@@ -11,7 +11,7 @@ export async function createApiExtenderModule(context, options) {
 	const overwrite = options.overwrite===true
 	const moduleName = context.moduleName
 	const title = context.title
-	const targetFile = path.join(context.apiExtenderDir, `${moduleName}-apiext.js`)
+	const targetFile = path.join(context.apiExtenderDir, `${moduleName}.apiext.js`)
 
 	try {
 		// cek dulu apakah file ada

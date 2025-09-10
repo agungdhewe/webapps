@@ -5,7 +5,7 @@ import { handleError } from './handleError.js'
 
 
 export async function defaultLoginAsset(req, res, next) {
-	const __dirname = context.getMyDirectory()
+	const __dirname = context.getWebappsDirectory()
 	const requestedFile = req.params.requestedAsset;
 	const filePath = path.join(__dirname, 'modules', 'login', requestedFile)
 

@@ -9,29 +9,29 @@ import { handleError } from './handleError.js';
 export async function modulePage(req, res) {
 	const moduleName = req.params.modulename;
 	const fullUrlWithHostHeader = `${req.protocol}://${req.headers.host}${req.originalUrl}`;
-	const __dirname = context.getRootDirectory()
+	const __rootDir = context.getRootDirectory()
 
 	const fgta5jsDebugMode = req.app.locals.appConfig.appDebugMode
 	const fgta5jsVersion = req.app.locals.appConfig.fgta5jsVersion
 	const appDebugMode = req.app.locals.appConfig.appDebugMode
 
-	const ejsPath = path.join(__dirname, '..', 'public', 'modules', moduleName, `${moduleName}.ejs`)
-	const cssPath = path.join(__dirname, '..', 'public', 'modules', moduleName, `${moduleName}.css`);
+	const moduleDir = path.join(__rootDir, 'public', 'modules', moduleName)
+	const ejsPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.ejs`)
+	const cssPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.css`);
 	
 	const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
-	const mjsPath = path.join(__dirname, '..', 'public', 'modules', moduleName, mjsFileName);
+	const mjsPath = path.join(__rootDir, 'public', 'modules', moduleName, mjsFileName);
 
 
 	const htmlExtenderFile = `${moduleName}-ext.html`
-	const htmlExtender = `${moduleName}/${htmlExtenderFile}`
-	const htmlExtenderPath = path.join(__dirname, '..', 'public', 'modules', moduleName, htmlExtenderFile)
+	const htmlExtenderPath = path.join(__rootDir, 'public', 'modules', moduleName, htmlExtenderFile)
 
 
 	const cssExists = await helper.isFileExists(cssPath)
 	const mjsExists = await helper.isFileExists(mjsPath);
 	const htmlExtenderExists = await helper.isFileExists(htmlExtenderPath);
 
-	const mjsPrerenderPath = path.join(__dirname, '..', 'public', 'modules', moduleName, `${moduleName}-prerender.mjs`);
+	const mjsPrerenderPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}-prerender.mjs`);
 	const mjsPrerenderExists = await helper.isFileExists(mjsPrerenderPath)
 
 
@@ -48,17 +48,18 @@ export async function modulePage(req, res) {
 		const variables	= {
 			...helper.createDefaultEjsVariable(req),
 			...{
+				moduleDir,
 				ejsPath,
 				mjsPrerenderExists,
 				cssExists,
 				mjsExists,
 				mjsFileName,
 				htmlExtenderExists,
-				htmlExtender,
+				htmlExtenderPath,
 			}
 		}
 
-		const tplFilePath = path.join(context.getMyDirectory(), 'templates', 'application.ejs')
+		const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'application.ejs')
 		const content = await helper.parseTemplate(tplFilePath, variables)
 
 		res.status(200).send(content)

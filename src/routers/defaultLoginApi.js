@@ -5,11 +5,10 @@ import { handleError } from './handleError.js'
 export async function defaultLoginApi(req, res, next) {
 	const moduleName = 'login'
 	const methodName = req.params.method
-	const cached = false
 
 	try {
 
-		const ModuleClass = await helper.importApiModule(moduleName, cached)
+		const ModuleClass = await helper.importApiModule(moduleName)
 		const method = helper.kebabToCamel(methodName);
 		if (ModuleClass===undefined) {
 			throw new Error(`invalid module: '${moduleName}'`)

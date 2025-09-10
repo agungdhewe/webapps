@@ -5,7 +5,7 @@ import * as helper from '../helper.js'
 
 
 export async function generatorAsset(req, res, next) {
-	const __dirname = context.getMyDirectory()
+	const __dirname = context.getWebappsDirectory()
 	const requestedFile = req.params.requestedAsset;
 	const filePath = path.join(__dirname, 'modules', 'generator', requestedFile)
 

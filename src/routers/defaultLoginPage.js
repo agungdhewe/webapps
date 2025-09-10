@@ -4,7 +4,7 @@ import * as path from 'node:path'
 import { handleError } from './handleError.js'
 
 export async function defaultLoginPage(req, res, next) {
-	const __dirname = context.getMyDirectory()
+	const __dirname = context.getWebappsDirectory()
 
 	try {
 

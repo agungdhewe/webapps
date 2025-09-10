@@ -1,8 +1,11 @@
 import pgp from 'pg-promise'
 
+import * as path from 'path'
 import db from '../db.js'
 import Api from '../api.js'
+import * as helper from '../helper.js'
 import { runDetachedWorker } from '../workermanager.js'
+import context from '../context.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
 
 
@@ -26,15 +29,18 @@ export default class extends Api {
 		}
 
 		// set context dengan data session saat ini
-		this.context = {
-			userId: req.session.user.userId,
-			userName: req.session.user.userName,
-			userFullname: req.session.userFullname,
-			sid: req.sessionID,
-			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
-			notifierSocket: req.app.locals.appConfig.notifierSocket,
-			notifierServer: req.app.locals.appConfig.notifierServer,
-		}
+		// this.context = {
+		// 	userId: req.session.user.userId,
+		// 	userName: req.session.user.userName,
+		// 	userFullname: req.session.userFullname,
+		// 	sid: req.sessionID,
+		// 	notifierId: Api.generateNotifierId(moduleName, req.sessionID),
+		// 	notifierSocket: req.app.locals.appConfig.notifierSocket,
+		// 	notifierServer: req.app.locals.appConfig.notifierServer,
+		// }
+
+
+
 	}
 
 	// dipanggil dengan model snake syntax
@@ -51,14 +57,19 @@ export default class extends Api {
 
 async function generator_init(self, body) {
 	console.log('init generator')
-	self.req.session.sid = self.req.sessionID
+	const req = self.req
+
+	// set sid untuk session ini, diperlukan ini agar session aktif
+	req.session.sid = req.sessionID
 
 	return {
-		userId: self.context.userId,
-		userFullname: self.context.userFullname,
-		sid: self.context.sid ,
-		notifierId: self.context.notifierId,
-		notifierSocket: self.context.notifierSocket
+		userId: req.session.user.userId,
+		userName: req.session.user.userName,
+		userFullname: req.session.userFullname,
+		sid: req.session.sid ,
+		notifierId: Api.generateNotifierId(moduleName, req.sessionID),
+		notifierSocket: req.app.locals.appConfig.notifierSocket,
+		targetDirectory: context.getRootDirectory()
 	}
 }
 
@@ -165,6 +176,7 @@ async function generator_save(self, body) {
 
 
 async function generator_generate(self, body) {
+	const req = self.req
 	const { data, clientId } = body
 	const id = `${data.id}`
 
@@ -178,8 +190,9 @@ async function generator_generate(self, body) {
 		const generator_id = result.generator_id
 
 		// generate di detached thread
-		const notifierServer = self.context.notifierServer	
-		runDetachedWorker('./src/generator/worker.js', notifierServer, clientId, {
+		const generatorWorker = path.join(context.getWebappsDirectory(), 'src', 'generator', 'worker.js')
+		const notifierServer = req.app.locals.appConfig.notifierServer
+		runDetachedWorker(generatorWorker, notifierServer, clientId, {
 			generator_id: generator_id,
 			timeout: generateTimeoutMs,
 			jeda: 0.5, // jeda 1 detik per masing-masing generate

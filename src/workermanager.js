@@ -29,10 +29,10 @@ export const runDetachedWorker = (workerPath, notifierServer, clientId, options)
 		clearTimeout(timeoutId);
 		console.log('Worker message:', 'message', info);
 		if (info.done===true) {
-		notifyClient(notifierServer, clientId, 'done', info)     // nofify message ke clent
-		// worker.terminate(); // Optional: let it exit naturally if preferred
+			notifyClient(notifierServer, clientId, 'done', info)     // nofify message ke clent
+			// worker.terminate(); // Optional: let it exit naturally if preferred
 		} else {
-		notifyClient(notifierServer, clientId, 'message', info)     // nofify message ke clent
+			notifyClient(notifierServer, clientId, 'message', info)     // nofify message ke clent
 		}
 	});
 
@@ -58,13 +58,14 @@ async function notifyClient(notifierServer, clientId, status, info) {
 		console.log('notify to:' , notifierServer)
 		console.log(clientId)
 
+		const data = {clientId, status, info}
 		const url = `${notifierServer}/notify`
 		const response = await fetch(url, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({clientId, status, info})
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data)
 		});
 
 		if (!response.ok) {

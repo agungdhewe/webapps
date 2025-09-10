@@ -1,3 +1,4 @@
+import Context from './generator-context.mjs'
 import Components from './appgen-components.mjs'
 
 const btn = {}
@@ -7,7 +8,7 @@ const ATTR_ROWUNIQUE = 'data-rowuniqueindex'
 const ATTR_ROWSEARCH = 'data-rowsearch'
 
 
-const Context = {}
+// const Context = {}
 
 const isValidName = str => /^[_a-z0-9]+$/.test(str) ;
 
@@ -567,7 +568,7 @@ async function AppGenIO_Reset(self) {
 		id: '',
 		appname: '',
 		name: '',
-		directory: '',
+		directory: Context.targetDirectory,
 		title: '',
 		description: '',
 		icon: '',

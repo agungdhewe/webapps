@@ -1,10 +1,10 @@
 import pgp from 'pg-promise';
 
-import db from '../app-db.js'
-import Api from '../api.js'
+import db from '@agung_dhewe/webapps/src/db.js'
+import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
 
-import * as Extender from './extenders/<%= moduleName %>-apiext.js'
+import * as Extender from './extenders/<%= moduleName %>.apiext.js'
 
 const moduleName = '<%= moduleName %>'
 const headerSectionName = 'header'
