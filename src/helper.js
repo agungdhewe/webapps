@@ -14,14 +14,14 @@ export function kebabToCamel(str) {
 }
 
 
-export async function importModule(modulename, cached=true) {
+export async function importApiModule(modulename, cached=true) {
 	// jika mode debug, 
 	// load api akan selalu dilakukan saat request (tanpa caching)
 
 	if (cached) {
-		return (await import(`./apis/${modulename}.js`)).default;
+		return (await import(`./apis/${modulename}.api.js`)).default;
 	} else {
-		const fullPath = new URL(`./apis/${modulename}.js`, import.meta.url).pathname;
+		const fullPath = new URL(`./apis/${modulename}.api.js`, import.meta.url).pathname;
 		const mtime = (await fs.stat(fullPath)).mtimeMs;
 		const freshUrl = `${fullPath}?v=${mtime}`;
 		const module = await import(freshUrl);

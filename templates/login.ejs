@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%= moduleName %></title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<% if (fgta5jsDebugMode) { %>
+			<!-- DEBUG MODE -->
+
+			<!-- Component -->
+			<script type="module" src="public/libs/fgta5js/src/main.mjs"></script>
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-root.css" />
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-messagebox.css" />
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-modal.css" />
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-entry.css" />
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-checkbox.css" />
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-gridview.css" />
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-appmanager.css" />
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5-module.css" />
+
+			<!-- Module -->
+			<script  src="public/libs/fgta5js/src/fgta5-module.js"></script>	
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5-module.css" />
+
+		<% } else { %>
+			<!-- PRODUCTION -->
+
+			<!-- Component -->
+			<script src="public/libs/fgta5js/dist/fgta5js<%=fgta5jsVersion%>.min.js"></script>
+			<link rel="stylesheet" href="public/libs/fgta5js/dist/fgta5js<%=fgta5jsVersion%>.min.css" /> 
+
+			<!-- Module -->
+			<script  src="public/libs/fgta5js/dist/fgta5-module-v1.0.js"></script>	
+			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5-module-v1.0.css" />
+
+		<% } %>	
+
+
+
+		
+		<link rel="stylesheet" href="login/login.css" />
+
+		<style>
+			#loadingindicator {
+				position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center; background-color: #fff;
+				transition: opacity 0.5s ease, visibility 0.5s ease;
+			}
+		</style>
+
+		<style>
+			@import url("public/fonts/karla.css");
+			* { font-family: "Karla"; }
+			input { user-select: text; }
+			dialog { outline: none; }
+			body {
+				background-color: white;
+				overscroll-behavior-y: contain;
+				user-select: none;
+				padding: 0px;
+				margin: 0px;
+				overscroll-behavior: contain;
+				font-size: 14px;
+			}
+
+			/* khusus mobile */
+			@media screen and (max-width: 500px) { 
+				html, body, input, button { font-size: 20px; }
+			}
+		</style>
+
+
+	</head>
+	<body>
+		<div id="loadingindicator">
+			<div style="font-family: system-ui, sans-serif">
+				loading module...
+			</div>
+		</div>		
+
+		<!-- <%= moduleName %> -->
+		<main id="mainapp"> 
+
+			<%- include(loginPagePath) %>
+
+		</main>
+	</body>
+
+	<script type="module">
+
+		function removeLoadingIndicator() {
+			const mainapp = document.getElementById('mainapp')
+			const pagemask = document.getElementById('loadingindicator')
+			mainapp.classList.remove('hidden')
+			setTimeout(()=>{
+				pagemask.style.opacity = 0
+				pagemask.style.visibility = 'hidden'
+				setTimeout(()=>{
+					pagemask.parentNode.removeChild(pagemask)
+				}, 500)
+			}, 50)
+		}
+
+		async function Start() {
+			window.addEventListener("load", async (event) => {
+				try {
+					const Application = await import('./login/login.mjs'	)
+					const $app = new Application.default();
+					await $app.main();
+				} catch (err) {
+					console.error(err)
+					const mainapp = document.getElementById('mainapp')
+					mainapp.innerHTML = '<div><h1 style="color:red">Module Error</h1><div>' + err.message + '</div></div>'
+				} finally {
+					removeLoadingIndicator()
+				}
+			});
+		}
+
+		Start()
+
+	</script>		
+</html>

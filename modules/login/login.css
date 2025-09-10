@@ -1,0 +1,11 @@
+.loginbox {
+	margin: 10px
+}
+
+.loginbox input {
+	margin-bottom: 5px;
+}
+
+.loginbox button {
+	margin-top: 5px;
+}

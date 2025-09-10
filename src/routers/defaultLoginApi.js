@@ -1,13 +1,30 @@
+import * as helper from './../helper.js'
+import { handleError } from './handleError.js'
+
+
 export async function defaultLoginApi(req, res, next) {
-	const err = new Error('test halaman login error')
-	
-	if (err) {
-		err.status = 500
-		next(err)
-	} else {
-		res.status(200).send(`defaultLoginApi`)
+	const moduleName = 'login'
+	const methodName = req.params.method
+	const cached = false
+
+	try {
+
+		const ModuleClass = await helper.importApiModule(moduleName, cached)
+		const method = helper.kebabToCamel(methodName);
+		if (ModuleClass===undefined) {
+			throw new Error(`invalid module: '${moduleName}'`)
+		}
+
+		const requestedBody = req.body
+		const module = new ModuleClass(req, res, next)
+		const result = await module.handleRequest(method, requestedBody)
+		const response = {
+			code: 0,
+			result: result
+		}
+		res.json(response)
+	} catch (err) {
+		handleError(err, req, res)
 	}
-
-
 	
 }

@@ -46,7 +46,7 @@ db.connect()
 		obj.done(); // Klien dikembalikan ke pool
 	})
 	.catch(error => {
-		console.error('ERROR connecting to Database:', error.message || error);
+		console.error("\n\x1b[31mError!\x1b[0m\ncannot connect to Database:", error.message || error, "\n");
 		process.exit(1);
 	});
 
@@ -56,6 +56,6 @@ dblog.connect()
 		obj.done(); // Klien dikembalikan ke pool
 	})
 	.catch(error => {
-		console.error('ERROR connecting to Logger Database:', error.message || error);
+		console.error('\n\x1b[31mError!\x1b[0m cannot\nconnect to Logger Database:', error.message || error, "\n");
 		process.exit(1);
 	});

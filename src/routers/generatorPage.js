@@ -35,9 +35,3 @@ export async function generatorPage(req, res, next) {
 }
 
 
-export async function generatorAsset(req, res, next) {
-	const __dirname = context.getMyDirectory()
-	const requestedFile = req.params.requestedAsset;
-	const filePath = path.join(__dirname, 'modules', 'generator', requestedFile)
-	res.sendFile(filePath);
-}

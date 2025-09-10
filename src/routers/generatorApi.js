@@ -9,7 +9,7 @@ export async function generatorApi(req, res, next) {
 	
 	try {
 
-		const ModuleClass = await helper.importModule(moduleName, cached)
+		const ModuleClass = await helper.importApiModule(moduleName, cached)
 		const method = helper.kebabToCamel(methodName);
 		if (ModuleClass===undefined) {
 			throw new Error(`invalid module: '${moduleName}'`)

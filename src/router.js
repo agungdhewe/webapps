@@ -12,9 +12,10 @@ import { handleModuleNotfound } from './routers/handleModuleNotfound.js'
 import { handleError } from './routers/handleError.js'
 import { fileUploadApi } from './routers/fileUploadApi.js'
 import { defaultLoginPage } from './routers/defaultLoginPage.js'
+import { defaultLoginAsset } from './routers/defaultLoginAsset.js'
 import { defaultLoginApi } from './routers/defaultLoginApi.js'
 import { generatorPage } from './routers/generatorPage.js'
-import { generatorAsset } from './routers/generatorPage.js'
+import { generatorAsset } from './routers/generatorAsset.js'
 import { generatorApi } from './routers/generatorApi.js'
 import { modulePage } from './routers/modulePage.js'
 import { moduleApi } from './routers/moduleApi.js'
@@ -41,6 +42,7 @@ export function createBasicRouter() {
 	router.post('/upload', fileUploadApi)
 	
 	router.get('/login', defaultLoginPage)
+	router.get('/login/:requestedAsset', defaultLoginAsset)
 	router.post('/login/:method', defaultLoginApi)
 	
 	router.get('/generator', generatorPage)

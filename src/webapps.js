@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 const SECOND = 1000
 const MINUTE = 60 * SECOND
 
-const defaultPort = 300
+const defaultPort = 3000
 const defaultRedisUrl = 'redis://localhost:6379'
 const defaultSessionName = 'sid'
 const defaultSessionSecret = 'rahasia'
@@ -35,10 +35,10 @@ export default class WebApplication {
 	#startedOnce
 	#express = ExpressServer();
 
-	static get defaultPort() { return defaultPort }
-	static get defaultRedisUrl() { return defaultRedisUrl }
-	static get defaultNotifierSocket() { return defaultNotifierSocket }
-	static get defaultNotifierServer() { return defaultNotifierServer }
+	get defaultPort() { return defaultPort }
+	get defaultRedisUrl() { return defaultRedisUrl }
+	get defaultNotifierSocket() { return defaultNotifierSocket }
+	get defaultNotifierServer() { return defaultNotifierServer }
 
 	get express() { return this.#express}
 
@@ -77,7 +77,7 @@ async function main(self, options) {
 
 	const app = self.express
 	const port = options.port ?? self.defaultPort
-	const startingMessage = options.startingMessage ?? `Starting webserver on port ${port}`
+	const startingMessage = options.startingMessage ?? `Starting webserver on port \x1b[1;33m${port}\x1b[0m`
 	const redisUrl = options.redisUrl || self.defaultRedisUrl
 	const notifierSocket = options.notifierSocket || self.defaultNotifierSocket
 	const notifierServer = options.notifierServer || self.defaultNotifierServer
@@ -138,9 +138,9 @@ async function main(self, options) {
 	// Tangani event 'error' pada objek server
 	server.on('error', (err) => {
 		if (err.code === 'EADDRINUSE') {
-			console.error(`Port ${port} sudah digunakan. Silakan coba port lain.`);
+			console.error(`\n\x1b[31mError!\x1b[0m\nPort ${port} sudah digunakan. Silakan coba port lain.\n`);
 		} else {
-			console.error('Terjadi kesalahan saat memulai server:', err);
+			console.error('\n\x1b[31mError!\x1b[0m\nTerjadi kesalahan saat memulai server:', err, "\n");
 		}
 		// Anda bisa memutuskan untuk keluar dari aplikasi atau mencoba port lain
 		process.exit(1); // Keluar dengan kode error
