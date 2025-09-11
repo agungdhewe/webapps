@@ -4,7 +4,9 @@
   "description": "library javascript (nodejs+express) untuk pengembangan applikasi web",
   "type": "module",
   "main": "./src/webapps.js",
-  "scripts": {},
+  "scripts": {
+    "generate" : "node ./src/generator/trygenerate.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/agungdhewe/webapps.git"

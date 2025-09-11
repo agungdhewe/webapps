@@ -34,7 +34,7 @@ export default class Api {
 				throw new Error('belum login')
 			}
 		} catch (err) {
-			err.code = 401
+			err.status = 401
 			throw err
 		}
 	}
