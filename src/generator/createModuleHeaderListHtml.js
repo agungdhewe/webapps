@@ -66,11 +66,27 @@ export async function createModuleHeaderListHtml(context, sectionName='header', 
 			let additionalAttributes = attrs.join(' ')
 
 
+
+			let columnDataName = dataName
+			let columnDataBinding = binding
+
+			if (component=='Combobox') {
+				if (bindingDisplay!='' && bindingDisplay!=null) {
+					columnDataName = bindingDisplay
+					columnDataBinding = bindingDisplay
+				} else {
+					columnDataName = bindingText
+					columnDataBinding = bindingText
+				}
+			}
+
+
+
 			// masukkan ke fields
 			fields.push({  
 				component,
-				dataName: bindingDisplay!=null ? bindingDisplay : dataName, 
-				binding: bindingDisplay!=null ? bindingDisplay : binding,
+				dataName: columnDataName, //bindingDisplay!=null ? bindingDisplay : dataName, 
+				binding: columnDataBinding, //bindingDisplay!=null ? bindingDisplay : binding,
 				label,
 				additionalAttributes
 			})

@@ -138,8 +138,14 @@ function createLookup(items) {
 		const item = items[fieldname]
 		if (item.component=='Combobox') {
 			const {bindingValue, bindingText, bindingDisplay, table} = item.Reference
+			
+			let displayField = bindingText
+			if (bindingDisplay!='' && bindingDisplay!=null) {
+				displayField = bindingDisplay
+			}	
+			
 			lookup.push({
-				fieldname, bindingValue, bindingText, bindingDisplay, table
+				fieldname, bindingValue, bindingText, bindingDisplay:displayField, table
 			})
 		}
 	}

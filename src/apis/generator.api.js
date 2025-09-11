@@ -77,7 +77,8 @@ async function generator_init(self, body) {
 async function generator_list(self, body) {
 	const { criteria={}, limit=0, offset=0, columns=[], sort={} } = body
 	const searchMap = {
-		searchtext: `generator_modulename ILIKE '%' || \${searchtext} || '%' OR generator_id=try_cast_bigint(\${searchtext}, 0)`
+		searchtext: `generator_modulename ILIKE '%' || \${searchtext} || '%' OR generator_id=try_cast_bigint(\${searchtext}, 0)`,
+		appname: `generator_appname=\${appname}`
 	};
 
 	try {

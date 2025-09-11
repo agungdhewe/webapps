@@ -84,6 +84,8 @@ export function createAdditionalAttributes(item) {
 				cfg.push(`invalid-message-minlength="${item.Validation.messageMinimum}"`)
 			}
 		}
+
+
 	} else if (item.component=='Numberbox') {
 		cfg.push(`maxlength="${item.data_length}"`)
 
@@ -100,10 +102,19 @@ export function createAdditionalAttributes(item) {
 				cfg.push(`invalid-message-max="${item.Validation.messageMaximum}"`)
 			}
 		}
+
+
 	} else if (item.component=='Checkbox') {
 		cfg.push(`type="checkbox"`)
+
+
 	} else if (item.component=='Combobox') {
-		cfg.push(`data-display="${item.Reference.bindingText}"`)
+		if (item.Reference.bindingDisplay!='' && item.Reference.bindingDisplay!=null) {
+			cfg.push(`data-display="${item.Reference.bindingDisplay}"`)
+		} else {
+			cfg.push(`data-display="${item.Reference.bindingText}"`)
+		}
+		
 	}	
 
 	if (item.Validation.hasCustomValidator) {
