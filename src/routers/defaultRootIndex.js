@@ -10,7 +10,7 @@ export async function defaultRootIndex(req, res, next) {
 
 		}
 	}
-	const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'index.ejs')
+	const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'index.page.ejs')
 	const content = await helper.parseTemplate(tplFilePath, variables)
 	res.status(200).send(content)
 }

@@ -43,6 +43,8 @@ export default class extends Module {
 				Context.userFullname = result.userFullname
 				Context.sid = result.sid
 				Context.targetDirectory = result.targetDirectory
+				Context.appsUrls = result.appsUrls
+
 			} catch (err) {
 				throw err
 			} 

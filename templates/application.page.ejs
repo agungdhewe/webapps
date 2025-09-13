@@ -7,35 +7,11 @@
 
 		<% if (fgta5jsDebugMode) { %>
 			<!-- DEBUG MODE -->
-
-			<!-- Component -->
-			<script type="module" src="public/libs/fgta5js/src/main.mjs"></script>
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-root.css" />
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-messagebox.css" />
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-modal.css" />
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-entry.css" />
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-checkbox.css" />
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-gridview.css" />
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5js-appmanager.css" />
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5-module.css" />
-
-			<!-- Module -->
-			<script  src="public/libs/fgta5js/src/fgta5-module.js"></script>	
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5-module.css" />
-
+			<%- include(libDebug) %>
 		<% } else { %>
 			<!-- PRODUCTION -->
-
-			<!-- Component -->
-			<script src="public/libs/fgta5js/dist/fgta5js<%=fgta5jsVersion%>.min.js"></script>
-			<link rel="stylesheet" href="public/libs/fgta5js/dist/fgta5js<%=fgta5jsVersion%>.min.css" /> 
-
-			<!-- Module -->
-			<script  src="public/libs/fgta5js/dist/fgta5-module-v1.0.js"></script>	
-			<link rel="stylesheet" href="public/libs/fgta5js/styles/fgta5-module-v1.0.css" />
-
+			<%- include(libProduction) %>
 		<% } %>	
-
 
 
 		

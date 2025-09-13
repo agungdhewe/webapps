@@ -36,7 +36,8 @@ export async function createSession(options) {
 		cookie: {
 			secure: false,
 			httpOnly: true,
-			maxAge: sessionMaxAge
+			maxAge: sessionMaxAge,
+			domain: '.transfashion.id'
 		}
 	}
 

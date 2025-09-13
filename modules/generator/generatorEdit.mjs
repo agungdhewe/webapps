@@ -13,6 +13,10 @@ const btn_new = new $fgta5.ActionButton('generatorEdit-btn_new', 'generator-new'
 const btn_save = new $fgta5.ActionButton('generatorEdit-btn_save')
 const btn_generate = new $fgta5.ActionButton('generatorEdit-btn_generate')
 
+const obj_appname = document.getElementById('obj_appname')
+const obj_directory = document.getElementById('obj_directory')
+
+
 export const Section = CurrentSection
 
 export async function init(self, args) {
@@ -26,6 +30,8 @@ export async function init(self, args) {
 	btn_new.addEventListener('click', (evt)=>{ btn_new_click(self, evt)})
 	btn_save.addEventListener('click', (evt)=>{ btn_save_click(self, evt)})
 	btn_generate.addEventListener('click', (evt)=>{ btn_generate_click(self, evt) })
+
+	obj_appname.addEventListener('change', (evt)=>{ obj_appname_change(self, evt) })
 
 	await ui.Init()
 
@@ -75,6 +81,21 @@ async function backToList(self, evt) {
 		evt.detail.fn_ShowNextSection()
 	}
 }
+
+
+async function obj_appname_change(self, evt) {
+	const el = evt.target
+	const value = el.value
+
+	if (Context.appsUrls[value]===undefined) {
+		const resp = await $fgta5.MessageBox.error(`nama apps '${value}' tidak teregister di daftar apps`)
+		return
+	}
+	
+	// console.log(Context.appsUrls[value].directory)
+	obj_directory.value = Context.appsUrls[value].directory
+}
+
 
 async function btn_new_click(self, evt) {
 	console.log('btn_new_click')

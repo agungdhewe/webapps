@@ -19,7 +19,7 @@ export default class Api {
 	}
 
 
-	cekLogin(req) {
+	static cekLogin(req) {
 		// jika req.session.user tidak ada datanya, berarti belum login 
 		try {
 			if (req.session.user==null) {

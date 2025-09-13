@@ -3,6 +3,8 @@ import pgp from 'pg-promise';
 import db from '@agung_dhewe/webapps/src/db.js'
 import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
+import context from '@agung_dhewe/webapps/src/context.js'
+
 
 import * as Extender from './extenders/<%= moduleName %>.apiext.js'
 
@@ -14,18 +16,7 @@ const headerTableName = '<%= headerTableName %>'
 export default class extends Api {
 	constructor(req, res, next) {
 		super(req, res, next);
-		this.cekLogin(req)
-
-		// set context dengan data session saat ini
-		this.context = {
-			userId: req.session.user.userId,
-			userName: req.session.user.userName,
-			userFullname: req.session.userFullname,
-			sid: req.sessionID,
-			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
-			notifierSocket: req.app.locals.appConfig.notifierSocket,
-			notifierServer: req.app.locals.appConfig.notifierServer,
-		}
+		Api.cekLogin(req)
 	}
 
 
@@ -45,8 +36,10 @@ export default class extends Api {
 
 
 async function <%= moduleName %>_init(self, body) {
-	console.log('init generator')
-	self.req.session.sid = self.req.sessionID
+	const req = self.req
+
+	// set sid untuk session ini, diperlukan ini agar session aktif
+	req.session.sid = req.sessionID
 
 	try {
 		// ambil data app dari database
@@ -61,13 +54,15 @@ async function <%= moduleName %>_init(self, body) {
 		}
 
 		return {
-			userId: self.context.userId,
-			userFullname: self.context.userFullname,
-			sid: self.context.sid ,
-			notifierId: self.context.notifierId,
-			notifierSocket: self.context.notifierSocket,
+			userId: req.session.user.userId,
+			userName: req.session.user.userName,
+			userFullname: req.session.userFullname,
+			sid: req.session.sid ,
+			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
+			notifierSocket: req.app.locals.appConfig.notifierSocket,
 			appsUrls: appsUrls
 		}
+		
 	} catch (err) {
 		throw err
 	}

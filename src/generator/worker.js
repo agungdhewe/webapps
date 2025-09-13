@@ -42,6 +42,11 @@ async function main(id) {
 		const sql = 'select generator_data from core."generator" where generator_id = \${generator_id}'
 		const data = await db.one(sql, queryParams);
 
+
+		// cek dahulu apakah directory tujuan benar
+		// console.log(data)
+
+
 		await generate(data.generator_data)
 		
 		

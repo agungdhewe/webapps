@@ -1,14 +1,26 @@
 import pgp from 'pg-promise';
 
 import sqlUtil from '@agung_dhewe/pgsqlc'
-
+import context from '../context.js'
 import db from '../db.js'
 import Api from '../api.js'
+
+
 
 
 export default class extends Api {
 	constructor(req, res, next) {
 		super(req, res, next);
+
+		this.currentState = {}
+		try {
+			Api.cekLogin(req)
+			this.currentState.isLogin = true
+		} catch (err) {
+			// tidak perlu throw error, karna hanya untuk cek sudah login apa belum
+			this.currentState.isLogin = false
+		}
+
 	}
 
 	// dipanggil dengan model snake syntax
@@ -21,7 +33,14 @@ export default class extends Api {
 
 
 async function login_init(self, body) {
-	return {}
+	const req = self.req
+	if (self.currentState.isLogin) {
+		req.session.sid = req.sessionID
+	}
+
+	return {
+		isLogin: self.currentState.isLogin
+	}
 }
 
 async function login_doLogin(self, body) {

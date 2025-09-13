@@ -17,7 +17,7 @@ export async function defaultLoginPage(req, res, next) {
 			}
 		}
 
-		const tplFilePath = path.join(__dirname, 'templates', 'login.ejs')
+		const tplFilePath = path.join(__dirname, 'templates', 'login.page.ejs')
 		const content = await helper.parseTemplate(tplFilePath, variables)
 
 		res.status(200).send(content)		

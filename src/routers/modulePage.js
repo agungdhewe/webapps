@@ -59,7 +59,7 @@ export async function modulePage(req, res) {
 			}
 		}
 
-		const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'application.ejs')
+		const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'application.page.ejs')
 		const content = await helper.parseTemplate(tplFilePath, variables)
 
 		res.status(200).send(content)

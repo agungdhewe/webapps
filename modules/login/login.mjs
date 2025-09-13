@@ -3,6 +3,9 @@ const btn_login = document.getElementById('btn_login')
 const obj_username = document.getElementById('obj_username')
 const obj_password = document.getElementById('obj_password')
 
+// need test direct open
+// https://core-dev.transfashion.id/?nexturl=https://ent-dev.transfashion.id/sitetype&id=STO
+// skenario: buka link di atas dalam kondisi belum login, setelah login, diredirect lagi ke halaman di atas
 
 
 export default class extends Module {
@@ -18,16 +21,21 @@ export default class extends Module {
 		btn_login.addEventListener('click', (evt)=>{
 			btn_login_click(self, evt)
 		})
+		
+		try {
+			// inisiasi sisi server
+			try {
+				const result = await Module.apiCall(`/login/init`, { })
+				if (result.isLogin) {
+					location.href = '/'
+				}
+			} catch (err) {
+				throw err
+			} 
 
-		setInterval(()=>{
-			// cek login, apakah sudah login
-			// console.log('test', Math.random())
-			const login = sessionStorage.getItem('login');
-			if (login) {
-				const nexturl = sessionStorage.getItem('login_nexturl');
-				location.href = nexturl
-			}
-		}, 500)	
+		} catch (err) {
+			throw err
+		}
 
 	}
 
@@ -54,6 +62,10 @@ async function btn_login_click(self, evt) {
 		const result = await apiLogin.execute({username, password})
 		if (result!=null) {
 			// login berhasil
+			
+			// simpan flag login
+			sessionStorage.setItem('login', true);
+
 			if (nextmodule!=null) {
 				sessionStorage.setItem('nextmodule', nextmodule);
 			}
@@ -61,7 +73,6 @@ async function btn_login_click(self, evt) {
 			if (nexturl!=null) {
 				// redirect ke next url
 				sessionStorage.setItem('login_nexturl', nexturl);
-				sessionStorage.setItem('login', true);
 				location.href = nexturl
 			} else {
 				location.href = '/'

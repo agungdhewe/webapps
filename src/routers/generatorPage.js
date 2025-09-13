@@ -24,7 +24,7 @@ export async function generatorPage(req, res, next) {
 			}
 		}
 
-		const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'generator.ejs')
+		const tplFilePath = path.join(context.getWebappsDirectory(), 'templates', 'generator.page.ejs')
 		const content = await helper.parseTemplate(tplFilePath, variables)
 
 		res.status(200).send(content)

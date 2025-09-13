@@ -20,26 +20,7 @@ const generateTimeoutMs = 5 * MINUTES
 export default class extends Api {
 	constructor(req, res, next) {
 		super(req, res, next);
-
-		// jika req.session.user tidak ada datanya, berarti belum login 
-		if (req.session.user==null) {
-			const err = new Error('belum login')
-			err.status = 401
-			throw err
-		}
-
-		// set context dengan data session saat ini
-		// this.context = {
-		// 	userId: req.session.user.userId,
-		// 	userName: req.session.user.userName,
-		// 	userFullname: req.session.userFullname,
-		// 	sid: req.sessionID,
-		// 	notifierId: Api.generateNotifierId(moduleName, req.sessionID),
-		// 	notifierSocket: req.app.locals.appConfig.notifierSocket,
-		// 	notifierServer: req.app.locals.appConfig.notifierServer,
-		// }
-
-
+		Api.cekLogin(req)
 
 	}
 
@@ -56,21 +37,41 @@ export default class extends Api {
 
 
 async function generator_init(self, body) {
-	console.log('init generator')
 	const req = self.req
 
 	// set sid untuk session ini, diperlukan ini agar session aktif
 	req.session.sid = req.sessionID
 
-	return {
-		userId: req.session.user.userId,
-		userName: req.session.user.userName,
-		userFullname: req.session.userFullname,
-		sid: req.session.sid ,
-		notifierId: Api.generateNotifierId(moduleName, req.sessionID),
-		notifierSocket: req.app.locals.appConfig.notifierSocket,
-		targetDirectory: context.getRootDirectory()
+
+	try {
+		// ambil data app dari database
+		const sql = 'select apps_id, apps_url, apps_directory from core."apps"'
+		const result = await db.any(sql)
+
+		const appsUrls = {}
+		for (let row of result) {
+			appsUrls[row.apps_id] = {
+				url: row.apps_url,
+				directory: row.apps_directory
+			}
+		}
+
+		return {
+			userId: req.session.user.userId,
+			userName: req.session.user.userName,
+			userFullname: req.session.userFullname,
+			sid: req.session.sid ,
+			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
+			notifierSocket: req.app.locals.appConfig.notifierSocket,
+			targetDirectory: context.getRootDirectory(),
+			appsUrls: appsUrls
+		}
+
+	} catch (err) {
+		throw err
 	}
+
+
 }
 
 

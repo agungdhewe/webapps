@@ -623,3 +623,11 @@ button:hover {
 .field-error {
 	background: #ff8383;
 }
+
+
+
+.search-editor-item {
+	padding: 6px;
+	cursor: pointer;
+	border-top: 1px dotted #ddd;
+}
