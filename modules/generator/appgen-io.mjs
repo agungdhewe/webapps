@@ -432,9 +432,11 @@ function AppGenIO_GetEntityUnique(self, editor) {
 }
 
 function AppGenIO_GetEntitySearch(self, editor) {
+	console.log('get entity search')
+
 	const search = {}
 	const tbl = editor.querySelector('table[name="tbl-search"]')
-	const trs = tbl.querySelectorAll(`tr[${ATTR_ROWUNIQUE}]`)
+	const trs = tbl.querySelectorAll(`tr[${ATTR_ROWSEARCH}]`)
 	for (var tr of trs) {
 		const tdName = tr.querySelector('td[data-name="name"]')
 		const tdLabel = tr.querySelector('td[data-name="label"]')
