@@ -27,10 +27,6 @@ import { createTable } from './createTable.js';
 
 
 const { generator_id, jeda } = workerData;
-const HEADER = 'header'
-const DETIL = 'detil'
-const LIST = 'list'
-const EDIT = 'edit'
 
 
 main(generator_id)
@@ -111,41 +107,47 @@ async function generate(data) {
 
 		await createModuleExtenderMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
+		
 
 		await createModuleEjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
+		
 		await createModuleMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
-		await createModuleHeaderListHtml(context, HEADER, LIST, {overwrite:true})
+
+
+		// Header
+		await createModuleHeaderListHtml(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
-		await createModuleHeaderListMjs(context, HEADER, LIST, {overwrite:true})
+		await createModuleHeaderListMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
-		await createModuleHeaderEditHtml(context, HEADER, EDIT, {overwrite:true})
+		await createModuleHeaderEditHtml(context,  {overwrite:true})
 		await sleep(jedaWaktu)
 
-		
-
-		await createModuleHeaderEditMjs(context, HEADER, EDIT, {overwrite:true})
-		await sleep(jedaWaktu)
-
-		
-		await createModuleDetilListHtml(context, DETIL, LIST, {overwrite:true})
-		await sleep(jedaWaktu)
-
-		await createModuleDetilListMjs(context, DETIL, LIST, {overwrite:true})
-		await sleep(jedaWaktu)
-
-
-		await createModuleDetilEditHtml(context, DETIL, EDIT, {overwrite:true})
+		await createModuleHeaderEditMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
 		
-		await createModuleDetilEditMjs(context, DETIL, EDIT, {overwrite:true})
+		
+
+		
+		// Detils
+		await createModuleDetilListHtml(context, {overwrite:true})
 		await sleep(jedaWaktu)
-			
+
+		await createModuleDetilListMjs(context, {overwrite:true})
+		await sleep(jedaWaktu)
+
+
+		await createModuleDetilEditHtml(context, {overwrite:true})
+		await sleep(jedaWaktu)
+		
+		await createModuleDetilEditMjs(context, {overwrite:true})
+		await sleep(jedaWaktu)
+		
 		
 		context.postMessage({message: `finish`, done:true})
 	} catch (err) {
