@@ -8,12 +8,15 @@ export async function createSession(options) {
 	const redisUrl = options.redisUrl || 'redis://localhost:6379'
 	const sessionName =  options.sessionName || 'sid'
 	const sessionSecret = options.sessionSecret || 'rahasia'
-	const sessionMaxAge = options.sessionMaxAge || 15 * 60 * 1000 // default 15 menit
+	const sessionMaxAge = options.sessionMaxAge || 15 * 50 * 1000 // default 15 menit
+	const sessionDomain = options.sessionDomain || 'localhost'
+	const sessionSecure = options.sessionSecure ?? false
+	const sessionHttpOnly = options.sessionHttpOnly ?? true
 
 	const RedisStore = connectRedis.RedisStore;
 
 
-	console.log(`setup redis client ${redisUrl}`)
+	console.log(`connecting to redis ${redisUrl}`)
 	const redisClient = createClient({
 		url: redisUrl
 	});
@@ -34,19 +37,11 @@ export async function createSession(options) {
 		saveUninitialized: false,
 		rolling: true,
 		cookie: {
-			secure: false,
-			httpOnly: true,
+			secure: sessionSecure,
+			httpOnly: sessionHttpOnly,
 			maxAge: sessionMaxAge,
-			domain: '.transfashion.id'
+			domain: sessionDomain
 		}
-	}
-
-	if (options.domain!==undefined) {
-		sessionConfig.cookie['domain'] = options.domain
-	}
-
-	if (options.path!=undefined) {
-		sessionConfig.cookie['path'] = options.path
 	}
 
 	// TODO: tambahkan untuk keperluan ini

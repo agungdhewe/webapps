@@ -14,14 +14,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-const SECOND = 1000
-const MINUTE = 60 * SECOND
+
 
 const defaultPort = 3000
 const defaultRedisUrl = 'redis://localhost:6379'
 const defaultSessionName = 'sid'
 const defaultSessionSecret = 'rahasia'
-const defaultSessionMaxAge = 15 * MINUTE
+const defaultSessionMaxAge = 15
+const defaultSessionDomain = 'localhost'
+const defaultSessionSecure = false
+const defaultSessionHttpOnly = true
+
+
 const defaultNotifierSocket = 'ws://localhost:8080'
 const defaultNotifierServer = 'http://localhost:8080'
 
@@ -40,6 +44,12 @@ export default class WebApplication {
 	get defaultRedisUrl() { return defaultRedisUrl }
 	get defaultNotifierSocket() { return defaultNotifierSocket }
 	get defaultNotifierServer() { return defaultNotifierServer }
+	get defaultSessionName() { return defaultSessionName }
+	get defaultSessionSecret() { return defaultSessionSecret }
+	get defaultSessionMaxAge() { return defaultSessionMaxAge }
+	get defaultSessionDomain() { return defaultSessionDomain }
+	get defaultSessionSecure() { return defaultSessionSecure }
+	get defaultSessionHttpOnly() { return defaultSessionHttpOnly }
 
 	get express() { return this.#express}
 
@@ -74,6 +84,33 @@ export default class WebApplication {
 }
 
 
+export function createDefaultAppConfig() {
+	const sessionName = defaultSessionName
+	const sessionSecret = defaultSessionSecret
+	const sessionMaxAge = defaultSessionMaxAge
+	const sessionDomain = defaultSessionDomain
+	const sessionSecure = defaultSessionDomain
+	const sessionHttpOnly = defaultSessionHttpOnly
+
+	const notifierSocket = defaultNotifierSocket
+	const notifierServer = defaultNotifierServer
+
+	const redisUrl = defaultRedisUrl
+
+	return {
+		sessionName,
+		sessionSecret,
+		sessionMaxAge,
+		sessionDomain,
+		sessionSecure,
+		sessionHttpOnly,
+
+		notifierSocket,
+		notifierServer,
+		redisUrl
+	}
+}
+
 
 async function main(self, options) {
 	const __rootDirectory = self.__rootDirectory
@@ -81,18 +118,25 @@ async function main(self, options) {
 	const app = self.express
 	const port = options.port ?? self.defaultPort
 	const startingMessage = options.startingMessage ?? `Starting webserver on port \x1b[1;33m${port}\x1b[0m`
-	const redisUrl = options.redisUrl || self.defaultRedisUrl
-	const notifierSocket = options.notifierSocket || self.defaultNotifierSocket
-	const notifierServer = options.notifierServer || self.defaultNotifierServer
-	const appConfig = options.appConfig || {}
+	const appConfig = options.appConfig || createDefaultAppConfig()
+	
 	const basicRouter = createBasicRouter()
 	const extendedRouter = options.router || ExpressServer.Router({ mergeParams: true });
 	const router = ExpressServer.Router({ mergeParams: true });
 
-	const sessionName = defaultSessionName // TODO: baca dari environtment
-	const sessionSecret = defaultSessionSecret
-	const sessionMaxAge = defaultSessionMaxAge
-	const session = await createSession({ redisUrl, sessionName, sessionSecret, sessionMaxAge })
+
+	const redisUrl = appConfig.redisUrl
+	const notifierSocket = appConfig.notifierSocket
+	const notifierServer = appConfig.notifierServer
+
+	const sessionName = appConfig.sessionName
+	const sessionSecret = appConfig.sessionSecret
+	const sessionMaxAge = appConfig.sessionMaxAge
+	const sessionDomain = appConfig.sessionDomain
+	const sessionSecure = appConfig.sessionSecure
+	const sessionHttpOnly = appConfig.sessionHttpOnly
+
+	const session = await createSession({ redisUrl, sessionName, sessionSecret, sessionMaxAge, sessionDomain, sessionSecure, sessionHttpOnly })
 
 	router.use(uploader)
 	router.use(extendedRouter) // extended akan dipanggil dahulu, sehingga akan meng-override basicRouter
