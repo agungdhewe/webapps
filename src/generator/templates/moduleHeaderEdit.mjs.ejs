@@ -298,11 +298,16 @@ async function btn_new_click(self, evt) {
 
 	try {
 
-		let datainit = {}
+		// inisiasi data baru
+		let datainit = {<% defaultInits.forEach(setdefault => { %>
+			<%- setdefault %>,
+		<% }) %>}
+
+
 		// jika perlu modifikasi data initial,
 		// atau dialog untuk opsi data baru, dapat dibuat di Extender.newData
 		if (typeof Extender.newData === 'function') {
-			datainit = await Extender.newData(self)
+			await Extender.newData(self, datainit)
 		}
 
 		// buat data baru

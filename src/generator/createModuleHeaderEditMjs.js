@@ -41,6 +41,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 			const fields = []
 			const fieldHandles = []
+			const defaultInits = []
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
 
@@ -55,6 +56,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 				const elementId = `${modulePart}-${item.input_name}`
 
 
+				// setup handles
 				const handles = []
 				for (let eventname in item.Handle) {
 					let createhandle = item.Handle[eventname]
@@ -78,6 +80,29 @@ export async function createModuleHeaderEditMjs(context, options) {
 				}
 
 
+				// setup default values
+				let setdefault
+				if (item.data_defaultvalue != '') {
+					if (item.component=='Datepicker' || item.component=='Timepicker') {
+						setdefault = `${item.name }: new Date()`
+					} else if (item.component=='Numberbox') {
+						setdefault = `${item.name }: ${item.data_defaultvalue}`
+					} else if (item.component=='Checkbox') {
+						if (item.data_defaultvalue==='true' || item.data_defaultvalue==='checked' || item.data_defaultvalue==='1') {
+							setdefault = `${item.name }: true`
+						}
+					} else {
+						setdefault = `${item.name }: '${item.data_defaultvalue}'`
+					}
+				}
+
+				if (setdefault!=null) {
+					defaultInits.push(setdefault)
+				}
+
+
+
+				// add to field config data	
 				fields.push({  
 					component,
 					fieldname,
@@ -89,13 +114,14 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 
 			const variables = {
-				title: title,
-				modulePart: modulePart,
-				moduleName: moduleName,
+				title,
+				modulePart,
+				moduleName,
 				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
 				moduleList: kebabToCamel(`${moduleName}-${sectionName}-list`),
-				fields: fields,
-				fieldHandles
+				fields,
+				fieldHandles,
+				defaultInits
 			}
 
 			
