@@ -78,8 +78,27 @@ async function generate(data) {
 
 	const jedaWaktu = jeda ?? 0
 
-	try {
 
+
+
+	// tambahkan referensi ke entity detil
+	const entityHeader = context.entities['header']
+	const headerPkFieldName = entityHeader.pk
+	const headerItems = entityHeader.Items
+	for (var entityName in context.entities) {
+		// tambahkan jika bukan header
+		if (entityName!='header') {
+			const headerPK = structuredClone(headerItems[headerPkFieldName])
+			headerPK.Reference.pk = entityHeader.pk
+			headerPK.Reference.table = entityHeader.table
+			headerPK.Reference.bindingValue = entityHeader.pk
+			headerPK.input_disabled = true
+			context.entities[entityName].Items[entityHeader.pk] = headerPK
+		}
+	}
+
+
+	try {
 		await prepareDirectory(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
@@ -90,10 +109,13 @@ async function generate(data) {
 		
 		await createApiExtenderModule(context, {overwrite:true})
 		await sleep(jedaWaktu)
+	
 
 		await createTable(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
+
+		
 		await createModuleRollup(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
@@ -121,13 +143,16 @@ async function generate(data) {
 		// Header
 		await createModuleHeaderListHtml(context, {overwrite:true})
 		await sleep(jedaWaktu)
+		
 
 		await createModuleHeaderListMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
+		
 		await createModuleHeaderEditHtml(context,  {overwrite:true})
 		await sleep(jedaWaktu)
 
+		
 		await createModuleHeaderEditMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
 		

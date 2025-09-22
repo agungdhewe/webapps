@@ -34,7 +34,8 @@ export async function createModuleEjs(context, options) {
 
 		const variables = {
 			moduleName: moduleName,
-			sections: sections
+			sections: sections,
+
 		}
 
 		const tplFilePath = path.join(__dirname, 'templates', 'module.ejs.ejs')

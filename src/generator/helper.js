@@ -46,8 +46,11 @@ export function capitalizeWords(input) {
 export function createAdditionalAttributes(item) {
 	const cfg = []
 	
-	if (item.data_defaultvalue!='') {
-		cfg.push(`value="${item.data_defaultvalue}"`)
+	// Default Value hanya untuk Textbox, Numberbox, Checkbox
+	if (['Textbox', 'Numberbox', 'Checkbox'].includes(item.component)) {
+		if (item.data_defaultvalue!='') {
+			cfg.push(`value="${item.data_defaultvalue}"`)
+		}
 	}
 
 	if (item.input_inlinestyle.trim()!='') {
@@ -85,7 +88,6 @@ export function createAdditionalAttributes(item) {
 			}
 		}
 
-
 	} else if (item.component=='Numberbox') {
 		cfg.push(`maxlength="${item.data_length}"`)
 
@@ -102,7 +104,6 @@ export function createAdditionalAttributes(item) {
 				cfg.push(`invalid-message-max="${item.Validation.messageMaximum}"`)
 			}
 		}
-
 
 	} else if (item.component=='Checkbox') {
 		cfg.push(`type="checkbox"`)

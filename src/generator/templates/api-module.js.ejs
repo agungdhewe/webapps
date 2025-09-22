@@ -3,7 +3,8 @@ import pgp from 'pg-promise';
 import db from '@agung_dhewe/webapps/src/db.js'
 import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
-import context from '@agung_dhewe/webapps/src/context.js'
+import context from '@agung_dhewe/webapps/src/context.js'  <% if (usesequencer) { %>
+import { createSequencer } from '@agung_dhewe/webapps/src/sequencer.js' <% } %>
 
 
 import * as Extender from './extenders/<%= moduleName %>.apiext.js'
@@ -179,19 +180,63 @@ async function <%= moduleName %>_headerOpen(self, body) {
 
 async function <%= moduleName %>_headerCreate(self, body) {
 	const { source, data } = body
+	const req = self.req
 
 	try {
-		sqlUtil.connect(db)
-
-		data._createby = 1
-		data._createdate = (new Date()).toISOString()
 
 
-		<% if (autoid) { %>const cmd = sqlUtil.createInsertCommand(headerTableName, data, ['<%= headerPrimaryKey %>'])<% }
-		else
-		{ %>const cmd = sqlUtil.createInsertCommand(headerTableName, data)<% } %>
-		const result = await cmd.execute(data)
+		const result = await db.tx(async dt=>{
+
+			sqlUtil.connect(dt)
+
+			data._createby = 1
+			data._createdate = (new Date()).toISOString()
+
+			<% if (usesequencer) { %>
+			// buat sequencer	
+			const sequencer = createSequencer(dt, { 
+				COMPANY_CODE: req.app.locals.appConfig.COMPANY_CODE,
+				blockLength: <%= identifierBlock %>,
+				numberLength: <%= identifierLength %>,
+			})
+
+			if (typeof Extender.sequencerSetup === 'function') {
+				// jika ada keperluan menambahkan code block/cluster di sequencer
+				// dapat diimplementasikan di exterder sequencerSetup 
+				await Extender.sequencerSetup(sequencer, data)
+			}
+
+			<%if (yearly) { 
+			%>// generate data <%= identifierPrefix %> reset pertahun
+			const seqdata = await sequencer.yearly('<%= identifierPrefix %>')<% } 
+			else { 
+			
+			%>// generate data <%= identifierPrefix %> reset perbulan
+			const seqdata = await sequencer.monthly('<%= identifierPrefix %>')<% } %>	
+			data.<%= headerPrimaryKey %> = seqdata.id
+			<% } %>	
+
+			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
+			if (typeof Extender.headerCreating === 'function') {
+				await Extender.headerCreating(data, seqdata)
+			}
+
+
+			<% if (autoid) { 
+			%><% if (usesequencer) { %>const cmd = sqlUtil.createInsertCommand(headerTableName, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(headerTableName, data, ['<%= headerPrimaryKey %>'])<% } %><% 
+		    } else { %>const cmd = sqlUtil.createInsertCommand(headerTableName, data)<% } %>
+			const res = await cmd.execute(data)
+
+
+			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
+			if (typeof Extender.headerCreated === 'function') {
+				await Extender.headerCreated(result, data)
+			}
+
 		
+			return res
+		})
+
 		// record log
 		let logdata = {moduleName, source, tablename:headerTableName, section:headerSectionName, action:'CREATE', id: result.<%= headerPrimaryKey %>}
 		await self.log(logdata)

@@ -166,6 +166,7 @@ async function main(self, options) {
 
 	// Routing /public  untuk serve halaman-halaman static
 	
+	app.use('/public/libs/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'libs', 'fgta5js')));
 	app.use('/public', rejectEjsFiles);
 	app.use('/public', ExpressServer.static(path.join(__rootDirectory, 'public')));
 	app.use('/', router)

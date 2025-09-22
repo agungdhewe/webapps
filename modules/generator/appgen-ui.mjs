@@ -957,8 +957,11 @@ function AppGenLayout_designerFieldNameChanged(self, entity_id, obj, fromentity)
 	const query = `tr[${ATTR_ENTITYID}="${entity_id}"] [name="${ENT_COL_PK}"] input`
 	const elpk = ME.DataEntities.querySelector(query)
 
+	const design = ME.EntityDesigner.querySelector(`[name="entity-editor"][${ATTR_ENTITYID}="${entity_id}"]`)
+	const datatypeEl = design.querySelector('select[name="datatype"]')
+	datatypeEl.disabled = false
 
-	
+	console.log('AppGenLayout_designerFieldNameChanged')
 	const setPk = (df, primary_key) => {
 		// reset seluruh primary key
 		const alliconspk = df.querySelectorAll('[name="icon-pk"]')
@@ -974,6 +977,21 @@ function AppGenLayout_designerFieldNameChanged(self, entity_id, obj, fromentity)
 				ico.innerHTML = ICON_PK
 			}
 
+		}
+
+
+		// untuk primary key detail tipe data otomatis di set ke bigInt
+		// ambil enentity header untuk pengecekan tipe data
+		if (current_fieldname_value==primary_key) {
+			const entityHeader = ME.DataEntities.querySelector('tr[data-isheader')
+			const headerEntityId = entityHeader.getAttribute(ATTR_ENTITYID)
+			if (entity_id!=headerEntityId) {
+				// set tipedata untuk PK di detil menjadi bigint
+				console.log('SET tO BIG INT')
+				datatypeEl.value = 'bigint'
+				datatypeEl.disabled = true
+				// console.log(datatypeEl)
+			}
 		}
 	}
 
@@ -996,6 +1014,13 @@ function AppGenLayout_designerFieldNameChanged(self, entity_id, obj, fromentity)
 		const df = obj.closest('[name="design-data-field"]') //cari [name="design-data-field"] terdekat
 		setPk(df, primary_key)
 	}
+
+
+
+
+
+
+
 }
 
 function AppGenLayout_handleActionForm(self) {

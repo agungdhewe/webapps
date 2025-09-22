@@ -14,7 +14,7 @@ export async function createTable(context, options) {
 	const skipGenerate = options.skipGenerate===true
 	const moduleName = context.moduleName
 	const title = context.title
-	const targetFile = path.join(context.moduleDir, `${moduleName}.sql`)
+	
 	
 
 	try {
@@ -23,18 +23,27 @@ export async function createTable(context, options) {
 			return
 		}
 
-		// reporting progress to parent process
-		context.postMessage({message: `generating file: '${targetFile}`})
-
 
 		// start geneate program code		
 		let sections = []
 		for (var entityName in context.entities) {
+
+			// prepare target file
+			const targetFile = path.join(context.moduleDir, `${moduleName}-${entityName}.sql`)
+			
+			
+			// reporting progress to parent process
+			context.postMessage({message: `generating file: '${targetFile}`})
+
+
+			// start generate table for tis entity
 			const entity = context.entities[entityName]
 			const {table, descr, pk, identifierMethod} = entity
 			const pkData = entity.Items[pk]
 			const {schema, tablename} = ddl.parseTableName(table)
 			const {data_fieldname, data_type, data_length, description} = pkData
+			
+
 
 			const scriptContent = []
 
@@ -52,18 +61,18 @@ export async function createTable(context, options) {
 				scriptContent.push(sql)
 			}
 
+			const recordColumns = createRecordColumns()
+			const entityItems = structuredClone({...entity.Items, ...recordColumns})
 
 			// Buat Fields
 			{
-				const recordColumns = createRecordColumns()
-				const Items = {...entity.Items, ...recordColumns}
-
-				for (var fieldname in Items) {
+				
+				for (var fieldname in entityItems) {
 					if (fieldname==pk) {
 						continue
 					}
 
-					const field = Items[fieldname]
+					const field = entityItems[fieldname]
 					const {data_fieldname, data_type, data_length, data_precision, data_allownull, data_defaultvalue, description} = field
 
 					const sql =	await ddl.createField(schema, tablename, {
@@ -77,13 +86,13 @@ export async function createTable(context, options) {
 					})
 					scriptContent.push(sql)
 				}
-
+			
 			}
 
 			// buat foreign key
 			scriptContent.push("\n")
 			{
-				const foreignKeys = Object.entries(entity.Items)
+				const foreignKeys = Object.entries(entityItems)
 					.filter(([_, value]) => value.Reference.table !== null && value.Reference.table !== '')
 					.reduce((acc, [key, value]) => {
 						acc[key] = value;
@@ -108,6 +117,8 @@ export async function createTable(context, options) {
 			
 			let content = scriptContent.join("\n")
 			await fs.writeFile(targetFile, content, 'utf8');
+
+
 		}
 	} catch (err) {
 		throw err
@@ -118,10 +129,25 @@ export async function createTable(context, options) {
 
 function createRecordColumns() {
 	const records = {
-		_createby: {data_fieldname: '_createby', data_type: 'bigint', data_allownull: false, description: 'user yang pertama kali membuat record ini'},
-		_createdate: {data_fieldname: '_createdate', data_type: 'timestamp', data_allownull: false, description: 'waktu record dibuat pertama kali'},
-		_modifyby: {data_fieldname: '_modifyby', data_type: 'bigint', data_allownull: true, description: 'user yang terakhir modifikasi record ini'},
-		_modifydate: {data_fieldname: '_modifydate', data_type: 'timestamp', data_allownull: true, description: 'waktu terakhir record dimodifikasi'}
+		_createby: {
+			data_fieldname: '_createby', data_type: 'bigint', data_allownull: false, description: 'user yang pertama kali membuat record ini',
+			Reference: {table: '',pk: ''}
+		},
+		
+		_createdate: {
+			data_fieldname: '_createdate', data_type: 'timestamp', data_allownull: false, description: 'waktu record dibuat pertama kali',
+			Reference: {table: '',pk: ''}
+		},
+		
+		_modifyby: {
+			data_fieldname: '_modifyby', data_type: 'bigint', data_allownull: true, description: 'user yang terakhir modifikasi record ini',
+			Reference: {table: '',pk: ''}
+		},
+
+		_modifydate: {
+			data_fieldname: '_modifydate', data_type: 'timestamp', data_allownull: true, description: 'waktu terakhir record dimodifikasi',
+			Reference: {table: '',pk: ''}
+		}
 	}
 
 	return records

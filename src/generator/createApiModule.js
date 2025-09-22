@@ -31,6 +31,11 @@ export async function createApiModule(context, options) {
 		const headerPrimaryKey = entityHeader.pk
 		const headerSearchMap = createSearchMap(entityHeader.Search, entityHeader.Items, headerTableName)
 		const autoid = entityHeader.identifierMethod=='manual' ? false : true
+		const usesequencer = ['auto-yearly', 'auto-monthly'].includes(entityHeader.identifierMethod) ? true : false
+		const yearly = entityHeader.identifierMethod == 'auto-yearly' ? true : false
+		const identifierPrefix = entityHeader.identifierPrefix
+		const identifierBlock = entityHeader.identifierBlock
+		const identifierLength = entityHeader.identifierLength
 
 		const headerFieldsLookup = createLookup(entityHeader.Items)
 
@@ -48,6 +53,11 @@ export async function createApiModule(context, options) {
 			title: title,
 			moduleName: moduleName,
 			autoid,
+			usesequencer,
+			yearly,
+			identifierPrefix,
+			identifierBlock,
+			identifierLength,
 			headerTableName,
 			headerPrimaryKey,
 			headerSearchMap,
