@@ -165,6 +165,18 @@ async function <%= moduleName %>_headerOpen(self, body) {
 		<% }) %>
 
 
+		// lookup data createby
+		{
+			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._createby)
+			data._createby = user_fullname ?? ''
+		}
+
+		// lookup data modifyby
+		{
+			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._modifyby)
+			data._modifyby = user_fullname ?? ''
+		}
+		
 
 		// pasang extender untuk olah data
 		if (typeof Extender.headerOpen === 'function') {

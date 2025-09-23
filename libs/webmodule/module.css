@@ -4,12 +4,25 @@
 
 
 
+#fRecord-section  [name="panel"] {
+	display: flex;
+}
 
 
+#fRecord-section [name="row"] {
+	display: flex;
+	margin-bottom: 5px;
+}
 
+#fRecord-section [name="column"] div:nth-child(even) {
+	margin-bottom: 15px;
+}
 
-
-
+#fRecord-section [name="caption"] {
+	width: 120px;
+	text-align: right;
+	padding-right: 10px;
+}
 
 
 

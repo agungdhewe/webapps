@@ -105,6 +105,8 @@ export async function openSelectedData(self, params) {
 		const id = params.keyvalue
 		const data = await openData(self, id)
 
+		CurrentState.currentOpenedId = id
+
 		// disable primary key
 		setPrimaryKeyState(self, {disabled:true})
 
@@ -112,6 +114,7 @@ export async function openSelectedData(self, params) {
 		frm.acceptChanges()
 		frm.lock()
 	} catch (err) {
+		CurrentState.currentOpenedId = null
 		throw err
 	} finally {
 		mask.close()
@@ -131,14 +134,14 @@ async function newData(self, datainit) {
 }
 
 async function openData(self, id) {
-	CurrentState.currentOpenedId = id
+	
 
 	const url = `/${Context.moduleName}/header-open`
 	try {
 		const result = await Module.apiCall(url, { id }) 
 		return result 
 	} catch (err) {
-		CurrentState.currentOpenedId = null
+		
 		throw err	
 	} 	
 }
@@ -194,7 +197,9 @@ async function backToList(self, evt) {
 
 	if (goback) {
 		frm.lock()
-		evt.detail.fn_ShowNextSection()
+		const listId =  Context.Sections.<%= moduleSection %>List
+		const listSection = Crsl.Items[listId]
+		listSection.show({direction: 1})
 	}
 }
 
@@ -379,6 +384,8 @@ async function btn_save_click(self, evt) {
 		console.log(`get data id ${idValue}`)
 		const data = await openData(self, idValue)
 		console.log('data', data)
+
+		CurrentState.currentOpenedId = idValue
 
 		if (frm.AutoID) {
 			console.log('update field ID di form')
