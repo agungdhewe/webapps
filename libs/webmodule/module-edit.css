@@ -1,0 +1,95 @@
+.module-form {
+	display: flex; 
+	column-gap: 10px; 
+	row-gap: 5px; 
+	flex-wrap: wrap; 
+	margin-bottom: 20px;
+}
+
+
+
+
+.input-field {
+	display: flex;
+	column-gap: 10px;
+	/* background-color: aliceblue; */
+}
+
+.input-field > label {
+	margin-top: 4px;
+	font-size: 0.8rem;
+	font-weight: bold;
+	
+}
+
+@media screen and (max-width: 500px) {
+	.input-field {
+		flex-direction: column;
+	}
+
+	.input-field > div[label],
+	.input-field > label {
+		text-align: left;
+		margin-bottom: 5px;
+		width: fit-content;
+		min-width: unset;
+	}
+}
+
+
+@media screen and (min-width: 501px) {
+	.input-field > label {
+		text-align: right;
+		width: 80px;
+	}
+}
+
+
+
+
+/* Box information detil */
+.panel-detil {
+	margin-top: 50px;
+	
+}
+
+.panel-detil [panel-title] {
+	font-weight: bold;
+	background-color: #2c2f60;
+	color: #fff;
+	border-radius: 10px 10px 0 0;
+	padding: 10px;
+}
+
+.panel-detil [panel-content] {
+	background-color: #ececec;
+	padding: 15px 10px 20px 10px;
+	border-radius: 0 0 10px 10px;
+	
+}
+
+
+/* Record Bar */
+.panel-recordbar {
+	display: flex;
+	margin-top: 12px;
+}
+
+.panel-recordbar > div {
+	padding: 2px 10px 2px 10px;
+	border-left: 1px solid #bebebe;
+	
+}
+
+.panel-recordbar > div:first-child {
+	border-left: 0
+}
+
+.panel-recordbar a {
+	color: #4a4a4a
+}
+
+.panel-recordbar a:hover {
+	color: #000
+	
+}
