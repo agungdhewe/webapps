@@ -51,6 +51,7 @@ export default class extends Module {
 			// render dan setup halaman
 			await render(self)
 
+
 		} catch (err) {
 			throw err
 		}
@@ -63,6 +64,7 @@ async function render(self) {
 		const footerButtonsContainer =  document.getElementsByClassName('footer-buttons-container')
 		Module.renderFooterButtons(footerButtonsContainer)
 	
+		// Set listener untuk section carousel
 		Crsl.addEventListener($fgta5.SectionCarousell.EVT_SECTIONSHOWING, (evt)=>{
 			var sectionId = evt.detail.commingSection.Id
 			for (let cont of footerButtonsContainer) {
@@ -80,7 +82,47 @@ async function render(self) {
 				}
 			}
 		})
+		
+		Crsl.Items['fRecord-section'].addEventListener($fgta5.Section.EVT_BACKBUTTONCLICK, async (evt)=>{
+			evt.detail.fn_ShowNextSection()
+		})
 
+		Crsl.Items['fLogs-section'].addEventListener($fgta5.Section.EVT_BACKBUTTONCLICK, async (evt)=>{
+			evt.detail.fn_ShowNextSection()
+		})
+
+		Crsl.Items['fAbout-section'].addEventListener($fgta5.Section.EVT_BACKBUTTONCLICK, async (evt)=>{
+			evt.detail.fn_ShowNextSection()
+		})
+		
+
+		// Set panel detil saat hover di detil item
+		const detilpanel = document.getElementById('panel-detil-selector')
+		detilpanel.querySelectorAll('.panel-detil-row a').forEach(link => {
+			link.addEventListener('mouseenter', () => {
+				link.closest('.panel-detil-row').classList.add('panel-detil-row-highligted');
+			});
+
+			link.addEventListener('mouseleave', () => {
+				link.closest('.panel-detil-row').classList.remove('panel-detil-row-highligted');
+			});
+
+
+			const sectionTarget = link.getAttribute('data-section')
+			const sectionBack = link.getAttribute('data-back')
+			link.addEventListener('click', (evt)=>{
+				openDetilSection(self, sectionTarget, sectionBack)
+			})
+
+			// if (Module.isMobileDevice()) {
+			// } else {
+			// 	link.addEventListener('dblclick', (evt)=>{
+			// 		openDetilSection(self, sectionTarget, sectionBack)
+			//	})
+			// }
+		});
+
+		
 		// <%= moduleName %>-ext.mjs, export function extendPage(self) {} 
 		if (typeof Extender.extendPage === 'function') {
 			Extender.extendPage(self)
@@ -91,4 +133,19 @@ async function render(self) {
 	} catch (err) {
 		throw err
 	}
+}
+
+
+function openDetilSection(self, sectionDetilName, sectionBackName) {
+	const sectionBackId = Context.Sections[sectionBackName]
+	const sectionBack =   Crsl.Items[sectionBackId]
+
+	const sectionId = Context.Sections[sectionDetilName]
+	const section = Crsl.Items[sectionId]
+
+	section.setSectionReturn(sectionBack)
+	section.show({}, ()=>{
+		const module = self.Modules[sectionDetilName]
+		console.log(module)
+	})
 }

@@ -55,9 +55,7 @@ export default class Api {
 		}
 	}
 
-	async log(data) {
-		console.log(data)
-	}
+
 }
 
 

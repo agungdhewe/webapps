@@ -49,6 +49,8 @@ export async function createModuleHeaderEditHtml(context, options) {
 
 			const autoid = entityData.identifierMethod=='manual' ? 'false' : 'true'
 
+
+			// ambil data field header
 			const fields = []
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
@@ -83,6 +85,24 @@ export async function createModuleHeaderEditHtml(context, options) {
 
 			}
 
+
+			// ambil data semua entity
+			const sectionDetils = []
+			for (var detilEntityName in context.entities) {
+				if (detilEntityName=='header') {
+					continue
+				}
+
+				const entityData = context.entities[detilEntityName]
+				const listModulePart = kebabToCamel(`${moduleName}-${detilEntityName}-list`)
+				const title = entityData.title
+				sectionDetils.push({
+					listModulePart,
+					title
+				})
+			}
+
+
 			const variables = {
 				title: title,
 				moduleName: moduleName,
@@ -91,7 +111,8 @@ export async function createModuleHeaderEditHtml(context, options) {
 				section: sectionData,
 				autoid,
 				primaryKeyElementId: primaryKeyElementId,
-				fields: fields
+				fields: fields,
+				sectionDetils: sectionDetils
 			}
 			
 			

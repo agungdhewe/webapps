@@ -38,6 +38,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 			// start geneate program code
 			const entityData = context.entities[entityName]
+			const tablename = entityData.table
 
 			const fields = []
 			const fieldHandles = []
@@ -115,6 +116,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 			const variables = {
 				title,
+				tablename,
 				modulePart,
 				moduleName,
 				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),

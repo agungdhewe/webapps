@@ -21,8 +21,9 @@ import { createModuleDetilEditMjs } from './createModuleDetilEditMjs.js'
 import { createApiModule } from './createApiModule.js'
 import { createApiExtenderModule } from './createApiExtenderModule.js'
 import { createTable } from './createTable.js';
-
-
+import { createInfoAboutExtender } from './createInfoAboutExtender.js';
+import { createInfoLogs } from './createInfoLogs.js';
+import { createInfoRecordExtender } from './createInfoRecordExtender.js';
 
 
 
@@ -102,16 +103,10 @@ async function generate(data) {
 		await prepareDirectory(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
+		await createTable(context, {overwrite:true})
+		await sleep(jedaWaktu)
 		
 		await createApiModule(context, {overwrite:true})
-		await sleep(jedaWaktu)
-
-		
-		await createApiExtenderModule(context, {overwrite:true})
-		await sleep(jedaWaktu)
-	
-
-		await createTable(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
 
@@ -119,16 +114,9 @@ async function generate(data) {
 		await createModuleRollup(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
-
-
 		await createModuleContext(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
-		await createModuleExtenderHtml(context, {overwrite:true})
-		await sleep(jedaWaktu)
-
-		await createModuleExtenderMjs(context, {overwrite:true})
-		await sleep(jedaWaktu)
 		
 
 		await createModuleEjs(context, {overwrite:true})
@@ -155,8 +143,7 @@ async function generate(data) {
 		
 		await createModuleHeaderEditMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
-		
-		
+	
 
 		
 		// Detils
@@ -173,7 +160,29 @@ async function generate(data) {
 		await createModuleDetilEditMjs(context, {overwrite:true})
 		await sleep(jedaWaktu)
 		
+
+		await createInfoLogs(context, {overwrite:true})
+		await sleep(jedaWaktu)
+
+
+		// Extender
+		await createApiExtenderModule(context, {overwrite:false})
+		await sleep(jedaWaktu)
+
+		await createModuleExtenderHtml(context, {overwrite:false})
+		await sleep(jedaWaktu)
+
+		await createModuleExtenderMjs(context, {overwrite:false})
+		await sleep(jedaWaktu)
+
+		await createInfoAboutExtender(context, {overwrite:false})
+		await sleep(jedaWaktu)
+
+		await createInfoRecordExtender(context, {overwrite:false})
+		await sleep(jedaWaktu)
+
 		
+		// Selesai
 		context.postMessage({message: `finish`, done:true})
 	} catch (err) {
 		throw err

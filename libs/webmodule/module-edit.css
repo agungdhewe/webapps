@@ -47,33 +47,93 @@
 
 
 
-/* Box information detil */
-.panel-detil {
-	margin-top: 50px;
-	
+
+
+@media screen and (max-width: 500px) {
+	/* Box information detil */
+	.panel-detil {
+		margin: 50px 0 0 0;
+	}
 }
+
+@media screen and (min-width: 501px) {
+	/* Box information detil */
+	.panel-detil {
+		margin: 50px 20px 20px 20px;
+	}
+}
+
 
 .panel-detil [panel-title] {
 	font-weight: bold;
 	background-color: #2c2f60;
 	color: #fff;
 	border-radius: 10px 10px 0 0;
-	padding: 10px;
+	padding: 10px 10px 10px 15px;
+	font-weight: 1.1rem;
 }
 
 .panel-detil [panel-content] {
 	background-color: #ececec;
-	padding: 15px 10px 20px 10px;
+	padding: 5px 0 10px 0;
 	border-radius: 0 0 10px 10px;
 	
 }
+
+.panel-detil-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr; /* 2 kolom */
+	grid-template-rows: auto auto; /* 2 baris */
+	column-gap: 10px; /* jarak antar item */
+	padding: 10px 15px 10px 15px;
+	color: rgb(80, 80, 80);
+
+}
+
+.panel-detil-row [data-info] {
+	font-weight: bold;
+	text-align: right;
+}
+
+.panel-detil-row a {
+	font-weight: bold;
+	text-decoration: none;
+	color: rgb(80, 80, 80);
+}
+
+.panel-detil-row-highligted {
+	background-color: #2c2f6031;
+	color: #fff
+}
+
+.panel-detil-row-highligted a {
+	color: #fff
+}
+
+
+
+
+
+
 
 
 /* Record Bar */
 .panel-recordbar {
 	display: flex;
-	margin-top: 12px;
 }
+
+@media screen and (max-width: 500px) {
+	.panel-recordbar {
+		margin-top: 12px;
+	}
+}
+
+@media screen and (min-width: 501px) {
+	.panel-recordbar {
+		margin: 12px 20px 20px 20px;
+	}
+}
+
 
 .panel-recordbar > div {
 	padding: 2px 10px 2px 10px;

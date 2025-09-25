@@ -1,6 +1,17 @@
+import Context from './<%= moduleName %>-context.mjs'
 
-
+const Crsl =  Context.Crsl
+const CurrentSectionId = Context.Sections.<%= modulePart %>
+const CurrentSection = Crsl.Items[CurrentSectionId]
 
 export async function init(self, args) {
 
+	// Back
+	CurrentSection.addEventListener($fgta5.Section.EVT_BACKBUTTONCLICK, async (evt)=>{
+		const sectionId =  Context.Sections.<%= headerModulePartEdit %>
+		const section = Crsl.Items[sectionId]
+		section.show({direction: 1})
+	})
 }
+
+

@@ -12,18 +12,19 @@
 </form>
 
 
-<div class="panel-detil">
+<div id="panel-detil-selector" class="panel-detil">
 	<div panel-title>
 		Information Detil
 	</div>
-	<div panel-content>
-		<div>
-			&nbsp;
+	<div panel-content><% sectionDetils.forEach(detil => { %>
+		<div class="panel-detil-row">
+			<div data-label><a href="javascript:void(0)" data-section="<%= detil.listModulePart %>" data-back="<%= modulePart %>"><%= detil.title %></a></div>
+			<div data-info>&nbsp</div>
+		</div><% }) %>
+
+		<div id="panel-detil-additionalinfo">
+			<!-- tambahkan additional info disini -->
 		</div>
-		<div>
-			&nbsp;
-		</div>
-		
 	</div>
 </div>
 

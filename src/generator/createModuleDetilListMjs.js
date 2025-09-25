@@ -11,10 +11,17 @@ const __dirname = path.dirname(__filename);
 export async function createModuleDetilListMjs(context, options) {
 	const overwrite = options.overwrite===true
 	const moduleName = context.moduleName
-	const title = context.title
+
 	const sectionPart = 'list'
 
 	try {
+
+		const headerEntityData = context.entities['header']
+		const headerModulePartEdit = kebabToCamel(`${moduleName}-header-edit`)
+
+
+
+
 		for (let entityName in context.entities) {
 			// process selain header
 			if (entityName=='header') {
@@ -24,6 +31,9 @@ export async function createModuleDetilListMjs(context, options) {
 			const sectionName = entityName
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
 			const targetFile = path.join(context.moduleDir, `${modulePart}.mjs`)
+
+
+				
 
 			// cek dulu apakah file ada
 			var fileExists = await isFileExist(targetFile)
@@ -36,10 +46,17 @@ export async function createModuleDetilListMjs(context, options) {
 			context.postMessage({message: `generating file: '${targetFile}`})
 
 
+			// start geneate program code	
+			const entityData = context.entities[entityName]
+			const sectionData = getSectionData(moduleName, entityName, entityData, 'edit')
+			const title = entityData.title
 
 
 			const variables = {
-
+				title,
+				modulePart,
+				moduleName,
+				headerModulePartEdit
 			}
 
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilList.mjs.ejs')

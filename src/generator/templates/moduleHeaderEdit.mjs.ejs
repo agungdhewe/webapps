@@ -1,6 +1,6 @@
 import Context from './<%= moduleName %>-context.mjs'
 import * as Extender from './<%= moduleName %>-ext.mjs'
-
+import * as pageHelper from '/public/libs/webmodule/pagehelper.mjs'
 
 const CurrentState = {}
 const Crsl =  Context.Crsl
@@ -22,6 +22,16 @@ const btn_del = new $fgta5.ActionButton('<%= modulePart %>-btn_delete')
 const btn_reset = new $fgta5.ActionButton('<%= modulePart %>-btn_reset')
 const btn_prev = new $fgta5.ActionButton('<%= modulePart %>-btn_prev')
 const btn_next = new $fgta5.ActionButton('<%= modulePart %>-btn_next')
+
+const btn_recordstatus = document.getElementById('<%= moduleSection %>-btn_recordstatus')
+const btn_logs = document.getElementById('<%= moduleSection %>-btn_logs')
+const btn_about = document.getElementById('<%= moduleSection %>-btn_about')
+
+const obj_createby = document.getElementById('fRecord-section-createby')
+const obj_createdate = document.getElementById('fRecord-section-createdate')
+const obj_modifyby = document.getElementById('fRecord-section-modifyby')
+const obj_modifydate = document.getElementById('fRecord-section-modifydate')
+
 
 const frm = new $fgta5.Form('<%= modulePart %>-frm');<% fields.forEach(field => { %>
 const <%= field.inputname %> = frm.Inputs['<%= field.elementId %>']<% }) %>	
@@ -50,7 +60,11 @@ export async function init(self, args) {
 	btn_next.addEventListener('click', (evt)=>{ btn_next_click(self, evt)})
 
 
-	// addEventListener
+	btn_recordstatus.addEventListener('click', evt=>{ btn_recordstatus_click(self, evt) })	
+	btn_logs.addEventListener('click', evt=>{ btn_logs_click(self, evt) })	
+	btn_about.addEventListener('click', evt=>{ btn_about_click(self, evt) })
+
+
 	<% fieldHandles.forEach(field => { %>
 	// <%= field.component %>: <%= field.inputname %><% field.handles.forEach(hnd => { %>
 	<%= field.inputname %>.addEventListener('<%= hnd.eventname %>', <% if (hnd.eventname=='selecting') { %>async <% } %>(evt)=>{
@@ -503,3 +517,90 @@ async function btn_next_click(self, evt) {
 }
 
 
+
+
+async function btn_recordstatus_click(self, evt) {
+	console.log('btn_recordstatus_click')
+	const params = {
+		Context,
+		sectionReturn: CurrentSection
+	}
+	
+	pageHelper.openSection(self, 'fRecord-section', params, async ()=>{
+
+		let mask = $fgta5.Modal.createMask()
+		try {
+			// ambil data
+			const pk = frm.getPrimaryInput()
+			const id = pk.value
+			const data = await openData(self, id)
+
+			obj_createby.innerHTML = data._createby
+			obj_createdate.innerHTML = data._createdate
+			obj_modifyby.innerHTML = data._modifyby
+			obj_modifydate.innerHTML = data._modifydate
+
+			if (typeof Extender.<%= modulePart %>_addRecordInfo === 'function') {
+				await Extender.<%= modulePart %>_addRecordInfo(data)
+			}
+
+		} catch (err) {
+			console.error(err)
+			$fgta5.MessageBox.error(err.message)
+		} finally {
+			mask.close()
+			mask = null
+		}
+	})
+
+}
+
+async function btn_logs_click(self, evt) {
+	const params = {
+		Context,
+		sectionReturn: CurrentSection
+	}
+
+	pageHelper.openSection(self, 'fLogs-section', params, async ()=>{
+		// get log data
+		const pk = frm.getPrimaryInput()
+		const id = pk.value
+
+
+		let mask = $fgta5.Modal.createMask()
+		try {
+
+			const url = `${Context.appsUrls.core.url}/logs/list`
+			const criteria = {
+				module: Context.moduleName,
+				table: '<%= tablename %>',
+				id: id
+			}
+
+			const result = await Module.apiCall(url, {  
+				criteria
+			}) 
+
+			const sc = document.getElementById('fLogs-section')
+			const tbody = sc.querySelector('tbody')
+			pageHelper.renderLog(tbody, result.data)
+		} catch (err) {
+			console.error(err)
+			$fgta5.MessageBox.error(err.message)
+		} finally {
+			mask.close()
+			mask = null
+		}
+
+	})
+}
+
+async function btn_about_click(self, evt) {
+	const params = {
+		Context,
+		sectionReturn: CurrentSection
+	}
+	pageHelper.openSection(self, 'fAbout-section', params, async ()=>{
+
+	})
+}
