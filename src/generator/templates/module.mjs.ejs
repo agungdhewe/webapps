@@ -108,10 +108,11 @@ async function render(self) {
 			});
 
 
-			const sectionTarget = link.getAttribute('data-section')
-			const sectionBack = link.getAttribute('data-back')
+			const sectionTargetName = link.getAttribute('data-target-section')
+			const sectionCurrentName = link.getAttribute('data-current-section')
+			
 			link.addEventListener('click', (evt)=>{
-				openDetilSection(self, sectionTarget, sectionBack)
+				openDetilSection(self, sectionTargetName, sectionCurrentName)
 			})
 
 			// if (Module.isMobileDevice()) {
@@ -136,16 +137,21 @@ async function render(self) {
 }
 
 
-function openDetilSection(self, sectionDetilName, sectionBackName) {
-	const sectionBackId = Context.Sections[sectionBackName]
-	const sectionBack =   Crsl.Items[sectionBackId]
+function openDetilSection(self, sectionTargetName, sectionCurrentName) {
+	const sectionCurrentId = Context.Sections[sectionCurrentName]
+	const sectionCurrent =   Crsl.Items[sectionCurrentId]
 
-	const sectionId = Context.Sections[sectionDetilName]
+	const sectionId = Context.Sections[sectionTargetName]
 	const section = Crsl.Items[sectionId]
 
-	section.setSectionReturn(sectionBack)
+	section.setSectionReturn(sectionCurrent)
 	section.show({}, ()=>{
-		const module = self.Modules[sectionDetilName]
-		console.log(module)
+		const moduleTarget = self.Modules[sectionTargetName]
+		const moduleHeaderEdit = self.Modules[sectionCurrentName]
+		moduleTarget.openList({
+			moduleHeaderEdit
+		})
 	})
+
+
 }

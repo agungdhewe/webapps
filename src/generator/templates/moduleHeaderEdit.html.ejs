@@ -18,7 +18,7 @@
 	</div>
 	<div panel-content><% sectionDetils.forEach(detil => { %>
 		<div class="panel-detil-row">
-			<div data-label><a href="javascript:void(0)" data-section="<%= detil.listModulePart %>" data-back="<%= modulePart %>"><%= detil.title %></a></div>
+			<div data-label><a href="javascript:void(0)" data-target-section="<%= detil.listModulePart %>" data-current-section="<%= modulePart %>"><%= detil.title %></a></div>
 			<div data-info>&nbsp</div>
 		</div><% }) %>
 
