@@ -3,6 +3,12 @@
 @import url('./module-footer.css');
 
 
+body {
+	overflow-x: hidden;
+
+}
+
+
 
 #fRecord-section  [name="panel"] {
 	display: flex;

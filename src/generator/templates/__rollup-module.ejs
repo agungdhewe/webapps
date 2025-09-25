@@ -17,11 +17,11 @@ export default {
 		banner: `/*! ${banner}*/`,
 		manualChunks: (id) => {
 			console.log('Chunking:', id);
-			if (id.includes('module.mjs')) return null;
+			if (id.includes('module.mjs')  || id.includes('-ext.mjs') || id.includes('public/libs/webmodule')) return null;
 		}
 	},
 	external: (id) => {
- 		return id.includes('module.mjs') || id === '$fgta5';
+ 		return id.includes('module.mjs') || id === '$fgta5' || id.includes('-ext.mjs') || id.includes('public/libs/webmodule');
 	},
 	
 	preserveEntrySignatures: 'strict',

@@ -148,7 +148,7 @@ function openDetilSection(self, sectionTargetName, sectionCurrentName) {
 	section.show({}, ()=>{
 		const moduleTarget = self.Modules[sectionTargetName]
 		const moduleHeaderEdit = self.Modules[sectionCurrentName]
-		moduleTarget.openList({
+		moduleTarget.openList(self, {
 			moduleHeaderEdit
 		})
 	})

@@ -51,7 +51,7 @@ async function login_doLogin(self, body) {
 		if (username=='agung') {
 			// setup session
 			self.req.session.user = {
-				userId: '234',
+				userId: '44',
 				userName: 'agung',
 				userFullname: 'Agung Nugroho',
 				isLogin: true

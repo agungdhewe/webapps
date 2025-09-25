@@ -3,7 +3,8 @@ import pgp from 'pg-promise';
 import db from '@agung_dhewe/webapps/src/db.js'
 import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
-import context from '@agung_dhewe/webapps/src/context.js'  <% if (usesequencer) { %>
+import context from '@agung_dhewe/webapps/src/context.js'  
+import logger from '@agung_dhewe/webapps/src/logger.js'<% if (usesequencer) { %>
 import { createSequencer } from '@agung_dhewe/webapps/src/sequencer.js' <% } %>
 
 
@@ -35,7 +36,7 @@ export default class extends Api {
 
 }
 
-
+// init module
 async function <%= moduleName %>_init(self, body) {
 	const req = self.req
 
@@ -70,7 +71,25 @@ async function <%= moduleName %>_init(self, body) {
 }
 
 
+// data logging
+async function <%= moduleName %>_log(self, body, startTime, tablename, id, action, remark='') {
+	const { source } = body
+	const req = self.req
+	const user_id = req.session.user.userId
+	const user_name = req.session.user.userFullname
+	const ipaddress = req.ip
+	const metadata = JSON.stringify({source:source})
+	const endTime = process.hrtime.bigint();
+	const executionTimeMs = Number((endTime - startTime) / 1_000_000n); // hasil dalam ms tanpa desimal
+	const logdata = {id, user_id, user_name, moduleName, action, tablename, executionTimeMs, remark, metadata, ipaddress}
+	await logger.log(logdata)
+}
+
+
+
+
 async function <%= moduleName %>_headerList(self, body) {
+	const tablename = headerTableName
 	const { criteria={}, limit=0, offset=0, columns=[], sort={} } = body
 	const searchMap = {<% headerSearchMap.forEach(searchmap => { %>
 		<%= searchmap.name %>: `<%- searchmap.data %>`,<% }) %>
@@ -94,7 +113,7 @@ async function <%= moduleName %>_headerList(self, body) {
 
 		var max_rows = limit==0 ? 10 : limit
 		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
-		const sql = sqlUtil.createSqlSelect({tablename:headerTableName, columns, whereClause, sort, limit:max_rows+1, offset, queryParams})
+		const sql = sqlUtil.createSqlSelect({tablename, columns, whereClause, sort, limit:max_rows+1, offset, queryParams})
 		const rows = await db.any(sql, queryParams);
 
 		
@@ -138,13 +157,15 @@ async function <%= moduleName %>_headerList(self, body) {
 }
 
 async function <%= moduleName %>_headerOpen(self, body) {
+	const tablename = headerTableName
+
 	try {
 		const { id } = body 
 		const criteria = { <%= headerPrimaryKey %>: id }
 		const searchMap = { <%= headerPrimaryKey %>: `<%= headerPrimaryKey %> = \${<%= headerPrimaryKey %>}`}
 		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
 		const sql = sqlUtil.createSqlSelect({
-			tablename: headerTableName, 
+			tablename: tablename, 
 			columns:[], 
 			whereClause, 
 			sort:{}, 
@@ -154,7 +175,7 @@ async function <%= moduleName %>_headerOpen(self, body) {
 		})
 		const data = await db.one(sql, queryParams);
 		if (data==null) { 
-			throw new Error(`[${headerTableName}] data dengan id '${id}' tidak ditemukan`) 
+			throw new Error(`[${tablename}] data dengan id '${id}' tidak ditemukan`) 
 		}	
 
 		<% headerFieldsLookup.forEach(lookup => { %>// lookup: <%= lookup.bindingDisplay %> dari field <%= lookup.bindingText %> pada table <%= lookup.table %> dimana (<%= lookup.table %>.<%= lookup.bindingValue %> = <%= headerTableName %>.<%=lookup.fieldname%>)
@@ -193,6 +214,9 @@ async function <%= moduleName %>_headerOpen(self, body) {
 async function <%= moduleName %>_headerCreate(self, body) {
 	const { source, data } = body
 	const req = self.req
+	const tablename = headerTableName
+	const user_id = req.session.user.userId
+	const startTime = process.hrtime.bigint();
 
 	try {
 
@@ -201,7 +225,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 			sqlUtil.connect(dt)
 
-			data._createby = 1
+			data._createby = user_id
 			data._createdate = (new Date()).toISOString()
 
 			<% if (usesequencer) { %>
@@ -235,8 +259,8 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 
 			<% if (autoid) { 
-			%><% if (usesequencer) { %>const cmd = sqlUtil.createInsertCommand(headerTableName, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(headerTableName, data, ['<%= headerPrimaryKey %>'])<% } %><% 
-		    } else { %>const cmd = sqlUtil.createInsertCommand(headerTableName, data)<% } %>
+			%><% if (usesequencer) { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data, ['<%= headerPrimaryKey %>'])<% } %><% 
+		    } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } %>
 			const res = await cmd.execute(data)
 
 
@@ -250,8 +274,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 		})
 
 		// record log
-		let logdata = {moduleName, source, tablename:headerTableName, section:headerSectionName, action:'CREATE', id: result.<%= headerPrimaryKey %>}
-		await self.log(logdata)
+		<%= moduleName %>_log(self, body, startTime, tablename, result.<%= headerPrimaryKey %>, 'CREATE')
 		
 		return result
 	} catch (err) {
@@ -261,19 +284,22 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 async function <%= moduleName %>_headerUpdate(self, body) {
 	const { source, data } = body
+	const tablename = headerTableName
+	const req = self.req
+	const user_id = req.session.user.userId
+	const startTime = process.hrtime.bigint();
 
 	try {
 		sqlUtil.connect(db)
 
-		data._modifyby = 1
+		data._modifyby = user_id
 		data._modifydate = (new Date()).toISOString()
 		
-		const cmd =  sqlUtil.createUpdateCommand(headerTableName, data, ['<%= headerPrimaryKey %>'])
+		const cmd =  sqlUtil.createUpdateCommand(tablename, data, ['<%= headerPrimaryKey %>'])
 		const result = await cmd.execute(data)
 		
 		// record log
-		let logdata = {moduleName, source, tablename:headerTableName, section:headerSectionName, action:'UPDATE', id: data.<%= headerPrimaryKey %>} 
-		await self.log(logdata)
+		<%= moduleName %>_log(self, body, startTime, tablename, data.<%= headerPrimaryKey %>, 'UPDATE')
 
 		return result
 	} catch (err) {
@@ -283,17 +309,20 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 
 
 async function <%= moduleName %>_headerDelete(self, body) {
+	const tablename = headerTableName
+	const req = self.req
+	const user_id = req.session.user.userId
+	const startTime = process.hrtime.bigint();
 
 	try {
 		const { source, id } = body 
 		const dataToRemove = {<%= headerPrimaryKey %>: id}
 
-		const cmd = sqlUtil.createDeleteCommand(headerTableName, ['<%= headerPrimaryKey %>'])
+		const cmd = sqlUtil.createDeleteCommand(tablename, ['<%= headerPrimaryKey %>'])
 		const result = await cmd.execute(dataToRemove)
 	
 		// record log
-		let logdata = {moduleName, source, tablename:headerTableName, section:headerSectionName, action:'DELETE', id}
-		await self.log(logdata)
+		<%= moduleName %>_log(self, body, startTime, tablename, id, 'DELETE')
 
 		return result
 	} catch (err) {
