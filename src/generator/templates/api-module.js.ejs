@@ -5,7 +5,7 @@ import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
 import context from '@agung_dhewe/webapps/src/context.js'  
 import logger from '@agung_dhewe/webapps/src/logger.js'<% if (usesequencer) { %>
-import { createSequencer } from '@agung_dhewe/webapps/src/sequencer.js' <% } %>
+import { createSequencerDocument } from '@agung_dhewe/webapps/src/sequencerdoc.js' <% } %>
 
 
 import * as Extender from './extenders/<%= moduleName %>.apiext.js'
@@ -230,7 +230,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 			<% if (usesequencer) { %>
 			// buat sequencer	
-			const sequencer = createSequencer(dt, { 
+			const sequencer = createSequencerDocument(dt, { 
 				COMPANY_CODE: req.app.locals.appConfig.COMPANY_CODE,
 				blockLength: <%= identifierBlock %>,
 				numberLength: <%= identifierLength %>,
