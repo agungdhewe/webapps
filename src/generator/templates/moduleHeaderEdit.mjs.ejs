@@ -140,6 +140,10 @@ export function getHeaderForm() {
 	return frm
 }
 
+export function clearForm(self, text) {
+	frm.clear(text)
+}
+
 async function newData(self, datainit) {
 	try {
 		frm.newData(datainit)
@@ -384,6 +388,7 @@ async function btn_save_click(self, evt) {
 		dataToSave = frm.getData()		
 	}
 
+	let mask = $fgta5.Modal.createMask()
 	try {
 		let result
 
@@ -437,7 +442,10 @@ async function btn_save_click(self, evt) {
 	} catch (err) {
 		console.error(err)
 		await $fgta5.MessageBox.error(err.message)
-	} 
+	} finally {
+		mask.close()
+		mask = null
+	}
 }
 
 async function btn_del_click(self, evt) {
@@ -462,6 +470,7 @@ async function btn_del_click(self, evt) {
 	}
 
 	console.log('delete data')
+	let mask = $fgta5.Modal.createMask()
 	try {
 		const result = await deleteData(self, idValue)
 		
@@ -478,6 +487,9 @@ async function btn_del_click(self, evt) {
 	} catch (err) {
 		console.error(err)
 		await $fgta5.MessageBox.error(err.message)
+	} finally {
+		mask.close()
+		mask = null
 	}
 
 }

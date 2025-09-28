@@ -13,7 +13,8 @@ export default new (class {
 			(log_time, log_user_id, log_user_name, log_action, log_ipaddress, log_module, log_table, log_doc_id, log_remark, log_executiontime, log_metadata)
 			values
 			(now(), \${log_user_id}, \${log_user_name}, \${log_action}, \${log_ipaddress}, \${log_module}, \${log_table}, \${log_doc_id}, \${log_remark}, \${log_executiontime}, \${log_metadata})
-		`
+			RETURNING log_time
+			`
 		const variable = {
 			log_user_id: user_id, 
 			log_user_name: user_name, 
@@ -27,7 +28,8 @@ export default new (class {
 			log_metadata: metadata
 		}
 
-		dblog.none(sql, variable)
+		const ret = await dblog.oneOrNone(sql, variable)
+		return ret
 	}
 
 

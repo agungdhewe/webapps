@@ -20,8 +20,12 @@ export async function init(self, args) {
 	// add event listener
 	tbl.addEventListener('nextdata', async evt=>{ tbl_nextdata(self, evt) })
 	tbl.addEventListener('sorting', async evt=>{ tbl_sorting(self, evt) })
-	tbl.addEventListener('cellclick', async evt=>{ tbl_cellclick(self, evt) })
-	tbl.addEventListener('celldblclick', async evt=>{ tbl_celldblclick(self, evt) })
+
+	if (Module.isMobileDevice()) {
+		tbl.addEventListener('cellclick', async evt=>{ tbl_cellclick(self, evt) })
+	} else {
+		tbl.addEventListener('celldblclick', async evt=>{ tbl_cellclick(self, evt) })
+	}
 
 	btn_gridload.addEventListener('click', async evt=>{ btn_gridload_click(self, evt) })
 	
@@ -120,6 +124,7 @@ async function openRow(self, tr) {
 	const key = tr.getAttribute('key')
 
 	const <%= moduleEdit %> = self.Modules.<%= moduleEdit %>
+	<%= moduleEdit %>.clearForm(self, 'loading...')
 
 	try {
 		setCurrentRow(self, tr)
@@ -162,29 +167,25 @@ async function tbl_nextdata(self, evt) {
 	tbl.scrollToFooter()
 }
 
-async function tbl_sorting(self, evt) {
+function tbl_sorting(self, evt) {
 	tbl.clear()
 	const sort = evt.detail.sort
 	const criteria = evt.detail.Criteria
 	tbl_loadData(self, {criteria, sort})
 }
 
-async function tbl_cellclick(self, evt) {
-	if (Module.isMobileDevice()) {
-		await tbl_celldblclick(self, evt)
-	}
-}
-
-async function tbl_celldblclick(self, evt) {
+function tbl_cellclick(self, evt) {
 	const tr = evt.detail.tr
 
 	const <%= moduleEdit %> = self.Modules.<%= moduleEdit %>
-	<%= moduleEdit %>.Section.show()
+	<%= moduleEdit %>.Section.show({}, (evt)=>{
+		openRow(self, tr)
+	})
 
-	await openRow(self, tr)
+	
 }
 
-async function btn_gridload_click(self, evt) {
+function btn_gridload_click(self, evt) {
 	setCurrentRow(self, null)
 	loadData(self)
 }
