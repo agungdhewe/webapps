@@ -11,7 +11,7 @@ export async function modulePage(req, res) {
 	const fullUrlWithHostHeader = `${req.protocol}://${req.headers.host}${req.originalUrl}`;
 	const __rootDir = context.getRootDirectory()
 
-	const fgta5jsDebugMode = req.app.locals.appConfig.appDebugMode
+	const fgta5jsDebugMode = req.app.locals.appConfig.fgta5jsDebugMode
 	const fgta5jsVersion = req.app.locals.appConfig.fgta5jsVersion
 	const appDebugMode = req.app.locals.appConfig.appDebugMode
 
@@ -19,7 +19,24 @@ export async function modulePage(req, res) {
 	const ejsPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.ejs`)
 	const cssPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.css`);
 	
-	const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
+
+	// const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
+	let mjsFileName
+	if (appDebugMode) {
+		// Default Debug
+		if (req.query.mode=='release') {
+			mjsFileName = `${moduleName}.min.mjs`
+		} else {
+			mjsFileName = `${moduleName}.mjs`
+		}
+	} else {
+		// Default Production
+		if (req.query.mode=='debug') {
+			mjsFileName = `${moduleName}.mjs`
+		} else {
+			mjsFileName = `${moduleName}.min.mjs`
+		}
+	}
 	const mjsPath = path.join(__rootDir, 'public', 'modules', moduleName, mjsFileName);
 
 

@@ -122,6 +122,13 @@
 	display: flex;
 }
 
+
+.panel-recordbar[data-view="nodetil"] {
+	margin-top: 60px;
+	padding-top: 10px;
+	border-top: 1px solid #c4c7e8;
+}
+
 @media screen and (max-width: 500px) {
 	.panel-recordbar {
 		margin-top: 12px;

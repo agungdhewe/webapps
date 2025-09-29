@@ -64,7 +64,7 @@ export function createDefaultEjsVariable(req) {
 	const moduleName = req.params.modulename
 	const libDebug = path.join(context.getWebappsDirectory(), 'templates', '_lib_debug.ejs')
 	const libProduction = path.join(context.getWebappsDirectory(), 'templates', '_lib_production.ejs')
-	const fgta5jsDebugMode = req.app.locals.appConfig.appDebugMode
+	const fgta5jsDebugMode = req.app.locals.appConfig.fgta5jsDebugMode
 	const fgta5jsVersion = req.app.locals.appConfig.fgta5jsVersion
 	const appDebugMode = req.app.locals.appConfig.appDebugMode
 
