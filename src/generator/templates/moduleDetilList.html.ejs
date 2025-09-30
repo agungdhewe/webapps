@@ -1,1 +1,25 @@
-<%= modulePart %> list
+<div id="<%= modulePart %>-head">
+
+</div>
+
+
+<table id="<%= modulePart %>-tbl" fgta5-component="Gridview">
+	<thead>
+		<tr data-header key="<%= section.primaryKey %>"><% fields.forEach(field => { %>
+			<th data-name="<%= field.dataName %>" binding="<%= field.binding %>" <%- field.additionalAttributes %>><%= field.label %></th><% }); %>
+		</tr>
+	</thead>
+</table>
+
+<div id="<%= modulePart %>-foot">
+
+</div>
+
+<div class="footer-buttons-container hidden">
+	<div></div>
+	<div>
+		<button id="<%=modulePart%>-btn_addrow" data-action="<%= moduleSection %>-addrow" data-sectionsource="<%=modulePart%>-section">Add Row</button>
+		<button id="<%=modulePart%>-btn_delrow">Delete Row</button>
+	</div>
+	<div></div>
+</div>

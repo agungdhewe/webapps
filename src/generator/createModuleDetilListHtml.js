@@ -63,7 +63,7 @@ export async function createModuleDetilListHtml(context, options) {
 				}
 
 				if (item.grid_inlinestyle.trim()!='') {
-					attrs.push(`style="${item.grid_inlinestyle}"`)
+					attrs.push(`style='${item.grid_inlinestyle}'`)
 				}
 
 				if (item.grid_sorting) {
@@ -116,15 +116,6 @@ export async function createModuleDetilListHtml(context, options) {
 			await fs.writeFile(targetFile, content, 'utf8');
 		
 		}
-
-
-		
-		
-		// const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilList.html.ejs')
-		// const template = await fs.readFile(tplFilePath, 'utf-8');
-		// const content = ejs.render(template, variables)
-				
-		// await fs.writeFile(targetFile, content, 'utf8');
 	} catch (err) {
 		throw err
 	}

@@ -18,9 +18,7 @@ export async function createModuleDetilListMjs(context, options) {
 
 		const headerEntityData = context.entities['header']
 		const headerModulePartEdit = kebabToCamel(`${moduleName}-header-edit`)
-
-
-
+		const headerPrimaryKey = headerEntityData.pk
 
 		for (let entityName in context.entities) {
 			// process selain header
@@ -31,8 +29,6 @@ export async function createModuleDetilListMjs(context, options) {
 			const sectionName = entityName
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
 			const targetFile = path.join(context.moduleDir, `${modulePart}.mjs`)
-
-
 				
 
 			// cek dulu apakah file ada
@@ -56,7 +52,11 @@ export async function createModuleDetilListMjs(context, options) {
 				title,
 				modulePart,
 				moduleName,
-				headerModulePartEdit
+				sectionName,
+				headerModulePartEdit,
+				headerPrimaryKey,
+				moduleEdit: kebabToCamel(`${moduleName}-${sectionName}-edit`),
+
 			}
 
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilList.mjs.ejs')

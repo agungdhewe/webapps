@@ -27,14 +27,12 @@ const btn_recordstatus = document.getElementById('<%= moduleSection %>-btn_recor
 const btn_logs = document.getElementById('<%= moduleSection %>-btn_logs')
 const btn_about = document.getElementById('<%= moduleSection %>-btn_about')
 
+const frm = new $fgta5.Form('<%= modulePart %>-frm');<% fields.forEach(field => { %>
+const <%= field.inputname %> = frm.Inputs['<%= field.elementId %>']<% }) %>	
 const obj_createby = document.getElementById('fRecord-section-createby')
 const obj_createdate = document.getElementById('fRecord-section-createdate')
 const obj_modifyby = document.getElementById('fRecord-section-modifyby')
 const obj_modifydate = document.getElementById('fRecord-section-modifydate')
-
-
-const frm = new $fgta5.Form('<%= modulePart %>-frm');<% fields.forEach(field => { %>
-const <%= field.inputname %> = frm.Inputs['<%= field.elementId %>']<% }) %>	
 
 
 export const Section = CurrentSection
@@ -104,13 +102,6 @@ export async function init(self, args) {
 	
 }
 
-
-
-export async function render(self) {
-	console.log('<%= modulePart %> render')
-}
-
-
 export async function openSelectedData(self, params) {
 	console.log('openSelectedData')
 
@@ -120,6 +111,13 @@ export async function openSelectedData(self, params) {
 		const data = await openData(self, id)
 
 		CurrentState.currentOpenedId = id
+
+
+		const fn_jurnHeaderEdit_isEditDisabled = Extender['jurnHeaderEdit_isEditDisabled']
+		if (typeof fn_jurnHeaderEdit_isEditDisabled === 'function') {
+			const editDisabled = fn_jurnHeaderEdit_isEditDisabled(self, data)
+			CurrentState.editDisabled = editDisabled
+		}
 
 		// disable primary key
 		setPrimaryKeyState(self, {disabled:true})
@@ -144,6 +142,14 @@ export function clearForm(self, text) {
 	frm.clear(text)
 }
 
+export function disableNextButton(self, disabled=true) {
+	btn_next.disabled = disabled
+}
+
+export function disablePrevButton(self, disabled=true) {
+	btn_prev.disabled = disabled
+}
+
 async function newData(self, datainit) {
 	try {
 		frm.newData(datainit)
@@ -155,14 +161,11 @@ async function newData(self, datainit) {
 }
 
 async function openData(self, id) {
-	
-
 	const url = `/${Context.moduleName}/header-open`
 	try {
 		const result = await Module.apiCall(url, { id }) 
 		return result 
 	} catch (err) {
-		
 		throw err	
 	} 	
 }
@@ -239,6 +242,17 @@ async function  frm_locked(self, evt) {
 	btn_prev.disabled = false
 	btn_next.disabled = false
 
+	if (CurrentState.editDisabled) {
+		// jika karena suatu kondisi data mengharuskan data tidak boleh diedit
+		btn_edit.disabled = true
+	}
+
+	<% entitiesDetil.forEach(entity => { %>
+	// trigger lock event di <%= entity.name %>
+	self.Modules.<%= entity.moduleSection %>List.headerLocked(self)
+	self.Modules.<%= entity.moduleSection %>Edit.headerLocked(self)
+	<% }) %>	
+
 }
 
 async function  frm_unlocked(self, evt) {
@@ -260,10 +274,13 @@ async function  frm_unlocked(self, evt) {
 	btn_reset.disabled = false
 	btn_prev.disabled = true
 	btn_next.disabled = true
+
+	<% entitiesDetil.forEach(entity => { %>
+	// trigger unlock event di <%= entity.name %>
+	self.Modules.<%= entity.moduleSection %>List.headerUnlocked(self)
+	self.Modules.<%= entity.moduleSection %>Edit.headerUnlocked(self)	
+	<% }) %>	
 }
-
-
-
 
 async function setPrimaryKeyState(self, opt) {
 	const obj_pk = frm.getPrimaryInput()
@@ -331,9 +348,11 @@ async function btn_new_click(self, evt) {
 
 
 		// jika perlu modifikasi data initial,
-		// atau dialog untuk opsi data baru, dapat dibuat di Extender.newData
-		if (typeof Extender.newData === 'function') {
-			await Extender.newData(self, datainit)
+		// atau dialog untuk opsi data baru, dapat dibuat di Extender
+		const fn_name = 'jurnHeaderEdit_newData'
+		const fn_jurnHeaderEdit_newData = Extender[fn_name]
+		if (typeof fn_jurnHeaderEdit_newData === 'function') {
+			await fn_jurnHeaderEdit_newData(self, datainit)
 		}
 
 		// buat data baru

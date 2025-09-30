@@ -5,14 +5,15 @@ import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
 import context from '@agung_dhewe/webapps/src/context.js'  
 import logger from '@agung_dhewe/webapps/src/logger.js'<% if (usesequencer) { %>
-import { createSequencerDocument } from '@agung_dhewe/webapps/src/sequencerdoc.js' <% } %>
-
+import { createSequencerDocument } from '@agung_dhewe/webapps/src/sequencerdoc.js' <% } %><% if (entitiesDetil.length>0) { %>
+import { createSequencerLine } from '@agung_dhewe/webapps/src/sequencerline.js' <% } %>
 
 import * as Extender from './extenders/<%= moduleName %>.apiext.js'
 
 const moduleName = '<%= moduleName %>'
 const headerSectionName = 'header'
-const headerTableName = '<%= headerTableName %>'
+const headerTableName = '<%= headerTableName %>' <% entitiesDetil.forEach(entity => { %>
+const <%= entity.name %>TableName = '<%= entity.table %>'  <% }) %>	
 
 // api: account
 export default class extends Api {
@@ -33,8 +34,17 @@ export default class extends Api {
 	async headerUpdate(body) { return await <%= moduleName %>_headerUpdate(this, body)}
 	async headerCreate(body) { return await <%= moduleName %>_headerCreate(this, body)}
 	async headerDelete(body) { return await <%= moduleName %>_headerDelete(this, body) }
-
-}
+	
+	<% entitiesDetil.forEach(entity => { %>
+	// <%= entity.name %>	
+	async <%= entity.name %>List(body) { return await <%= moduleName %>_<%= entity.name %>List(this, body) }
+	async <%= entity.name %>Open(body) { return await <%= moduleName %>_<%= entity.name %>Open(this, body) }
+	async <%= entity.name %>Update(body) { return await <%= moduleName %>_<%= entity.name %>Update(this, body)}
+	async <%= entity.name %>Create(body) { return await <%= moduleName %>_<%= entity.name %>Create(this, body) }
+	async <%= entity.name %>Delete(body) { return await <%= moduleName %>_<%= entity.name %>Delete(this, body) }
+	async <%= entity.name %>DeleteRows(body) { return await <%= moduleName %>_<%= entity.name %>DeleteRows(this, body) }
+	<% }) %>		
+}	
 
 // init module
 async function <%= moduleName %>_init(self, body) {
@@ -72,17 +82,19 @@ async function <%= moduleName %>_init(self, body) {
 
 
 // data logging
-async function <%= moduleName %>_log(self, body, startTime, tablename, id, action, remark='') {
+async function <%= moduleName %>_log(self, body, startTime, tablename, id, action, data={}, remark='') {
 	const { source } = body
 	const req = self.req
 	const user_id = req.session.user.userId
 	const user_name = req.session.user.userFullname
 	const ipaddress = req.ip
-	const metadata = JSON.stringify({source:source})
+	const metadata = JSON.stringify({...{source:source}, ...data})
 	const endTime = process.hrtime.bigint();
 	const executionTimeMs = Number((endTime - startTime) / 1_000_000n); // hasil dalam ms tanpa desimal
+	
 	const logdata = {id, user_id, user_name, moduleName, action, tablename, executionTimeMs, remark, metadata, ipaddress}
-	await logger.log(logdata)
+	const ret = await logger.log(logdata)
+	return ret
 }
 
 
@@ -129,11 +141,9 @@ async function <%= moduleName %>_headerList(self, body) {
 				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
 			}
 			<% }) %>
-
-
 			// pasang extender di sini
 			if (typeof Extender.headerListRow === 'function') {
-				await Extender.headerListRow(row)
+				await Extender.headerListRow(self, row)
 			}
 
 			data.push(row)
@@ -185,7 +195,6 @@ async function <%= moduleName %>_headerOpen(self, body) {
 		}
 		<% }) %>
 
-
 		// lookup data createby
 		{
 			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._createby)
@@ -198,10 +207,9 @@ async function <%= moduleName %>_headerOpen(self, body) {
 			data._modifyby = user_fullname ?? ''
 		}
 		
-
 		// pasang extender untuk olah data
 		if (typeof Extender.headerOpen === 'function') {
-			await Extender.headerOpen(data)
+			await Extender.headerOpen(self, data)
 		}
 
 		return data
@@ -214,23 +222,20 @@ async function <%= moduleName %>_headerOpen(self, body) {
 async function <%= moduleName %>_headerCreate(self, body) {
 	const { source, data } = body
 	const req = self.req
-	const tablename = headerTableName
 	const user_id = req.session.user.userId
 	const startTime = process.hrtime.bigint();
+	const tablename = headerTableName
 
 	try {
 
+		data._createby = user_id
+		data._createdate = (new Date()).toISOString()
 
-		const result = await db.tx(async dt=>{
+		const result = await db.tx(async tx=>{
+			sqlUtil.connect(tx)
 
-			sqlUtil.connect(dt)
-
-			data._createby = user_id
-			data._createdate = (new Date()).toISOString()
-
-			<% if (usesequencer) { %>
-			// buat sequencer	
-			const sequencer = createSequencerDocument(dt, { 
+			<% if (usesequencer) { %>// buat sequencer	
+			const sequencer = createSequencerDocument(tx, { 
 				COMPANY_CODE: req.app.locals.appConfig.COMPANY_CODE,
 				blockLength: <%= identifierBlock %>,
 				numberLength: <%= identifierLength %>,
@@ -239,11 +244,10 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			if (typeof Extender.sequencerSetup === 'function') {
 				// jika ada keperluan menambahkan code block/cluster di sequencer
 				// dapat diimplementasikan di exterder sequencerSetup 
-				await Extender.sequencerSetup(sequencer, data)
+				await Extender.sequencerSetup(self, tx, sequencer, data)
 			}
 
-			<%if (yearly) { 
-			%>// generate data <%= identifierPrefix %> reset pertahun
+			<%if (yearly) { %>// generate data <%= identifierPrefix %> reset pertahun
 			const seqdata = await sequencer.yearly('<%= identifierPrefix %>')<% } 
 			else { 
 			
@@ -254,28 +258,28 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
 			if (typeof Extender.headerCreating === 'function') {
-				await Extender.headerCreating(data, seqdata)
+				await Extender.headerCreating(self, tx, data, seqdata)
 			}
 
 
 			<% if (autoid) { 
 			%><% if (usesequencer) { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data, ['<%= headerPrimaryKey %>'])<% } %><% 
 		    } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } %>
-			const res = await cmd.execute(data)
+			const ret = await cmd.execute(data)
 
+			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
 			if (typeof Extender.headerCreated === 'function') {
-				await Extender.headerCreated(result, data)
+				await Extender.headerCreated(self, tx, ret, data, logMetadata)
 			}
 
-		
-			return res
+			// record log
+			<%= moduleName %>_log(self, body, startTime, tablename, ret.<%= headerPrimaryKey %>, 'CREATE', logMetadata)
+
+			return ret
 		})
 
-		// record log
-		<%= moduleName %>_log(self, body, startTime, tablename, result.<%= headerPrimaryKey %>, 'CREATE')
-		
 		return result
 	} catch (err) {
 		throw err
@@ -284,22 +288,42 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 async function <%= moduleName %>_headerUpdate(self, body) {
 	const { source, data } = body
-	const tablename = headerTableName
 	const req = self.req
 	const user_id = req.session.user.userId
-	const startTime = process.hrtime.bigint();
+	const startTime = process.hrtime.bigint()
+	const tablename = headerTableName
 
 	try {
-		sqlUtil.connect(db)
 
 		data._modifyby = user_id
 		data._modifydate = (new Date()).toISOString()
+
+		const result = await db.tx(async tx=>{
+			sqlUtil.connect(tx)
+
+
+			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
+			if (typeof Extender.headerUpdating === 'function') {
+				await Extender.headerUpdating(self, tx, data)
+			}
+
+			// eksekusi update
+			const cmd = sqlUtil.createUpdateCommand(tablename, data, ['<%= headerPrimaryKey %>'])
+			const ret = await cmd.execute(data)
+
+			const logMetadata = {}
+
+			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
+			if (typeof Extender.headerUpdated === 'function') {
+				await Extender.headerUpdated(self, tx, ret, data, logMetadata)
+			}			
+
+			// record log
+			<%= moduleName %>_log(self, body, startTime, tablename, data.<%= headerPrimaryKey %>, 'UPDATE')
+
+			return ret
+		})
 		
-		const cmd =  sqlUtil.createUpdateCommand(tablename, data, ['<%= headerPrimaryKey %>'])
-		const result = await cmd.execute(data)
-		
-		// record log
-		<%= moduleName %>_log(self, body, startTime, tablename, data.<%= headerPrimaryKey %>, 'UPDATE')
 
 		return result
 	} catch (err) {
@@ -309,23 +333,354 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 
 
 async function <%= moduleName %>_headerDelete(self, body) {
-	const tablename = headerTableName
+	const { source, id } = body
 	const req = self.req
 	const user_id = req.session.user.userId
-	const startTime = process.hrtime.bigint();
+	const startTime = process.hrtime.bigint()
+	const tablename = headerTableName
 
 	try {
-		const { source, id } = body 
-		const dataToRemove = {<%= headerPrimaryKey %>: id}
 
-		const cmd = sqlUtil.createDeleteCommand(tablename, ['<%= headerPrimaryKey %>'])
-		const result = await cmd.execute(dataToRemove)
+		const result = await db.tx(async tx=>{
+			sqlUtil.connect(tx)
+
+			const dataToRemove = {<%= headerPrimaryKey %>: id}
+
+			// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender headerDeleting
+			if (typeof Extender.headerDeleting === 'function') {
+				await Extender.headerDeleting(self, tx, dataToRemove)
+			}
+
+			<% if (entitiesDetil.length>0) { %>
+			<% entitiesDetil.forEach(entity => { %>// hapus data <%= entity.name %>
+			{
+				const sql = `select * from ${<%= entity.name %>TableName} where <%= headerPrimaryKey %>=\${<%= headerPrimaryKey %>}`
+				const rows = await tx.any(sql, dataToRemove)
+				for (let row<%= entity.name %> of rows) {
+					// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
+					if (typeof Extender.<%= entity.name %>Deleting === 'function') {
+						await Extender.<%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata)
+					}
+
+					const param = {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>}
+					const cmd = sqlUtil.createDeleteCommand(<%= entity.name %>TableName, ['<%= entity.pk %>'])
+					const deletedRow = await cmd.execute(param)
+
+					// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
+					if (typeof Extender.<%= entity.name %>Deleted === 'function') {
+						await Extender.<%= entity.name %>Deleted(self, tx, deletedRow, logMetadata)
+					}					
+
+					<%= moduleName %>_log(self, body, startTime, <%= entity.name %>TableName, row<%= entity.name %>.<%= entity.pk %>, 'DELETE', {rowdata: deletedRow})
+					<%= moduleName %>_log(self, body, startTime, headerTableName, row<%= entity.name %>.<%= headerPrimaryKey %>, 'DELETE ROW <%= entity.name.toUpperCase() %>', {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>, tablename: <%= entity.name %>TableName}, `removed: ${row<%= entity.name %>.<%= entity.pk %>}`)
+
+
+				}	
+			}
+
+			<% }) %>
+			<% } %>
+
+			// hapus data header
+			const cmd = sqlUtil.createDeleteCommand(tablename, ['<%= headerPrimaryKey %>'])
+			const deletedRow = await cmd.execute(dataToRemove)
+
+			const logMetadata = {}
+
+			// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender headerDeleted
+			if (typeof Extender.headerDeleted === 'function') {
+				await Extender.headerDeleted(self, tx, ret, logMetadata)
+			}
+
+			// record log
+			<%= moduleName %>_log(self, body, startTime, tablename, id, 'DELETE', logMetadata)
+
+			return deletedRow
+		})
 	
-		// record log
-		<%= moduleName %>_log(self, body, startTime, tablename, id, 'DELETE')
 
 		return result
 	} catch (err) {
 		throw err
 	}
 }
+
+
+<% entitiesDetil.forEach(entity => { %>
+// <%= entity.name %>	
+
+async function <%= moduleName %>_<%= entity.name %>List(self, body) {
+	const tablename = <%= entity.name %>TableName
+	const { criteria={}, limit=0, offset=0, columns=[], sort={} } = body
+	const searchMap = {
+		<%= headerPrimaryKey %>: `<%= headerPrimaryKey %>=try_cast_bigint(\${<%= headerPrimaryKey %>}, 0)`,
+	};
+
+	try {
+	
+		// hilangkan criteria '' atau null
+		for (var cname in criteria) {
+			if (criteria[cname]==='' || criteria[cname]===null) {
+				delete criteria[cname]
+			}
+		}
+
+
+		var max_rows = limit==0 ? 10 : limit
+		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
+		const sql = sqlUtil.createSqlSelect({tablename, columns, whereClause, sort, limit:max_rows+1, offset, queryParams})
+		const rows = await db.any(sql, queryParams);
+
+		
+		var i = 0
+		const data = []
+		for (var row of rows) {
+			i++
+			if (i>max_rows) { break }
+
+			// pasang extender di sini
+			if (typeof Extender.detilListRow === 'function') {
+				await Extender.detilListRow(row)
+			}
+
+			data.push(row)
+		}
+
+		var nextoffset = null
+		if (rows.length>max_rows) {
+			nextoffset = offset+max_rows
+		}
+
+		return {
+			criteria: criteria,
+			limit:  max_rows,
+			nextoffset: nextoffset,
+			data: data
+		}
+
+	} catch (err) {
+		throw err
+	}
+}
+
+async function <%= moduleName %>_<%= entity.name %>Open(self, body) {
+	const tablename = <%= entity.name %>TableName
+
+	try {
+		const { id } = body 
+		const criteria = { <%= entity.pk %>: id }
+		const searchMap = { <%= entity.pk %>: `<%= entity.pk %> = \${<%= entity.pk %>}`}
+		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
+		const sql = sqlUtil.createSqlSelect({
+			tablename, 
+			columns:[], 
+			whereClause, 
+			sort:{}, 
+			limit:0, 
+			offset:0, 
+			queryParams
+		})
+		const data = await db.one(sql, queryParams);
+		if (data==null) { 
+			throw new Error(`[${tablename}] data dengan id '${id}' tidak ditemukan`) 
+		}	
+
+		// lookup data createby
+		{
+			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._createby)
+			data._createby = user_fullname ?? ''
+		}
+
+		// lookup data modifyby
+		{
+			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._modifyby)
+			data._modifyby = user_fullname ?? ''
+		}	
+
+		return data
+	} catch (err) {
+		throw err
+	}
+}
+
+async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
+	const { source, data } = body
+	const req = self.req
+	const user_id = req.session.user.userId
+	const startTime = process.hrtime.bigint();
+	const tablename = <%= entity.name %>TableName
+
+	try {
+
+		data._createby = user_id
+		data._createdate = (new Date()).toISOString()
+
+		const result = await db.tx(async tx=>{
+			sqlUtil.connect(tx)
+
+			const sequencer = createSequencerLine(tx, {})
+			const id = await sequencer.increment('<%= identifierPrefix %>')
+			data.<%= entity.pk %> = id
+
+			// apabila ada keperluan pengolahan data SEBELUM disimpan
+			if (typeof Extender.<%= entity.name %>Creating === 'function') {
+				await Extender.<%= entity.name %>Creating(self, tx, data)
+			}
+
+			const cmd = sqlUtil.createInsertCommand(tablename, data)
+			const ret = await cmd.execute(data)
+
+
+			const logMetadata = {}
+
+			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
+			if (typeof Extender.<%= entity.name %>Created === 'function') {
+				await Extender.<%= entity.name %>Created(self, tx, ret, data, logMetadata)
+			}
+
+			// record log
+			<%= moduleName %>_log(self, body, startTime, tablename, ret.<%= entity.pk %>, 'CREATE', logMetadata)
+
+			return ret
+		})
+
+		return result
+	} catch (err) {
+		throw err
+	}
+}
+
+async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
+	const { source, data } = body
+	const req = self.req
+	const user_id = req.session.user.userId
+	const startTime = process.hrtime.bigint()
+	const tablename = <%= entity.name %>TableName
+
+	try {
+
+		data._modifyby = user_id
+		data._modifydate = (new Date()).toISOString()
+
+		const result = await db.tx(async tx=>{
+			sqlUtil.connect(tx)
+
+
+			// apabila ada keperluan pengolahan data SEBELUM disimpan
+			if (typeof Extender.<%= entity.name %>Updating === 'function') {
+				await Extender.<%= entity.name %>Updating(self, tx, data)
+			}			
+			
+			const cmd =  sqlUtil.createUpdateCommand(tablename, data, ['<%= entity.pk %>'])
+			const ret = await cmd.execute(data)
+
+			const logMetadata = {}
+
+			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
+			if (typeof Extender.<%= entity.name %>Updated === 'function') {
+				await Extender.<%= entity.name %>Updated(self, tx, ret, data, logMetadata)
+			}
+
+			// record log
+			<%= moduleName %>_log(self, body, startTime, tablename, data.<%= entity.pk %>, 'UPDATE', logMetadata)
+
+			return ret
+		})
+	
+		return result
+	} catch (err) {
+		throw err
+	}
+}
+
+async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
+	const { source, id } = body 
+	const req = self.req
+	const user_id = req.session.user.userId
+	const startTime = process.hrtime.bigint()
+	const tablename = <%= entity.name %>TableName
+
+	try {
+
+		const deletedRow = await db.tx(async tx=>{
+			sqlUtil.connect(tx)
+
+			const dataToRemove = {<%= entity.pk %>: id}
+			const sql = `select * from ${<%= entity.name %>TableName} where <%= entity.pk %>=\${<%= entity.pk %>}`
+			const row<%= entity.name %> = await tx.oneOrNone(sql, dataToRemove)
+
+
+			// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
+			if (typeof Extender.<%= entity.name %>Deleting === 'function') {
+				await Extender.<%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata)
+			}
+
+			const param = {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>}
+			const cmd = sqlUtil.createDeleteCommand(<%= entity.name %>TableName, ['<%= entity.pk %>'])
+			const deletedRow = await cmd.execute(param)
+
+			// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
+			if (typeof Extender.<%= entity.name %>Deleted === 'function') {
+				await Extender.<%= entity.name %>Deleted(self, tx, deletedRow, logMetadata)
+			}					
+
+			<%= moduleName %>_log(self, body, startTime, <%= entity.name %>TableName, row<%= entity.name %>.<%= entity.pk %>, 'DELETE', {rowdata: deletedRow})
+			<%= moduleName %>_log(self, body, startTime, headerTableName, row<%= entity.name %>.<%= headerPrimaryKey %>, 'DELETE ROW <%= entity.name.toUpperCase() %>', {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>, tablename: <%= entity.name %>TableName}, `removed: ${row<%= entity.name %>.<%= entity.pk %>}`)
+
+			return deletedRow
+		})
+	
+
+		return result
+	} catch (err) {
+		throw err
+	}
+}
+
+async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
+	const { data } = body 
+	const req = self.req
+	const user_id = req.session.user.userId
+	const startTime = process.hrtime.bigint();
+	const tablename = <%= entity.name %>TableName
+
+
+	try {
+		const result = await db.tx(async tx=>{
+			sqlUtil.connect(tx)
+
+			for (let id of data) {
+				const dataToRemove = {jurndetil_id: id}
+				const sql = `select * from ${<%= entity.name %>TableName} where <%= entity.pk %>=\${<%= entity.pk %>}`
+				const row<%= entity.name %> = await tx.oneOrNone(sql, dataToRemove)
+
+				// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
+				if (typeof Extender.<%= entity.name %>Deleting === 'function') {
+					await Extender.<%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata)
+				}
+
+				const param = {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>}
+				const cmd = sqlUtil.createDeleteCommand(<%= entity.name %>TableName, ['<%= entity.pk %>'])
+				const deletedRow = await cmd.execute(param)
+
+				// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
+				if (typeof Extender.<%= entity.name %>Deleted === 'function') {
+					await Extender.<%= entity.name %>Deleted(self, tx, deletedRow, logMetadata)
+				}					
+
+				<%= moduleName %>_log(self, body, startTime, <%= entity.name %>TableName, row<%= entity.name %>.<%= entity.pk %>, 'DELETE', {rowdata: deletedRow})
+				<%= moduleName %>_log(self, body, startTime, headerTableName, row<%= entity.name %>.<%= headerPrimaryKey %>, 'DELETE ROW <%= entity.name.toUpperCase() %>', {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>, tablename: <%= entity.name %>TableName}, `removed: ${row<%= entity.name %>.<%= entity.pk %>}`)
+			}
+		})
+
+		const res = {
+			deleted: true,
+			message: ''
+		}
+		return res
+	} catch (err) {
+		throw err
+	}	
+}
+
+<% }) %>	

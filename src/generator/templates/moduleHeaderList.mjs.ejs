@@ -66,11 +66,6 @@ export async function init(self, args) {
 
 }
 
-export async function render(self) {
-	console.log('<%= modulePart %> render')
-}
-
-
 export async function loadData(self) {
 	await tbl.clear()
 	tbl_loadData(self)
@@ -80,9 +75,7 @@ export function getCurrentRow(self) {
 	return CurrentState.SelectedRow
 }
 
-function setCurrentRow(self, tr) {
-	CurrentState.SelectedRow = tr
-}
+
 
 export function addNewRow(self, data) {
 	const tr = tbl.addRow(data)
@@ -119,6 +112,27 @@ export function selectPreviousRow(self) {
 }
 
 
+export function setPagingButton(self,  editModule) {
+	const tr = CurrentState.SelectedRow
+	
+	if (tr.previousElementSibling) {
+		editModule.disablePrevButton(self, false)
+	} else {
+		editModule.disablePrevButton(self, true)
+	}
+
+	if (tr.nextElementSibling) {
+		editModule.disableNextButton(self, false)
+	} else {
+		editModule.disableNextButton(self, true)
+	}
+
+}
+
+function setCurrentRow(self, tr) {
+	CurrentState.SelectedRow = tr
+}
+
 async function openRow(self, tr) {
 	const keyvalue = tr.getAttribute('keyvalue')
 	const key = tr.getAttribute('key')
@@ -138,6 +152,10 @@ async function openRow(self, tr) {
 		setCurrentRow(self, null)
 		CurrentSection.show() // kembalikan ke list kalau error saat buka data
 	}
+
+
+	// matikan atau nyalakan button prev/next sesuai kondisi
+	setPagingButton(self, <%= moduleEdit %>)
 }
 
 async function listRows(self, criteria, offset,limit, sort) {
@@ -185,12 +203,6 @@ function tbl_cellclick(self, evt) {
 	
 }
 
-function btn_gridload_click(self, evt) {
-	setCurrentRow(self, null)
-	loadData(self)
-}
-
-
 async function tbl_loadData(self, params={}) {
 	console.log('loading <%= moduleSection %> data')
 	console.log(params)
@@ -232,4 +244,9 @@ async function tbl_loadData(self, params={}) {
 		mask = null
 	}
 	
+}
+
+function btn_gridload_click(self, evt) {
+	setCurrentRow(self, null)
+	loadData(self)
 }

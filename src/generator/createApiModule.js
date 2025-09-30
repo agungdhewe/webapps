@@ -40,12 +40,21 @@ export async function createApiModule(context, options) {
 		const headerFieldsLookup = createLookup(entityHeader.Items)
 
 		// get detil information
+		const entitiesDetil = []
 		for (let entityName in context.entities) {
 			if (entityName=='header') {
 				continue
 			}
 
 			const entity = context.entities[entityName]
+			
+			const e = {
+				name: entityName,
+				table: entity.table,
+				pk: entity.pk
+			}
+			entitiesDetil.push(e)
+
 		}
 
 
@@ -61,7 +70,8 @@ export async function createApiModule(context, options) {
 			headerTableName,
 			headerPrimaryKey,
 			headerSearchMap,
-			headerFieldsLookup
+			headerFieldsLookup,
+			entitiesDetil
 		}
 		
 		

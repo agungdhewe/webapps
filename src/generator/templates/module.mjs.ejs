@@ -115,18 +115,17 @@ async function render(self) {
 				openDetilSection(self, sectionTargetName, sectionCurrentName)
 			})
 
+			// jika ada event-event yang khusus untuk mobile device
 			// if (Module.isMobileDevice()) {
-			// } else {
-			// 	link.addEventListener('dblclick', (evt)=>{
-			// 		openDetilSection(self, sectionTarget, sectionBack)
-			//	})
 			// }
 		});
 
 		
 		// <%= moduleName %>-ext.mjs, export function extendPage(self) {} 
-		if (typeof Extender.extendPage === 'function') {
-			Extender.extendPage(self)
+		const fn_name = 'extendPage'
+		const fn_extendPage = Extender[fn_name]
+		if (typeof fn_extendPage === 'function') {
+			fn_extendPage(self)
 		} else {
 			console.warn(`'extendPage' tidak diimplementasikan di extender`)
 		}

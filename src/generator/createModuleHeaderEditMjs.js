@@ -15,11 +15,35 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 	try {
 
+		// Data Detil
+		const entitiesDetil = []
 		for (let entityName in context.entities) {
+			const entity = context.entities[entityName]
+
+			// hanya proses yang detil
+			if (entityName=='header') {
+				continue
+			}
+
+			const e = {
+				name: entityName,
+				table: entity.table,
+				pk: entity.pk,
+				moduleSection:  kebabToCamel(`${moduleName}-${entityName}`),
+			}
+			entitiesDetil.push(e)
+		}
+
+
+
+		// Data Header
+		for (let entityName in context.entities) {
+			const entityData = context.entities[entityName]
+
 			// hanya proses yang Header
 			if (entityName!='header') {
 				continue
-			}
+			} 
 
 			const sectionName = entityName
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
@@ -37,7 +61,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 
 			// start geneate program code
-			const entityData = context.entities[entityName]
+			
 			const tablename = entityData.table
 
 			const fields = []
@@ -103,6 +127,8 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 
 
+
+
 				// add to field config data	
 				fields.push({  
 					component,
@@ -111,6 +137,8 @@ export async function createModuleHeaderEditMjs(context, options) {
 					elementId
 				})
 			}
+
+		
 
 
 
@@ -123,7 +151,8 @@ export async function createModuleHeaderEditMjs(context, options) {
 				moduleList: kebabToCamel(`${moduleName}-${sectionName}-list`),
 				fields,
 				fieldHandles,
-				defaultInits
+				defaultInits,
+				entitiesDetil
 			}
 
 			
