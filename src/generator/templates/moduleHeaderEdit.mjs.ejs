@@ -112,10 +112,10 @@ export async function openSelectedData(self, params) {
 
 		CurrentState.currentOpenedId = id
 
-
-		const fn_jurnHeaderEdit_isEditDisabled = Extender['jurnHeaderEdit_isEditDisabled']
-		if (typeof fn_jurnHeaderEdit_isEditDisabled === 'function') {
-			const editDisabled = fn_jurnHeaderEdit_isEditDisabled(self, data)
+		const fn_name = '<%= modulePart %>_isEditDisabled'
+		const fn_<%= modulePart %>_isEditDisabled = Extender[fn_name]
+		if (typeof fn_<%= modulePart %>_isEditDisabled === 'function') {
+			const editDisabled = fn_<%= modulePart %>_isEditDisabled(self, data)
 			CurrentState.editDisabled = editDisabled
 		}
 
@@ -349,10 +349,10 @@ async function btn_new_click(self, evt) {
 
 		// jika perlu modifikasi data initial,
 		// atau dialog untuk opsi data baru, dapat dibuat di Extender
-		const fn_name = 'jurnHeaderEdit_newData'
-		const fn_jurnHeaderEdit_newData = Extender[fn_name]
-		if (typeof fn_jurnHeaderEdit_newData === 'function') {
-			await fn_jurnHeaderEdit_newData(self, datainit)
+		const fn_name = '<%= modulePart %>_newData'
+		const fn_<%= modulePart %>_newData = Extender[fn_name]
+		if (typeof fn_<%= modulePart %>_newData === 'function') {
+			await fn_<%= modulePart %>_newData(self, datainit)
 		}
 
 		// buat data baru

@@ -1,4 +1,4 @@
-import { kebabToCamel, isFileExist, getSectionData } from './helper.js'
+import { kebabToCamel, isFileExist, getSectionData, createAdditionalAttributes } from './helper.js'
 import { fileURLToPath } from 'url';
 import path from 'path'
 import fs from 'fs/promises'
@@ -32,9 +32,61 @@ export async function createModuleDetilEditHtml(context, options) {
 			}
 			context.postMessage({message: `generating file: '${targetFile}`})  // reporting progress to parent process
 
+			// start geneate program code
+			const entityData = context.entities[entityName]
+			const sectionData = getSectionData(moduleName, entityName, entityData, 'edit')
+			const primaryKeyFieldData = entityData.Items[sectionData.primaryKey] 
+			const primaryKeyName = primaryKeyFieldData.input_name
+			const primaryKeyElementId = `${modulePart}-${primaryKeyName}`
+
+			const autoid = true // untuk detil, pasti autoid
+
+			
+			// ambil data field header
+			const fields = []
+			for (var fieldName in entityData.Items) {
+				const item = entityData.Items[fieldName]
+
+				// if (item.data_fieldname=='grouptype_id') {
+				// 	console.log(item)
+				// }
+
+				if (!item.showInForm) {
+					continue
+				}
+
+				const component = item.component
+				const fieldname = item.data_fieldname
+				const elementId = `${modulePart}-${item.input_name}`
+				const placeholder = item.input_placeholder
+				const label = item.input_label
+				const binding = item.data_fieldname
+				const additionalAttributes = createAdditionalAttributes(item)
+				const cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}` 
+
+				fields.push({  
+					component,
+					cssContainer,
+					fieldname,
+					elementId,
+					placeholder,
+					label,
+					binding,
+					additionalAttributes
+				})
+
+			}
 
 
 			const variables = {
+				title: title,
+				moduleName: moduleName,
+				modulePart: modulePart,
+				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
+				section: sectionData,
+				autoid,
+				primaryKeyElementId: primaryKeyElementId,
+				fields: fields,
 			}
 
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilEdit.html.ejs')

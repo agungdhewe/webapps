@@ -341,7 +341,7 @@ async function <%= moduleName %>_headerDelete(self, body) {
 
 	try {
 
-		const result = await db.tx(async tx=>{
+		const deletedRow = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
 
 			const dataToRemove = {<%= headerPrimaryKey %>: id}
@@ -399,7 +399,7 @@ async function <%= moduleName %>_headerDelete(self, body) {
 		})
 	
 
-		return result
+		return deletedRow
 	} catch (err) {
 		throw err
 	}
@@ -631,7 +631,7 @@ async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
 		})
 	
 
-		return result
+		return deletedRow
 	} catch (err) {
 		throw err
 	}
@@ -650,7 +650,7 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 			sqlUtil.connect(tx)
 
 			for (let id of data) {
-				const dataToRemove = {jurndetil_id: id}
+				const dataToRemove = {<%= entity.pk %>: id}
 				const sql = `select * from ${<%= entity.name %>TableName} where <%= entity.pk %>=\${<%= entity.pk %>}`
 				const row<%= entity.name %> = await tx.oneOrNone(sql, dataToRemove)
 
