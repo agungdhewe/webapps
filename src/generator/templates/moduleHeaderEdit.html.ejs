@@ -12,7 +12,7 @@
 </form>
 
 
-<div id="panel-detil-selector" class="panel-detil">
+<div id="panel-detil-selector" class="panel-detil <% if (detilCount==0) { %>hidden<% } %>">
 	<div panel-title>
 		Information Detil
 	</div>
@@ -27,8 +27,9 @@
 		</div>
 	</div>
 </div>
+ 
 
-<div class="panel-recordbar">
+<div class="panel-recordbar" <% if (detilCount==0) { %>data-view="nodetil"<% } %>>
 	<div><a id="<%= moduleSection %>-btn_recordstatus" href="javascript:void(0)">Record Status</a></div>
 	<div><a id="<%= moduleSection %>-btn_logs" href="javascript:void(0)">Logs</a></div>
 	<div><a id="<%= moduleSection %>-btn_about" href="javascript:void(0)">About</a></div>

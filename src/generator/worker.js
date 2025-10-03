@@ -4,6 +4,9 @@ import db from '../db.js'
 import { workerData, parentPort } from 'worker_threads';
 import { access, mkdir } from 'fs/promises';
 import { constants } from 'fs';
+
+import { isFileExist } from './helper.js'
+
 import { createModuleRollup } from './createModuleRollup.js'
 import { createModuleContext } from './createModuleContext.js'
 import { createModuleExtenderMjs } from './createModuleExtenderMjs.js'
@@ -24,10 +27,12 @@ import { createTable } from './createTable.js';
 import { createInfoAboutExtender } from './createInfoAboutExtender.js';
 import { createInfoLogs } from './createInfoLogs.js';
 import { createInfoRecordExtender } from './createInfoRecordExtender.js';
+import { createIcon } from './createIcon.js'
+import { createProgramData } from './createProgramData.js'
 
 
 
-const { generator_id, jeda } = workerData;
+const { generator_id, user_id, user_name, ipaddress, jeda } = workerData;
 
 
 main(generator_id)
@@ -44,7 +49,7 @@ async function main(id) {
 		// console.log(data)
 
 
-		await generate(data.generator_data)
+		await generate(id, data.generator_data)
 		
 		
 	} catch (err) {
@@ -65,13 +70,21 @@ async function sleep(s) {
 	})
 }
 
-async function generate(data) {
+async function generate(id, data) {
+
+
 	const context = {
+		id:id,
+		user_id: user_id,
+		user_name: user_name, 
+		ipaddress: ipaddress,
 		title: data.title,
+		descr: data.description,
 		directory: data.directory,
 		appname: data.appname,
 		moduleName: data.name,
 		entities: data.entities,
+		icon: data.icon,
 		postMessage: (info) => {
 			parentPort.postMessage(info)
 		}
@@ -103,6 +116,16 @@ async function generate(data) {
 		await prepareDirectory(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
+		const iconFileName = await createIcon(context, {overwrite:true})
+
+
+		await createProgramData(context, {iconFileName})
+
+
+		/*
+		
+
+		
 		await createTable(context, {overwrite:true})
 		await sleep(jedaWaktu)
 		
@@ -180,8 +203,10 @@ async function generate(data) {
 
 		await createInfoRecordExtender(context, {overwrite:false})
 		await sleep(jedaWaktu)
-
 		
+		*/
+
+
 		// Selesai
 		context.postMessage({message: `finish`, done:true})
 	} catch (err) {
@@ -227,6 +252,17 @@ async function prepareDirectory(context) {
 		if (!apiExtenderDirExists) {
 			throw new Error(`directory tujuan '${apiExtenderDir}' tidak ditemukan`)
 		}
+
+
+		// cek apakah sudah di lock
+		const lockFile = path.join(moduleDir, `${moduleName}.lock`)
+		var fileExists = await isFileExist(lockFile)
+		if (fileExists) {
+			console.log("\n\n\x1b[1m\x1b[31mERROR\x1b[0m")
+			console.log('Module sudah di lock, tidak bisa digenerate ulang')
+			process.exit(1)
+		}  
+
 
 		context.moduleDir = moduleDir
 		context.apiDir = apiDir

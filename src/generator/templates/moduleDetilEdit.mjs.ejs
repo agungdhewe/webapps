@@ -28,8 +28,8 @@ const btn_next = new $fgta5.ActionButton('<%= modulePart %>-btn_next')
 const btn_recordstatus = document.getElementById('<%= moduleSection %>-btn_recordstatus')
 const btn_logs = document.getElementById('<%= moduleSection %>-btn_logs')
 
-const frm = new $fgta5.Form('<%= modulePart %>-frm');
-
+const frm = new $fgta5.Form('<%= modulePart %>-frm');<% fields.forEach(field => { %>
+const <%= field.inputname %> = frm.Inputs['<%= field.elementId %>']<% }) %>	
 const obj_createby = document.getElementById('fRecord-section-createby')
 const obj_createdate = document.getElementById('fRecord-section-createdate')
 const obj_modifyby = document.getElementById('fRecord-section-modifyby')
@@ -60,10 +60,57 @@ export async function init(self, args) {
 	btn_recordstatus.addEventListener('click', evt=>{ btn_recordstatus_click(self, evt) })	
 	btn_logs.addEventListener('click', evt=>{ btn_logs_click(self, evt) })	
 
-
-
 	CurrentState.headerFormLocked = true 
 	CurrentState.editDisabled = false
+
+
+	<% fieldHandles.forEach(field => { %>
+	// <%= field.component %>: <%= field.inputname %><% field.handles.forEach(hnd => { %>
+	<%= field.inputname %>.addEventListener('<%= hnd.eventname %>', <% if (hnd.eventname=='selecting') { %>async <% } %>(evt)=>{
+		const fn_<%= hnd.eventname %>_name = '<%= field.inputname %>_<%= hnd.eventname %>'
+		const fn_<%= hnd.eventname %> = Extender[fn_<%= hnd.eventname %>_name]
+		if (typeof fn_<%= field.inputname %>_<%= hnd.eventname %> === 'function') {
+			fn_<%= field.inputname %>_<%= hnd.eventname %>(self, <%= field.inputname %>, evt)
+		} else {<% if (field.component=='Combobox' && hnd.eventname=='selecting') { %>
+			// default selecting
+			const cbo = evt.detail.sender
+			const dialog = evt.detail.dialog
+			const searchtext = evt.detail.searchtext!=null ? evt.detail.searchtext : ''
+			const url = `${Context.appsUrls.<%= hnd.appId %>.url}/<%- hnd.path %>`
+			const criteria = {
+				searchtext: searchtext,
+			}
+
+			const fn_<%= hnd.eventname %>_criteria_name = '<%= field.inputname %>_<%= hnd.eventname %>_criteria'
+			const fn_<%= field.inputname %>_<%= hnd.eventname %>_criteria = Extender[fn_<%= hnd.eventname %>_criteria_name]
+			if (typeof fn_<%= hnd.eventname %>_criteria === 'function') {
+				fn_<%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, criteria)
+			}
+
+			cbo.wait()
+			try {
+				const result = await Module.apiCall(url, {
+					criteria,
+					offset: evt.detail.offset,
+					limit: evt.detail.limit,
+				}) 
+
+				for (var row of result.data) {
+					evt.detail.addRow(row.<%= hnd.field_value %>, row.<%= hnd.field_text %>, row)
+				}
+
+				dialog.setNext(result.nextoffset, result.limit)
+			} catch (err) {
+				$fgta5.MessageBox.error(err.message)
+			} finally {
+				cbo.wait(false)
+			}
+
+			<% } else { %>	
+			console.warn('Extender.<%= field.inputname %>_<%= hnd.eventname %> is not implemented')<% } %>
+		}		
+	})<% }) %>
+	<% }) %>	
 }
 
 
@@ -80,10 +127,10 @@ export async function openSelectedData(self, params) {
 		
 		// jika posisi header dalam keadaan unlock (bisa edit, perlu cek kondisi data, untuk menentukan bisa diedit atau tidak)
 		if (!CurrentState.headerFormLocked) {
-			const fn_name = '<%= modulePart %>_isEditDisabled'
-			const fn_<%= modulePart %>_isEditDisabled = Extender[fn_name]
-			if (typeof fn_<%= modulePart %>_isEditDisabled === 'function') {
-				const editDisabled = fn_<%= modulePart %>_isEditDisabled(self, data)
+			const fn_iseditdisabled_name = '<%= modulePart %>_isEditDisabled'
+			const fn_iseditdisabled = Extender[fn_iseditdisabled_name]
+			if (typeof fn_iseditdisabled === 'function') {
+				const editDisabled = fn_iseditdisabled(self, data)
 				CurrentState.editDisabled = editDisabled
 			}
 		}
@@ -95,6 +142,11 @@ export async function openSelectedData(self, params) {
 		frm.acceptChanges()
 		frm.lock()
 
+		const fn_formopened_name = '<%= modulePart %>_formOpened'
+		const fn_formopened = Extender[fn_formopened_name]
+		if (typeof fn_formopened === 'function') {
+			fn_formopened(self, frm, CurrentState)
+		}
 	} catch (err) {
 		CurrentState.currentOpenedId = null
 		throw err
@@ -330,10 +382,10 @@ async function btn_new_click(self, evt) {
 		// jika perlu modifikasi data initial,
 		// atau dialog untuk opsi data baru, 
 		// dapat dibuat di Extender.newData
-		const fn_name = '<%= modulePart %>_newData'
-		const fn_<%= modulePart %>_newData = Extender[fn_name]
-		if (typeof fn_<%= modulePart %>_newData === 'function') {
-			datainit = await fn_<%= modulePart %>_newData(self)
+		const fn_newdata_name = '<%= modulePart %>_newData'
+		const fn_newdata = Extender[fn_newdata_name]
+		if (typeof fn_newdata === 'function') {
+			await fn_newdata(self, datainit, frm)
 		}
 
 		// buat data baru
@@ -390,6 +442,15 @@ async function btn_save_click(self, evt) {
 	}
 
 
+	// Extender Saving
+	const fn_datasaving_name = '<%= modulePart %>_dataSaving'
+	const fn_datasaving = Extender[fn_datasaving_name]
+	if (typeof fn_datasaving === 'function') {
+		await fn_datasaving(self, dataToSave, frm)
+	}
+
+
+
 	let mask = $fgta5.Modal.createMask()
 	try {
 		let result
@@ -422,6 +483,14 @@ async function btn_save_click(self, evt) {
 
 		// update form
 		frm.setData(data)	
+
+
+		// Extender Saving
+		const fn_datasaved_name = '<%= modulePart %>_dataSaved'
+		const fn_datasaved = Extender[fn_datasaved_name]
+		if (typeof fn_datasaved === 'function') {
+			await fn_datasaved(self, data, frm)
+		}
 
 
 		// persist perubahan di form
@@ -558,10 +627,10 @@ async function btn_recordstatus_click(self, evt) {
 			// jika mau menambah beberapa informasi mengenai record,
 			// misalnya commit by, postby, dll
 			// melalui extender <%= modulePart %>_addRecordInfo
-			const fn_name = '<%= modulePart %>_addRecordInfo'
-			const fn_<%= modulePart %>_addRecordInfo = Extender[fn_name]
-			if (typeof fn_<%= modulePart %>_addRecordInfo === 'function') {
-				await fn_<%= modulePart %>_addRecordInfo(self, data)
+			const fn_addrecordinfo_name = '<%= modulePart %>_addRecordInfo'
+			const fn_addrecordinfo = Extender[fn_addrecordinfo_name]
+			if (typeof fn_addrecordinfo === 'function') {
+				await fn_addrecordinfo(data)
 			}
 
 		} catch (err) {

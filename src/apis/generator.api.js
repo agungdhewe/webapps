@@ -142,6 +142,9 @@ async function generator_open(self, body) {
 async function generator_save(self, body) {
 	const { data } = body
 	const tablename = 'core."generator"'
+	const req = self.req
+	const user_id = req.session.user.userId
+
 
 	try {
 		sqlUtil.connect(db)
@@ -159,12 +162,12 @@ async function generator_save(self, body) {
 
 		let cmd
 		if (id=='') {
-			obj._createby = 1
+			obj._createby = user_id
 			obj._createdate = (new Date()).toISOString()
 			cmd = sqlUtil.createInsertCommand(tablename, obj, ['generator_id'])
 		} else {
 			obj.generator_id = id
-			obj._modifyby = 1
+			obj._modifyby = user_id
 			obj._modifydate = (new Date()).toISOString()
 			cmd = sqlUtil.createUpdateCommand(tablename, obj, ['generator_id'])
 		}
@@ -181,6 +184,9 @@ async function generator_generate(self, body) {
 	const req = self.req
 	const { data, clientId } = body
 	const id = `${data.id}`
+	const user_id = req.session.user.userId
+	const user_name = req.session.user.userFullname
+	const ipaddress = req.ip
 
 	try {
 		if (id=='') {
@@ -196,6 +202,9 @@ async function generator_generate(self, body) {
 		const notifierServer = req.app.locals.appConfig.notifierServer
 		runDetachedWorker(generatorWorker, notifierServer, clientId, {
 			generator_id: generator_id,
+			user_id: user_id,
+			user_name: user_name,
+			ipaddress: ipaddress,
 			timeout: generateTimeoutMs,
 			jeda: 0.5, // jeda 1 detik per masing-masing generate
 		})

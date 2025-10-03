@@ -5,7 +5,7 @@ import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
 import context from '@agung_dhewe/webapps/src/context.js'  
 import logger from '@agung_dhewe/webapps/src/logger.js'<% if (usesequencer) { %>
-import { createSequencerDocument } from '@agung_dhewe/webapps/src/sequencerdoc.js' <% } %><% if (entitiesDetil.length>0) { %>
+import { createSequencerDocument } from '@agung_dhewe/webapps/src/sequencerdoc.js' <% } %><% if (usesequencerline) { %>
 import { createSequencerLine } from '@agung_dhewe/webapps/src/sequencerline.js' <% } %>
 
 import * as Extender from './extenders/<%= moduleName %>.apiext.js'
@@ -122,6 +122,10 @@ async function <%= moduleName %>_headerList(self, body) {
 			}
 		}
 
+		// apabila ada keperluan untuk recompose criteria
+		if (typeof Extender.headerListCriteria === 'function') {
+			await Extender.headerListCriteria(self, db, searchMap, criteria, sort, columns)
+		}
 
 		var max_rows = limit==0 ? 10 : limit
 		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
@@ -234,7 +238,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
 
-			<% if (usesequencer) { %>// buat sequencer	
+			<% if (usesequencer) { %>// buat sequencer document	
 			const sequencer = createSequencerDocument(tx, { 
 				COMPANY_CODE: req.app.locals.appConfig.COMPANY_CODE,
 				blockLength: <%= identifierBlock %>,
@@ -254,6 +258,23 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			%>// generate data <%= identifierPrefix %> reset perbulan
 			const seqdata = await sequencer.monthly('<%= identifierPrefix %>')<% } %>	
 			data.<%= headerPrimaryKey %> = seqdata.id
+			
+			
+			<% } else if (usesequencerline) { %>
+			// buat short sequencer	
+			const sequencer = createSequencerLine(tx, {})
+
+			if (typeof Extender.sequencerSetup === 'function') {
+				// jika ada keperluan menambahkan code block/cluster di sequencer
+				// dapat diimplementasikan di exterder sequencerSetup 
+				await Extender.sequencerSetup(self, tx, sequencer, data)
+			}
+
+			// generate short id untuk <%= identifierPrefix %> reset pertahun
+			const id = await sequencer.yearlyshort('<%= identifierPrefix %>')
+			data.<%= headerPrimaryKey %> = id
+
+			const seqdata = {}
 			<% } %>	
 
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
@@ -263,7 +284,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 
 			<% if (autoid) { 
-			%><% if (usesequencer) { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data, ['<%= headerPrimaryKey %>'])<% } %><% 
+			%><% if (usesequencer || usesequencerline) { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data, ['<%= headerPrimaryKey %>'])<% } %><% 
 		    } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } %>
 			const ret = await cmd.execute(data)
 
@@ -416,6 +437,7 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 		<%= headerPrimaryKey %>: `<%= headerPrimaryKey %>=try_cast_bigint(\${<%= headerPrimaryKey %>}, 0)`,
 	};
 
+
 	try {
 	
 		// hilangkan criteria '' atau null
@@ -425,6 +447,10 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 			}
 		}
 
+		// apabila ada keperluan untuk recompose criteria
+		if (typeof Extender.<%= moduleName %>ListCriteria === 'function') {
+			await Extender.<%= moduleName %>ListCriteria(self, db, searchMap, criteria, sort, columns)
+		}
 
 		var max_rows = limit==0 ? 10 : limit
 		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
@@ -437,6 +463,13 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 		for (var row of rows) {
 			i++
 			if (i>max_rows) { break }
+
+			<% entity.fieldsLookup.forEach(lookup => { %>// lookup: <%= lookup.bindingDisplay %> dari field <%= lookup.bindingText %> pada table <%= lookup.table %> dimana (<%= lookup.table %>.<%= lookup.bindingValue %> = <%= headerTableName %>.<%=lookup.fieldname%>)
+			{
+				const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', row.<%=lookup.fieldname%>)
+				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
+			}
+			<% }) %>
 
 			// pasang extender di sini
 			if (typeof Extender.detilListRow === 'function') {
@@ -484,6 +517,14 @@ async function <%= moduleName %>_<%= entity.name %>Open(self, body) {
 		if (data==null) { 
 			throw new Error(`[${tablename}] data dengan id '${id}' tidak ditemukan`) 
 		}	
+
+
+		<% entity.fieldsLookup.forEach(lookup => { %>// lookup: <%= lookup.bindingDisplay %> dari field <%= lookup.bindingText %> pada table <%= lookup.table %> dimana (<%= lookup.table %>.<%= lookup.bindingValue %> = <%= headerTableName %>.<%=lookup.fieldname%>)
+		{
+			const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', data.<%=lookup.fieldname%>)
+			data.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
+		}
+		<% }) %>
 
 		// lookup data createby
 		{

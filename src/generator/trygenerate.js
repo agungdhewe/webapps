@@ -27,11 +27,13 @@ async function main(generator_id) {
 	console.log(`Start to generate program id:'${generator_id}'`)
 
 	try {
-		
 		const workerPath = './src/generator/worker.js'
 		const worker = new Worker(workerPath, {
 			workerData: {
-				generator_id
+				generator_id,
+				user_id: 1,
+				user_name: 'coredeveloper',
+				ipaddress: 'local-cli'
 			}
 		}, workerTimeoutMs) 
 

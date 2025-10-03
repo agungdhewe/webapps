@@ -37,11 +37,11 @@
 		<div>
 			<select name="identifier-method">
 				<option value="manual" selected>Manual</option>
-				<option value="auto-by-default">Auto By Default (Numeric)</option>
-				<option value="auto-always">Auto Always (Numeric)</option>
-				<option value="auto-yearly">Auto Yearly (String)</option>
-				<option value="auto-monthly">Auto Monthly (String)</option>
-				<option value="custom">Custom</option>
+				<option value="auto-by-default">Auto By Default (Numeric Only)</option>
+				<option value="auto-always">Auto Always (Numeric Only)</option>
+				<option value="auto-yearly">Auto Yearly (for Document) </option>
+				<option value="auto-monthly">Auto Monthly (for Document)</option>
+				<option value="auto-yearly-short">Auto Yearly (short, for entity)</option>
 			</select>
 
 			<label style="margin-left: 40px; margin-right: 5px;">Prefix</label>
@@ -516,7 +516,7 @@ ishandlekeydown
 			<input name="gridcss" type="text">
 
 			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
-			<input name="gridinlinestyle" type="text" value='text-align:"center"'>
+			<input name="gridinlinestyle" type="text" value="text-align:right">
 
 			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
 			<label>
@@ -704,7 +704,7 @@ ishandlekeydown
 			<input name="gridcss" type="text">
 						
 			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
-			<input name="gridinlinestyle" type="text" value='text-align:"center"'>
+			<input name="gridinlinestyle" type="text" value='text-align:center'>
 
 			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
 			<label>

@@ -395,6 +395,8 @@ export async function createFereignKey(schema, tablename, foreignKeys) {
 				const field = foreignKeys[fieldname]
 				const {data_fieldname, Reference} = field
 				const ref_name = `fk$${schema}$${tablename}$${data_fieldname}`
+
+				
 				{
 					const {schema, tablename} = parseTableName(Reference.table)
 					Reference.ref_schema = schema

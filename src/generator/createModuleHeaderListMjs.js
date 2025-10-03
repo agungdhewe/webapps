@@ -48,7 +48,8 @@ export async function createModuleHeaderListMjs(context, options) {
 				modulePart: modulePart,
 				moduleName: moduleName,
 				moduleEdit: kebabToCamel(`${moduleName}-${sectionName}-edit`),
-				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`)
+				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
+				sectionName
 			}
 
 			

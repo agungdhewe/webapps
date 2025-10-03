@@ -3,4 +3,10 @@ ALTER TABLE <%= schema %>."<%= tablename %>"
 	ADD CONSTRAINT <%= fk.ref_name %>
 	FOREIGN KEY (<%= fk.fieldname %>)
 	REFERENCES <%= fk.ref_schema %>."<%= fk.ref_tablename %>"(<%= fk.ref_fieldname %>);
+
+
+-- Add As Index, drop dulu jika sudah ada
+DROP INDEX IF EXISTS <%= schema %>.idx_<%= fk.ref_name %>;
+CREATE INDEX idx_<%= fk.ref_name %> ON <%= schema %>."<%= tablename %>"(<%= fk.fieldname %>);	
+
 <% }) %>	

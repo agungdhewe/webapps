@@ -50,8 +50,9 @@ async function login_doLogin(self, body) {
 		// dummy login dulu
 		if (username=='agung') {
 			// setup session
+			const user_id = '2590000000000000001'
 			self.req.session.user = {
-				userId: '44',
+				userId: user_id,
 				userName: 'agung',
 				userFullname: 'Agung Nugroho',
 				isLogin: true

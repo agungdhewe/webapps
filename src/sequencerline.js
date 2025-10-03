@@ -43,10 +43,23 @@ class Sequencer {
 		}
 	}
 
+	// 9 digit, untuk tipe integer
+	async yearlyshort(doc_id) {
+		const self = this
+		const db = self.db
+		try {
+			const month = 0
+			const { year } = await getDbCurrentDate(db)
+			return await generateId(self, year, month, doc_id, true)
+		} catch (err) {
+			throw err
+		}
+	}
+
 }
  
 
-async function generateId(self, year, month, doc_id) {
+async function generateId(self, year, month, doc_id, short=false) {
 	const options = self.options
 	const db = self.db
 	const searchMap = {
@@ -71,6 +84,7 @@ async function generateId(self, year, month, doc_id) {
 		}
 
 
+
 		// hitung total panjang bigint yang akan dihailkan
 		let nlength = 0
 		if  (month==0) {
@@ -90,8 +104,15 @@ async function generateId(self, year, month, doc_id) {
 		// 25 09 01 000402 0000009
 
 		const ln = nlength + self.options.numberLength
-		if (ln > MAX_LENGTH) {
-			throw new Error(`Total length of sequencer (${ln}) is mre than max length allowed(${MAX_LENGTH})`)
+		
+		if (short) {
+			if (ln > 9) {
+				throw new Error(`Total length of sequencer (${ln}) is mre than max length allowed(9)`)
+			}
+		} else {
+			if (ln > MAX_LENGTH) {
+				throw new Error(`Total length of sequencer (${ln}) is mre than max length allowed(${MAX_LENGTH})`)
+			}
 		}
 
 
@@ -142,8 +163,16 @@ async function generateId(self, year, month, doc_id) {
 
 
 			const tokennum = []
-			tokennum.push(YY)
-			tokennum.push(MM)
+			if (short) {
+				// hanya tahun
+				tokennum.push(YY)
+			} else {
+				// tahun dan bulan
+				tokennum.push(YY)
+				tokennum.push(MM)
+			}
+
+			
 
 			if (seqnum>0) {
 				tokennum.push(String(seqnum).padStart(2, '0'))
@@ -152,8 +181,9 @@ async function generateId(self, year, month, doc_id) {
 			
 			//  250901999999
 			// 2509019999999
+			const maxlen = short ? 9 : MAX_LENGTH
 			const idpref = tokennum.join('')
-			const numlen = MAX_LENGTH - idpref.length
+			const numlen = maxlen - idpref.length
 			tokennum.push(String(obj.sequencer_number).padStart(numlen, '0'))
 
 			const s =  tokennum.join('')

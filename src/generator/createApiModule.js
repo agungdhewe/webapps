@@ -30,14 +30,15 @@ export async function createApiModule(context, options) {
 		const headerTableName = entityHeader.table
 		const headerPrimaryKey = entityHeader.pk
 		const headerSearchMap = createSearchMap(entityHeader.Search, entityHeader.Items, headerTableName)
-		const autoid = entityHeader.identifierMethod=='manual' ? false : true
 		const usesequencer = ['auto-yearly', 'auto-monthly'].includes(entityHeader.identifierMethod) ? true : false
+		
 		const yearly = entityHeader.identifierMethod == 'auto-yearly' ? true : false
 		const identifierPrefix = entityHeader.identifierPrefix
 		const identifierBlock = entityHeader.identifierBlock
 		const identifierLength = entityHeader.identifierLength
 
 		const headerFieldsLookup = createLookup(entityHeader.Items)
+	
 
 		// get detil information
 		const entitiesDetil = []
@@ -51,11 +52,15 @@ export async function createApiModule(context, options) {
 			const e = {
 				name: entityName,
 				table: entity.table,
-				pk: entity.pk
+				pk: entity.pk,
+				fieldsLookup: createLookup(entity.Items)
 			}
 			entitiesDetil.push(e)
 
 		}
+
+		const usesequencerline = entityHeader.identifierMethod=='auto-yearly-short' || entitiesDetil.length>0 ? true : false
+		const autoid = usesequencer || usesequencerline ? true : false
 
 
 		const variables = {
@@ -63,6 +68,7 @@ export async function createApiModule(context, options) {
 			moduleName: moduleName,
 			autoid,
 			usesequencer,
+			usesequencerline,
 			yearly,
 			identifierPrefix,
 			identifierBlock,

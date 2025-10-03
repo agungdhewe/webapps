@@ -21,6 +21,15 @@ export async function init(self, args) {
 	tbl.addEventListener('nextdata', async evt=>{ tbl_nextdata(self, evt) })
 	tbl.addEventListener('sorting', async evt=>{ tbl_sorting(self, evt) })
 
+
+	// tambahkan event lain di extender: rowrender, rowremoving
+	// dapatkan parameternya di evt.detail
+	const fn_addTableEvents_name = '<%= sectionName %>List_addTableEvents'
+	const fn_addTableEvents = Extender[fn_addTableEvents_name]
+	if (typeof fn_addTableEvents === 'function') {
+		fn_addTableEvents(self, tbl)
+	}
+
 	if (Module.isMobileDevice()) {
 		tbl.addEventListener('cellclick', async evt=>{ tbl_cellclick(self, evt) })
 	} else {
@@ -48,8 +57,10 @@ export async function init(self, args) {
 		}
 
 		// <%= modulePart %>-ext.mjs, export function initSearchParams(self, SearchParams) {} 
-		if (typeof Extender.initSearchParams === 'function') {
-			Extender.initSearchParams(self, SearchParams)
+		const fn_initSearchParams_name = '<%= sectionName %>List_initSearchParams'
+		const fn_initSearchParams = Extender[fn_initSearchParams_name]
+		if (typeof fn_initSearchParams === 'function') {
+			fn_initSearchParams(self, SearchParams)
 		} else {
 			console.warn(`'initSearchParams' tidak diimplementasikan di extender`)
 		}

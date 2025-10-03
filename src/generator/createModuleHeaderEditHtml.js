@@ -15,6 +15,16 @@ export async function createModuleHeaderEditHtml(context, options) {
 
 	try {
 
+		// ambil data entity selain header
+		let detilCount = 0
+		for (let entityName in context.entities) {
+			if (entityName=='header') {
+				continue
+			}
+			detilCount++
+		}
+
+
 		for (let entityName in context.entities) {
 			// hanya proses yang Header
 			if (entityName!='header') {
@@ -112,7 +122,8 @@ export async function createModuleHeaderEditHtml(context, options) {
 				autoid,
 				primaryKeyElementId: primaryKeyElementId,
 				fields: fields,
-				sectionDetils: sectionDetils
+				sectionDetils: sectionDetils,
+				detilCount
 			}
 			
 			
