@@ -187,6 +187,9 @@ async function AppGenLayout_Render(self) {
 function AppGenLayout_createButtons(self) {
 	// upload image icon
 	ME.IconButton.style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(ICON_DEFAULT)}')`;
+	console.log(ME.IconButton.style.backgroundImage)
+
+	
 	const btnUpload = document.getElementById('btn_IconUpload')
 	btnUpload.addEventListener('change', (evt)=>{
 		const file = btnUpload.files[0];

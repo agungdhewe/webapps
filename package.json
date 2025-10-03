@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./src/webapps.js",
   "scripts": {
-    "generate" : "node ./src/generator/trygenerate.js"
+    "generate": "node ./src/generator/trygenerate.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/agungdhewe/webapps#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

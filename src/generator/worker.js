@@ -122,10 +122,7 @@ async function generate(id, data) {
 		await createProgramData(context, {iconFileName})
 
 
-		/*
-		
-
-		
+	
 		await createTable(context, {overwrite:true})
 		await sleep(jedaWaktu)
 		
@@ -204,7 +201,7 @@ async function generate(id, data) {
 		await createInfoRecordExtender(context, {overwrite:false})
 		await sleep(jedaWaktu)
 		
-		*/
+	
 
 
 		// Selesai

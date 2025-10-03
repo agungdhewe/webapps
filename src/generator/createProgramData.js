@@ -16,23 +16,26 @@ export async function createProgramData(context, options) {
 	const moduleName = context.moduleName
 	const apps_id = context.appname
 	const user_id = context.user_id
-	const user_name = context.user_name,
-	const ipaddress = context.ipaddress,
+	const user_name = context.user_name
+	const ipaddress = context.ipaddress
 	const title = context.title
 	const descr = context.descr
-	const icon = context.icon=='' ? 'public/programicons/default.svg' : `public/modules/${moduleName}/${options.iconFileName}`
+	const icon = context.icon=='' ? '' : `public/modules/${moduleName}/${options.iconFileName}`
 	const tablename = 'core.program'
 
 
-	const log = (tablename, id, action, data={}, remark='') => {
+	const log = async (id, action, data={}, remark='') => {
 		const source = 'generator'
 		const metadata = JSON.stringify({})
 		const executionTimeMs = 0
 		
 		const logdata = {id, user_id, user_name, moduleName, action, tablename, executionTimeMs, remark, metadata, ipaddress}
+		logdata.moduleName = 'program'
+		logdata.tablename = 'core.program'
+
 		const ret = await logger.log(logdata)
 		return ret
-}
+	}
 
 
 	try {
@@ -47,7 +50,6 @@ export async function createProgramData(context, options) {
 			program_descr: descr,
 			program_icon: icon,
 			generator_id: generator_id,
-			
 		}
 
 		const result = await db.tx(async tx=>{
@@ -66,8 +68,7 @@ export async function createProgramData(context, options) {
 				const ret = await cmd.execute(obj)
 
 				// log
-				log(tablename, obj.program_id, 'GENERATED', data={}, remark='') 
-				log(tablename, obj.program_id, 'CREATED', data={}, remark='') 
+				log(obj.program_id, 'GENERATED') 
 
 			} else {
 				// update
@@ -76,11 +77,10 @@ export async function createProgramData(context, options) {
 				obj._modifydate =  (new Date()).toISOString()
 
 				const cmd = sqlUtil.createUpdateCommand(tablename, obj, ['program_id'])
-				const ret = await cmd.execute(data)
+				const ret = await cmd.execute(obj)
 
 				// log
-				log(tablename, obj.program_id, 'REGENERATED', data={}, remark='') 
-				log(tablename, obj.program_id, 'UPDATED', data={}, remark='') 
+				log(obj.program_id, 'REGENERATED') 
 			}
 		})
 
