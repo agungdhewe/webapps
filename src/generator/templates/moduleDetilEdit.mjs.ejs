@@ -122,6 +122,8 @@ export async function openSelectedData(self, params) {
 		const id = params.keyvalue
 		const data = await openData(self, id)
 
+		dataOpened(self, data)
+
 		CurrentState.currentOpenedId = id
 		
 		
@@ -331,6 +333,10 @@ async function btn_edit_click(self, evt) {
 	}
 }
 
+async function dataOpened(self, data) {
+
+}
+
 async function btn_new_click(self, evt) {
 	console.log('new')
 	const sourceSection = evt.target.getAttribute('data-sectionsource') 
@@ -469,6 +475,9 @@ async function btn_save_click(self, evt) {
 		console.log(`get data id ${idValue}`)
 		const data = await openData(self, idValue)
 		console.log('data', data)
+
+
+		dataOpened(self, data)
 
 		CurrentState.currentOpenedId = idValue
 

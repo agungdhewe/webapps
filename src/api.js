@@ -39,6 +39,25 @@ export default class Api {
 		}
 	}
 
+	static parseUploadData(data, files) {
+		const jsonFieldName = 'form-body-jsondata'
+		try {
+			if (files!=undefined) {
+				// ambil json data
+				const jsondata = files.filter(file => file.fieldname==jsonFieldName)
+				const jsonstring = jsondata[0].buffer.toString('utf-8')
+				Object.assign(data, JSON.parse(jsonstring).data)
+
+				const filelist = files.filter(file => file.fieldname!=jsonFieldName)
+				return filelist
+			}
+
+			return null
+		} catch (err) {
+			throw err
+		}
+	}
+
 
 	async handleRequest(methodName, body) {
 		try {

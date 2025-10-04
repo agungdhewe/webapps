@@ -28,11 +28,13 @@ export default {
 
 export function uploader(req, res, next) {
 	if (req.is('multipart/form-data')) {
+		const upload = multer();
 		upload.any()(req, res, next);
 	} else {
 		next();
 	}
 }
+
 
 
 export function createBasicRouter() {

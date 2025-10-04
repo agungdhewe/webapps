@@ -11,10 +11,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createProgramData(context, options) {
+	const apps_id = context.appname
+	if (apps_id=='dev') {
+		// untuk dev, tidak perlu diinput ke program
+		return
+	}
+
+
 	const generator_id = context.id
 	const rawData = context.icon
 	const moduleName = context.moduleName
-	const apps_id = context.appname
 	const user_id = context.user_id
 	const user_name = context.user_name
 	const ipaddress = context.ipaddress

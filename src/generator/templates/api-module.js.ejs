@@ -232,6 +232,10 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 	try {
 
+		// parse uploaded data
+		const files = Api.parseUploadData(data, req.files)
+
+
 		data._createby = user_id
 		data._createdate = (new Date()).toISOString()
 
@@ -288,6 +292,13 @@ async function <%= moduleName %>_headerCreate(self, body) {
 		    } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } %>
 			const ret = await cmd.execute(data)
 
+			// jika ada file yang diupload
+			if (files!=null) {
+				// handler file upload
+				// console.log(files)
+			}
+
+
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
@@ -316,6 +327,10 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 
 	try {
 
+		// parse uploaded data
+		const files = Api.parseUploadData(data, req.files)
+
+
 		data._modifyby = user_id
 		data._modifydate = (new Date()).toISOString()
 
@@ -331,6 +346,13 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 			// eksekusi update
 			const cmd = sqlUtil.createUpdateCommand(tablename, data, ['<%= headerPrimaryKey %>'])
 			const ret = await cmd.execute(data)
+
+			// jika ada file yang diupload
+			if (files!=null) {
+				// handler file upload
+				// console.log(files)
+			}
+
 
 			const logMetadata = {}
 
@@ -553,6 +575,10 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 
 	try {
 
+		// parse uploaded data
+		const files = Api.parseUploadData(data, req.files)
+
+
 		data._createby = user_id
 		data._createdate = (new Date()).toISOString()
 
@@ -570,6 +596,12 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 
 			const cmd = sqlUtil.createInsertCommand(tablename, data)
 			const ret = await cmd.execute(data)
+
+			// jika ada file yang diupload
+			if (files!=null) {
+				// handler file upload
+				// console.log(files)
+			}
 
 
 			const logMetadata = {}
@@ -600,6 +632,10 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 
 	try {
 
+		// parse uploaded data
+		const files = Api.parseUploadData(data, req.files)
+
+
 		data._modifyby = user_id
 		data._modifydate = (new Date()).toISOString()
 
@@ -615,6 +651,13 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 			const cmd =  sqlUtil.createUpdateCommand(tablename, data, ['<%= entity.pk %>'])
 			const ret = await cmd.execute(data)
 
+			// jika ada file yang diupload
+			if (files!=null) {
+				// handler file upload
+				// console.log(files)
+			}
+
+			
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated

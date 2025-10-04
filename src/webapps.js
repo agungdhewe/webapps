@@ -138,7 +138,9 @@ async function main(self, options) {
 
 	const session = await createSession({ redisUrl, sessionName, sessionSecret, sessionMaxAge, sessionDomain, sessionSecure, sessionHttpOnly })
 
+
 	router.use(uploader)
+
 	router.use(extendedRouter) // extended akan dipanggil dahulu, sehingga akan meng-override basicRouter
 	router.use(basicRouter)
 

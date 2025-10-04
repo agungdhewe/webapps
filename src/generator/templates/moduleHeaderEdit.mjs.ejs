@@ -121,6 +121,8 @@ export async function openSelectedData(self, params) {
 		const id = params.keyvalue
 		const data = await openData(self, id)
 
+		dataOpened(self, data)
+
 		CurrentState.currentOpenedId = id
 
 		const fn_iseditdisabled_name = '<%= modulePart %>_isEditDisabled'
@@ -311,6 +313,11 @@ async function setPrimaryKeyState(self, opt) {
 	}
 }
 
+
+async function dataOpened(self, data) {
+
+}
+
 async function btn_edit_click(self, evt) {
 	console.log('btn_edit_click')
 
@@ -452,6 +459,9 @@ async function btn_save_click(self, evt) {
 		console.log(`get data id ${idValue}`)
 		const data = await openData(self, idValue)
 		console.log('data', data)
+
+
+		dataOpened(self, data)
 
 		CurrentState.currentOpenedId = idValue
 

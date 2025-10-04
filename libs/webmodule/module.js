@@ -42,11 +42,18 @@ class Module {
 
 
 
-	static async apiCall(url, args) {
+	static async apiCall(url, args, formData) {
 		const inFrane = window.self !== window.top;
 		const api = new $fgta5.ApiEndpoint(url)
+
+
+		api.setHeader('appid', 'fgta')
+		api.setHeader('timestamp', 'timestamp')
+		api.setHeader('verifier', 'verifier')
+
+		
 		try {
-			const result = await api.execute(args)
+			const result = await api.execute(args, formData)
 			return result 
 		} catch (err) {
 			const currentUrl = window.location.href;
