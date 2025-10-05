@@ -41,42 +41,131 @@ class Module {
 	}
 
 
+	static async download(url, args) {
+		const method = 'POST'
+		const body = JSON.stringify(args)
+		const headers = {
+			'Content-Type': 'application/json'
+		}
+
+		// tambahkan informasi header
+		headers['appid'] = 'fgta'
+		headers['timestamp'] = 'timestamp'
+		headers['verifier'] = 'verifier'
+
+		try {
+			const response = await fetch(url, {method, headers, body})
+			if (!response.ok) {
+				const status = response.status
+				
+				let errorMessage
+				if (status==401) {
+					// belum login, hapus session login
+					sessionStorage.removeItem('login');
+					sessionStorage.removeItem('login_nexturl');
+					errorMessage = 'need authorization to download asset'
+				} else {
+					errorMessage = 'download fail'
+				}
+
+				const err = new Error(errorMessage)
+				err.status = status
+				err.code = response.code || 1
+				throw err
+			}
+
+			let filename = 'download'; // fallback
+			const disposition = response.headers.get('Content-Disposition');
+	
+			if (disposition && disposition.includes('filename=')) {
+				const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+				if (match != null && match[1]) {
+					filename = match[1].replace(/['"]/g, ''); // hapus tanda kutip
+				}
+			}
+
+			// Ambil file sebagai blob
+			const blob = await response.blob();
+
+
+			// Buat link download
+			const downloadUrl = URL.createObjectURL(blob)
+			const a = document.createElement('a')
+			a.setAttribute('target', '_blank')
+			a.href = downloadUrl
+			a.download = filename // atau nama file yang sesuai
+			document.body.appendChild(a)
+			a.click()
+			a.remove()
+			URL.revokeObjectURL(downloadUrl); // bersihkan URL blob
+
+		} catch (err) {
+			await this.processError(err)
+			// throw err	
+		}
+	}
+
 
 	static async apiCall(url, args, formData) {
 		const inFrane = window.self !== window.top;
 		const api = new $fgta5.ApiEndpoint(url)
 
-
 		api.setHeader('appid', 'fgta')
 		api.setHeader('timestamp', 'timestamp')
 		api.setHeader('verifier', 'verifier')
-
 		
 		try {
 			const result = await api.execute(args, formData)
 			return result 
 		} catch (err) {
-			const currentUrl = window.location.href;
-			if (err.status==401) {
-				console.error(err)
-				await $fgta5.MessageBox.error(err.message)
-				if (inFrane) {
-					window.parent.postMessage({
-						action:'REDIRECT_TO_LOGIN',
-						href: '/login',
-						nexturl: currentUrl
+			this.processError(err)
+			// const currentUrl = window.location.href;
+			// if (err.status==401) {
+			// 	console.error(err)
+			// 	await $fgta5.MessageBox.error(err.message)
+			// 	if (inFrane) {
+			// 		window.parent.postMessage({
+			// 			action:'REDIRECT_TO_LOGIN',
+			// 			href: '/login',
+			// 			nexturl: currentUrl
 
-					}, '*')
-				} else {
-					location.href = `/login?nexturl=${currentUrl}`
-				}
-				await this.sleep(10000)
-				throw err				
-			} else {
-				throw err
-			}
+			// 		}, '*')
+			// 	} else {
+			// 		location.href = `/login?nexturl=${currentUrl}`
+			// 	}
+			// 	await this.sleep(10000)
+			// 	throw err				
+			// } else {
+			// 	throw err
+			// }
 		}
 	}
+
+
+	static async processError(err) {
+		const inFrane = window.self !== window.top;
+		const currentUrl = window.location.href;
+		if (err.status==401) {
+			console.error(err)
+			await $fgta5.MessageBox.error(err.message)
+			if (inFrane) {
+				window.parent.postMessage({
+					action:'REDIRECT_TO_LOGIN',
+					href: '/login',
+					nexturl: currentUrl
+
+				}, '*')
+			} else {
+				location.href = `/login?nexturl=${currentUrl}`
+			}
+			await this.sleep(10000)
+			throw err				
+		} else {
+			throw err
+		}
+
+	}
+
 
 	static async loadTemplate(name) {
 		const tpl = document.querySelector(`template[name="${name}"]`)

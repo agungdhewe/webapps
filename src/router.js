@@ -11,6 +11,7 @@ import { defaultRootIndex } from './routers/defaultRootIndex.js'
 import { handleModuleNotfound } from './routers/handleModuleNotfound.js'
 import { handleError } from './routers/handleError.js'
 import { fileUploadApi } from './routers/fileUploadApi.js'
+import { publicDownloadHandler, privateDownloadHandler } from './routers/downloadHandler.js'
 import { defaultLoginPage } from './routers/defaultLoginPage.js'
 import { defaultLoginAsset } from './routers/defaultLoginAsset.js'
 import { defaultLoginApi } from './routers/defaultLoginApi.js'
@@ -40,19 +41,34 @@ export function uploader(req, res, next) {
 export function createBasicRouter() {
 	const router = ExpressServer.Router({ mergeParams: true });
 
+	// index
 	router.get('/', defaultRootIndex)
+	
+	
+	// upload
 	router.post('/upload', fileUploadApi)
 	
+	// download
+	router.get('/download', publicDownloadHandler)
+	router.post('/download', privateDownloadHandler)
+
+
+	// login
 	router.get('/login', defaultLoginPage)
 	router.get('/login/:requestedAsset', defaultLoginAsset)
 	router.post('/login/:method', defaultLoginApi)
 	
+	// generator
 	router.get('/generator', generatorPage)
 	router.get('/generator/:requestedAsset', generatorAsset)
 	router.post('/generator/:method', generatorApi)
 	
+	// modul
 	router.get('/:modulename', modulePage)
 	router.post('/:modulename/:method', moduleApi)
+
+
+
 
 	return router
 }
