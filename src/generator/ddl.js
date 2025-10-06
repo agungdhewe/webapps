@@ -99,7 +99,8 @@ export async function createTable(schema, tablename, tabledescr, pk) {
 			}
 
 		} else if (['char', 'varchar', 'text'].includes(datatype)) {
-			if (['auto-bigint', 'auto-bigint-always', 'auto-int', 'auto-int-always'].includes(identifierMethod)) {
+			//  manual, auto-by-default, auto-always, auto-yearly, auto-monthly, custom
+			if (['auto-by-default', 'auto-always'].includes(identifierMethod)) {
 				throw new Error(`identifier '${identifierMethod}' tidak bisa diterapkan untuk tipe data '${datatype}'`)
 			}
 

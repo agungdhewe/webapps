@@ -127,15 +127,17 @@ async function generate(id, data) {
 
 
 	try {
+
+		await checkEntitiy(context)
+		process.exit(0)
+
+
 		await prepareDirectory(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
 		const iconFileName = await createIcon(context, {overwrite:true})
 
-
 		await createProgramData(context, {iconFileName})
-
-
 	
 		await createTable(context, {overwrite:true})
 		await sleep(jedaWaktu)
@@ -294,32 +296,84 @@ async function directoryExists(path) {
 	}
 }
 
-// async function main(generator_id) {
-//   let t = 0;
- 
-//   let interval = setInterval(() => {
-//     t++;
-//     console.log(`progress of generate ${generator_id}: ${t}`)
+async function checkEntitiy(context) {
+	const apps = []
+	try {
+		const sql = "select * from core.apps"
+		const rows = await db.any(sql)
+		for (let row of rows) {
+			apps[row.apps_id] = row
+		}
+	} catch (err) {
+		throw err
+	}
 
-// 	// if (t==5) {
-// 	// 	throw new Error('ini error aja')
-// 	// }
+
+	for (let entityName in context.entities) {
+		const entity = context.entities[entityName]
+		const entity_table = entity.table
+		const entity_pk = entity.pk
+		const Items = entity.Items
+		
+		let pkExists = false	
+
+		for (let fieldName in Items) {
+			const item = Items[fieldName]
+			const component = item.component
+
+			// Cek Primary Key
+			if (fieldName==entity_pk) {
+				pkExists = true
+				if (!item.showInForm) {
+					throw new Error(`Primary key '${fieldName}' pada entity '${entityName}' harus di embed di form. Apabila ingin menyembunyakannya, gunakan 'hidden' di Container CSS `)
+				}
+			}
+
+			// Cek combobox
+			if (component=='Combobox') {
+				// cek apakah konfig udah bener
+				const reference = item.Reference
+				const table = reference.table.trim()
+				const pk = reference.pk.trim()
+				const bindingValue = reference.bindingValue.trim()
+				const bindingText = reference.bindingText.trim()
+				const loaderApiModule = reference.loaderApiModule.trim()
+				const loaderApiPath = reference.loaderApiPath.trim()
+
+				if(table=='') {
+					throw new Error(`table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
+				}
+
+				if(pk=='') {
+					throw new Error(`PK untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
+				}
+				
+				if(bindingValue=='') {
+					throw new Error(`binding value untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
+				}
+
+				if(bindingText=='') {
+					throw new Error(`binding value untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
+				}
+
+				if(loaderApiModule=='') {
+					throw new Error(`loader API Name untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
+				}
+
+				if (apps[loaderApiModule]==null) {
+					throw new Error(`loader API Name: '${loaderApiModule}' untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak valid. Cek di data apps`)
+				}
+
+				if(loaderApiPath=='') {
+					throw new Error(`loader API path untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
+				}
+			}
+		}
+
+		if (!pkExists) {
+			throw new Error(`Primary key pada entity '${entityName}' belum didefinisikan`)
+		}
 
 
-// 	if (t==20) {
-// 		parentPort.postMessage({
-// 			done: true,
-// 			result: 'abc bac'
-// 		})
-// 		clearInterval(interval)
-// 		interval = null
-// 	} else {
-// 		parentPort.postMessage({
-// 			done: false,
-// 			progress: t,
-// 			message: `generate ${generator_id}: ${t}`
-// 		})
-// 	}
-
-//   }, 1000);
-// }
+	}
+}

@@ -290,8 +290,8 @@ function AppGenIO_GetDef(self, PROG) {
 
 
 	PROG.id = obj_programid.value
-	PROG.appname = obj_appname.value
-	PROG.name = obj_programname.value
+	PROG.appname = obj_appname.value.toLowerCase()
+	PROG.name = obj_programname.value.toLowerCase()
 	PROG.title = obj_programtitle.value 
 	PROG.directory = obj_directory.value
 	PROG.description = obj_programdescription.value
@@ -326,12 +326,12 @@ function AppGenIO_GetEntities(self, PROG) {
 			let entity = AppGenIO_GetEntityData(self, entity_id)	
 			
 			if (!isValidName(entity.name)) {
-				throw new Error(`entity name '${entity.name}' is not valid`)
+				throw new Error(`entity name '${entity.name}' tidak valid`)
 			}
 
 			if (PROG.entities[entity.name]!==undefined) {
 				// sudah ada, entiti duplikasi
-				throw new Error(`entity ${entity.name} is duplicated`)
+				throw new Error(`entity ${entity.name} terduplikasi`)
 			}
 
 			PROG.entities[entity.name] = entity
@@ -401,7 +401,7 @@ function AppGenIO_GetEntityData(self, entity_id) {
 		let field = AppGenIO_GetFieldData(self, elfield)
 		if (entity.Items[field.name]!==undefined) {
 			elfield.classList.add('field-error')
-			throw new Error(`fieldname '${field.name}' duplicated!`)
+			throw new Error(`fieldname '${field.name}' terduplikasi!`)
 		}
 		entity.Items[field.name] = field
 	}
@@ -557,7 +557,7 @@ function AppGenIO_GetFieldData(self, el) {
 
 	if (!isValidName(field.data_fieldname)) {
 		el.classList.add('field-error')
-		throw new Error('Field Name is not valid')
+		throw new Error('Nama Field is not valid, gunakan huruf kecil, karakter special _ atau angka')
 	} 
 
 	return field

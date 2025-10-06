@@ -123,10 +123,17 @@ function createSearchMap(searchdata, items, tablename) {
 	// searchtext: `user_fullname ILIKE '%' || \${searchtext} || '%' OR user_id=try_cast_bigint(\${searchtext}, 0)`,
 	// searchgroup: `group_id = \${searchgroup}`,
 	// user_isdisabled: `user_isdisabled = \${user_isdisabled}`
+	
+	let searchtextExists = false
 	const searchMap = []
 	for (let searchname in searchdata) {
 		const search = searchdata[searchname]
 		const searchfield = parseSearchField(search.fields)
+
+		// harus ada 1 criteria searchtext
+		if (searchname=='searchtext') {
+			searchtextExists = true
+		}
 		
 		// cek tipe data dari masing-masing search field
 		const params = []
@@ -161,6 +168,11 @@ function createSearchMap(searchdata, items, tablename) {
 			data: searchcriteria
 		})
 	}
+
+	if (!searchtextExists) {
+		throw new Error(`search criteria untuk 'searchtext' belum dibuat`)
+	}
+
 	return searchMap
 }
 

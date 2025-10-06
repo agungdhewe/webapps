@@ -24,7 +24,7 @@ export async function createIcon(context, options) {
 		const base64 = getBase64data(rawData, ext)
 
 		if (base64==null) {
-			throw new Error('data icon not supported')
+			throw new Error('data icon tidak di support, gunakan svg atau png')
 		}
 
 		const svgBuffer = Buffer.from(base64, 'base64');
