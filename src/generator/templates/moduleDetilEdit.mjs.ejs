@@ -122,7 +122,8 @@ export async function openSelectedData(self, params) {
 		const id = params.keyvalue
 		const data = await openData(self, id)
 
-		dataOpened(self, data)
+		<% if (detilHasUpload) { %>
+		dataOpened(self, data)<% } %>
 
 		CurrentState.currentOpenedId = id
 		
@@ -165,11 +166,13 @@ export function clearForm(self, text) {
 export function headerLocked(self) {
 	CurrentState.headerFormLocked = true
 	CurrentState.editDisabled = true
+	btn_new.disabled = true
 }
 
 export function headerUnlocked(self) {
 	CurrentState.headerFormLocked = false
 	CurrentState.editDisabled = false
+	btn_new.disabled = false
 }
 
 export function disableNextButton(self, disabled=true) {
@@ -183,7 +186,11 @@ export function disablePrevButton(self, disabled=true) {
 
 async function newData(self, datainit) {
 	try {
-		frm.newData(datainit)
+		<% if (detilHasUpload) { %>
+		<% uploadFields.forEach(uploadfield => { %>
+		<%= uploadfield.inputname %>.setDownloadLink(null)
+		
+		<% }) %><% } %>frm.newData(datainit)
 		frm.acceptChanges()
 		frm.setAsNewData()
 	} catch (err) {
@@ -202,20 +209,20 @@ async function openData(self, id) {
 	} 	
 }
 
-async function createData(self, data) {
+async function createData(self, data, formData) {
 	const url = `/${Context.moduleName}/<%= sectionName %>-create`
 	try {
-		const result = await Module.apiCall(url, { data, source: Source }) 
+		const result = await Module.apiCall(url, { data, source: Source }, formData) 
 		return result 
 	} catch (err) {
 		throw err	
 	} 	
 }
 
-async function updateData(self, data) {
+async function updateData(self, data, formData) {
 	const url = `/${Context.moduleName}/<%= sectionName %>-update`
 	try {
-		const result = await Module.apiCall(url, { data, source: Source }) 
+		const result = await Module.apiCall(url, { data, source: Source }, formData) 
 		return result 
 	} catch (err) {
 		throw err	
@@ -318,6 +325,36 @@ async function setPrimaryKeyState(self, opt) {
 	}
 }
 
+<% if (detilHasUpload) { %>
+async function downloadFile(self, objectname, filename) {
+	console.log(`downloading ${filename}`)
+	const url = `/download`
+	try {
+		const param = {
+			bucketname: Context.moduleName,
+			objectname: objectname
+		}
+		await Module.download(url, param) 
+	} catch (err) {
+		console.error(err)
+		await $fgta5.MessageBox.error(err.message)
+	}
+}
+
+async function dataOpened(self, data) {
+	const docid = data.<%= headerPrimaryKey %>
+	const rowid = data.<%= detilPrimaryKey %>
+
+	<% uploadFields.forEach(uploadfield => { %>
+	<%= uploadfield.inputname %>.setDownloadLink(data.<%= uploadfield.fieldname %>, async ()=>{
+		const filename = data.<%= uploadfield.fieldname %>
+		const objectname = `${docid}/<%= entityName %>/${rowid}-<%= uploadfield.fieldname %>`
+		await downloadFile(self, objectname, filename)
+	})
+	<% }) %>	
+}
+<% } %>
+
 async function btn_edit_click(self, evt) {
 	console.log('btn_edit_click')
 
@@ -333,9 +370,6 @@ async function btn_edit_click(self, evt) {
 	}
 }
 
-async function dataOpened(self, data) {
-
-}
 
 async function btn_new_click(self, evt) {
 	console.log('new')
@@ -447,6 +481,18 @@ async function btn_save_click(self, evt) {
 		dataToSave = frm.getData()		
 	}
 
+	
+	// bila ada file, upload filenya
+	let formData = null
+	const files = frm.getFiles()
+	if (files!=null) {
+		formData = new FormData();
+		for (let name in files) {
+			const file = files[name]
+			formData.append(name, file)
+		}
+	}
+
 
 	// Extender Saving
 	const fn_datasaving_name = '<%= modulePart %>_dataSaving'
@@ -462,9 +508,9 @@ async function btn_save_click(self, evt) {
 		let result
 
 		if (isNewData) {
-			result = await createData(self, dataToSave)
+			result = await createData(self, dataToSave, formData)
 		} else {
- 			result = await updateData(self, dataToSave)
+ 			result = await updateData(self, dataToSave, formData)
 		}
 
 		console.log('result', result)
@@ -476,8 +522,8 @@ async function btn_save_click(self, evt) {
 		const data = await openData(self, idValue)
 		console.log('data', data)
 
-
-		dataOpened(self, data)
+		<% if (detilHasUpload) { %>
+		dataOpened(self, data)<% } %>
 
 		CurrentState.currentOpenedId = idValue
 

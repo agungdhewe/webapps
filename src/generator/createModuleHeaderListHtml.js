@@ -104,6 +104,7 @@ export async function createModuleHeaderListHtml(context, options) {
 			}
 
 			const variables = {
+				timeGenerated: context.timeGenerated,
 				title: title,
 				moduleName: moduleName,
 				modulePart: modulePart,

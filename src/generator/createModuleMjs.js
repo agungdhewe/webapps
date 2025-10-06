@@ -34,6 +34,7 @@ export async function createModuleMjs(context, options) {
 		}
 
 		const variables = {
+			timeGenerated: context.timeGenerated,
 			title: title,
 			moduleName: moduleName,
 			sections: sections

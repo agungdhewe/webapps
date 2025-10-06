@@ -6,7 +6,8 @@ import sqlUtil from '@agung_dhewe/pgsqlc'
 import context from '@agung_dhewe/webapps/src/context.js'  
 import logger from '@agung_dhewe/webapps/src/logger.js'<% if (usesequencer) { %>
 import { createSequencerDocument } from '@agung_dhewe/webapps/src/sequencerdoc.js' <% } %><% if (usesequencerline) { %>
-import { createSequencerLine } from '@agung_dhewe/webapps/src/sequencerline.js' <% } %>
+import { createSequencerLine } from '@agung_dhewe/webapps/src/sequencerline.js' <% } %><% if (importbucket) { %>
+import bucket from '@agung_dhewe/webapps/src/bucket.js'	<% } %>
 
 import * as Extender from './extenders/<%= moduleName %>.apiext.js'
 
@@ -97,8 +98,47 @@ async function <%= moduleName %>_log(self, body, startTime, tablename, id, actio
 	return ret
 }
 
+<% if (importbucket) { %>
+async function <%= moduleName %>_upload(self, data, files, detilName, id, fn_uploadSuccess) {
+	const bucketname = '<%= moduleName %>'
+	const docid = data.<%= headerPrimaryKey %>
+	
+	const uploads = files.map(async (file) => {
+		const fieldname = file.fieldname
+		const objectname = detilName=='header' ? `${docid}/${fieldname}` : `${docid}/${detilName}/${id}-${fieldname}`
+		
+		const metaData = {
+			'Content-Type': file.mimetype,
+			'X-Amz-Meta-document_id': docid,
+			'X-Amz-Meta-fieldname': fieldname,
+			'X-Amz-Meta-originalname': file.originalname,
+		};
+
+		if (detilName!='header') {
+			metaData['X-Amz-Meta-document-rowid'] = id
+		}
 
 
+		// simpan di bucket
+		await bucket.putObject(bucketname, objectname, file.buffer, metaData);
+
+		// catat di log
+		if (typeof fn_uploadSuccess==='function') {
+			fn_uploadSuccess({
+				originalname: file.originalname,
+				mimetype: file.fieldname,
+				size: file.size,
+				bucketname,
+				objectname
+			})
+		}
+		return {fieldname, objectname};
+	});
+
+	const uploadedFiles = await Promise.all(uploads);
+	return uploadedFiles
+}
+<% } %>
 
 async function <%= moduleName %>_headerList(self, body) {
 	const tablename = headerTableName
@@ -224,7 +264,7 @@ async function <%= moduleName %>_headerOpen(self, body) {
 
 
 async function <%= moduleName %>_headerCreate(self, body) {
-	const { source, data } = body
+	const { source='<%= moduleName %>', data={} } = body
 	const req = self.req
 	const user_id = req.session.user.userId
 	const startTime = process.hrtime.bigint();
@@ -292,13 +332,14 @@ async function <%= moduleName %>_headerCreate(self, body) {
 		    } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } %>
 			const ret = await cmd.execute(data)
 
-			// jika ada file yang diupload
+			<% if (headerHasUpload) { %>
+			// jika ada file yang diupload di header
 			if (files!=null) {
-				// handler file upload
-				// console.log(files)
+				<%= moduleName %>_upload(self, ret, files, 'header', ret.<%= headerPrimaryKey %>,  (result)=>{
+					<%= moduleName %>_log(self, body, startTime, tablename, ret.<%= headerPrimaryKey %>, 'UPLOAD FILE', result, `${result.originalname}`)
+				})
 			}
-
-
+			<% } %>
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
@@ -319,7 +360,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 }
 
 async function <%= moduleName %>_headerUpdate(self, body) {
-	const { source, data } = body
+	const { source='<%= moduleName %>', data={} } = body
 	const req = self.req
 	const user_id = req.session.user.userId
 	const startTime = process.hrtime.bigint()
@@ -347,13 +388,14 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 			const cmd = sqlUtil.createUpdateCommand(tablename, data, ['<%= headerPrimaryKey %>'])
 			const ret = await cmd.execute(data)
 
-			// jika ada file yang diupload
+			<% if (headerHasUpload) { %>
+			// jika ada file yang diupload di header
 			if (files!=null) {
-				// handler file upload
-				// console.log(files)
+				<%= moduleName %>_upload(self, ret, files, 'header', ret.<%= headerPrimaryKey %>,  (result)=>{
+					<%= moduleName %>_log(self, body, startTime, tablename, ret.<%= headerPrimaryKey %>, 'UPLOAD FILE', result, `${result.originalname}`)
+				})
 			}
-
-
+			<% } %>
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
@@ -567,7 +609,7 @@ async function <%= moduleName %>_<%= entity.name %>Open(self, body) {
 }
 
 async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
-	const { source, data } = body
+	const { source='<%= moduleName %>', data={} } = body
 	const req = self.req
 	const user_id = req.session.user.userId
 	const startTime = process.hrtime.bigint();
@@ -596,14 +638,14 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 
 			const cmd = sqlUtil.createInsertCommand(tablename, data)
 			const ret = await cmd.execute(data)
-
-			// jika ada file yang diupload
+			<% if (entity.detilHasUpload) { %>
+			// jika ada file yang diupload di <%= entity.name %>
 			if (files!=null) {
-				// handler file upload
-				// console.log(files)
+				<%= moduleName %>_upload(self, ret, files, '<%= entity.name %>', ret.<%= entity.pk %>,  (result)=>{
+					<%= moduleName %>_log(self, body, startTime, tablename, ret.<%= entity.pk %>, 'UPLOAD FILE', result, `${result.originalname}`)
+				})
 			}
-
-
+			<% } %>
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
@@ -624,7 +666,7 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 }
 
 async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
-	const { source, data } = body
+	const { source='<%= moduleName %>', data={} } = body
 	const req = self.req
 	const user_id = req.session.user.userId
 	const startTime = process.hrtime.bigint()
@@ -650,14 +692,14 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 			
 			const cmd =  sqlUtil.createUpdateCommand(tablename, data, ['<%= entity.pk %>'])
 			const ret = await cmd.execute(data)
-
-			// jika ada file yang diupload
+			<% if (entity.detilHasUpload) { %>
+			// jika ada file yang diupload di <%= entity.name %>
 			if (files!=null) {
-				// handler file upload
-				// console.log(files)
+				<%= moduleName %>_upload(self, ret, files, '<%= entity.name %>', ret.<%= entity.pk %>,  (result)=>{
+					<%= moduleName %>_log(self, body, startTime, tablename, ret.<%= entity.pk %>, 'UPLOAD FILE', result, `${result.originalname}`)
+				})
 			}
-
-			
+			<% } %>
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated

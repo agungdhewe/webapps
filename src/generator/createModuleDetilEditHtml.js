@@ -79,6 +79,7 @@ export async function createModuleDetilEditHtml(context, options) {
 
 
 			const variables = {
+				timeGenerated: context.timeGenerated,
 				title: title,
 				moduleName: moduleName,
 				modulePart: modulePart,

@@ -12,6 +12,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 	const moduleName = context.moduleName
 	const title = context.title
 	const sectionPart = 'edit'
+	const timeGenerated = context.timeGenerated
 
 	try {
 
@@ -63,10 +64,13 @@ export async function createModuleHeaderEditMjs(context, options) {
 			// start geneate program code
 			
 			const tablename = entityData.table
+			const headerPrimaryKey = entityData.pk
 
 			const fields = []
 			const fieldHandles = []
 			const defaultInits = []
+			const uploadFields = []
+			let headerHasUpload = false
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
 
@@ -80,6 +84,16 @@ export async function createModuleHeaderEditMjs(context, options) {
 				const inputname = item.input_name
 				const elementId = `${modulePart}-${item.input_name}`
 
+
+				if (component=='Filebox') {
+					headerHasUpload = true
+					uploadFields.push({
+						elementId,
+						fieldname,
+						inputname
+					})
+
+				}
 
 				// setup handles
 				const handles = []
@@ -143,6 +157,8 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 
 			const variables = {
+				timeGenerated,
+				moduleDescription: context.descr,
 				title,
 				tablename,
 				modulePart,
@@ -152,7 +168,10 @@ export async function createModuleHeaderEditMjs(context, options) {
 				fields,
 				fieldHandles,
 				defaultInits,
-				entitiesDetil
+				headerPrimaryKey,
+				headerHasUpload,
+				entitiesDetil,
+				uploadFields
 			}
 
 			

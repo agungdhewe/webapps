@@ -28,6 +28,7 @@ export async function createInfoAboutExtender(context, options) {
 		// start geneate program code		
 		const variables = {
 			moduleName: moduleName
+
 		}
 		
 		const tplFilePath = path.join(__dirname, 'templates', 'module-ext-about.ejs')

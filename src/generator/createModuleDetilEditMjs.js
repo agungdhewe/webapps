@@ -48,6 +48,8 @@ export async function createModuleDetilEditMjs(context, options) {
 			const fields = []
 			const fieldHandles = []
 			const defaultInits = []
+			const uploadFields = []
+			let detilHasUpload = false
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
 
@@ -61,6 +63,15 @@ export async function createModuleDetilEditMjs(context, options) {
 				const inputname = item.input_name
 				const elementId = `${modulePart}-${item.input_name}`
 
+
+				if (component=='Filebox') {
+					detilHasUpload = true
+					uploadFields.push({
+						elementId,
+						fieldname,
+						inputname
+					})
+				}				
 
 				// setup handles
 				const handles = []
@@ -117,21 +128,29 @@ export async function createModuleDetilEditMjs(context, options) {
 					inputname,
 					elementId
 				})
-			}			
+			}	
+			
+			
+			const detilPrimaryKey = entityData.pk
 
 
 			const variables = {
+				timeGenerated: context.timeGenerated,
 				title,
 				tablename,
 				modulePart,
 				moduleName,
 				sectionName,
+				entityName,
 				headerPrimaryKey,
+				detilPrimaryKey,
 				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
 				moduleList: kebabToCamel(`${moduleName}-${sectionName}-list`),
 				fields,
 				fieldHandles,
 				defaultInits,
+				detilHasUpload,
+				uploadFields
 			}
 
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilEdit.mjs.ejs')

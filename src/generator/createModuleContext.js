@@ -32,6 +32,7 @@ export async function createModuleContext(context, options) {
 		}
 
 		const variables = {
+			timeGenerated: context.timeGenerated,
 			moduleName: moduleName,
 			sections: sections
 		}

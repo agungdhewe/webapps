@@ -49,6 +49,7 @@ export async function createModuleDetilListMjs(context, options) {
 
 
 			const variables = {
+				timeGenerated: context.timeGenerated,
 				title,
 				modulePart,
 				moduleName,

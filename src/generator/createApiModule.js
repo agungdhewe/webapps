@@ -36,9 +36,21 @@ export async function createApiModule(context, options) {
 		const identifierPrefix = entityHeader.identifierPrefix
 		const identifierBlock = entityHeader.identifierBlock
 		const identifierLength = entityHeader.identifierLength
-
 		const headerFieldsLookup = createLookup(entityHeader.Items)
 	
+		// cek apakah di header ada file upload
+		let importbucket = false
+		let headerHasUpload = false
+		for (var fieldName in entityHeader.Items) {
+			const item = entityHeader.Items[fieldName]
+			const component = item.component
+			if (component=='Filebox') {
+				headerHasUpload = true
+				importbucket = true
+			}
+		}
+
+
 
 		// get detil information
 		const entitiesDetil = []
@@ -48,11 +60,22 @@ export async function createApiModule(context, options) {
 			}
 
 			const entity = context.entities[entityName]
-			
+
+			let detilHasUpload
+			for (var fieldName in entity.Items) {
+				const item = entity.Items[fieldName]
+				const component = item.component
+				if (component=='Filebox') {
+					detilHasUpload = true
+					importbucket = true
+				}
+			}
+
 			const e = {
 				name: entityName,
 				table: entity.table,
 				pk: entity.pk,
+				detilHasUpload: detilHasUpload,
 				fieldsLookup: createLookup(entity.Items)
 			}
 			entitiesDetil.push(e)
@@ -64,6 +87,7 @@ export async function createApiModule(context, options) {
 
 
 		const variables = {
+			timeGenerated: context.timeGenerated,
 			title: title,
 			moduleName: moduleName,
 			autoid,
@@ -77,6 +101,8 @@ export async function createApiModule(context, options) {
 			headerPrimaryKey,
 			headerSearchMap,
 			headerFieldsLookup,
+			headerHasUpload,
+			importbucket,
 			entitiesDetil
 		}
 		

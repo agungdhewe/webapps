@@ -158,8 +158,39 @@ async function main(self, options) {
 		path.join(__rootDirectory, 'public', 'modules')
 	]);
 
+	// setup cors
+	if (options.allowedOrigins!=null) {
+		const allowedOrigins = options.allowedOrigins
+		app.use(cors({
+			origin: function (origin, callback) {
+				if (!origin) return callback(null, true); // untuk server-side atau curl
+				const isAllowed = allowedOrigins.some(o => {
+					if (typeof o === 'string') return o === origin;
+					if (o instanceof RegExp) return o.test(origin);
+					return false;
+				});
+
+				if (isAllowed) {
+					callback(null, true);
+				} else {
+					callback(new Error('Not allowed by CORS'));
+				}
+			},
+
+			// methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+			// allowedHeaders: ['Content-Type', 'Authorization'],
+			// credentials: true
+		}));
+
+
+
+	} else {
+		app.use(cors());
+	}
+
+
+
 	// setup middleware
-	app.use(cors());
 	app.use(favicon(path.join(__rootDirectory, 'public', 'favicon.ico')));
 	app.use(ExpressServer.json());
 	app.use(ExpressServer.urlencoded({ extended: true }));

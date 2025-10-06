@@ -44,6 +44,7 @@ export async function createModuleHeaderListMjs(context, options) {
 			const sectionData = getSectionData(moduleName, entityName, entityData, 'list')
 
 			const variables = {
+				timeGenerated: context.timeGenerated,
 				title: title,
 				modulePart: modulePart,
 				moduleName: moduleName,

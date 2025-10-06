@@ -100,6 +100,7 @@ export async function createModuleDetilListHtml(context, options) {
 
 
 			const variables = {
+				timeGenerated: context.timeGenerated,
 				title: title,
 				moduleName: moduleName,
 				modulePart: modulePart,

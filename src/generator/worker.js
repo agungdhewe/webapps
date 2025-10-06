@@ -72,6 +72,19 @@ async function sleep(s) {
 
 async function generate(id, data) {
 
+	const now = new Date();
+
+	const options = {
+		day: 'numeric',
+		month: 'short',
+		year: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	};
+
+	const formattedTime = now.toLocaleString('en-GB', options).replace(',', '');
+
 
 	const context = {
 		id:id,
@@ -85,6 +98,7 @@ async function generate(id, data) {
 		moduleName: data.name,
 		entities: data.entities,
 		icon: data.icon,
+		timeGenerated: formattedTime,
 		postMessage: (info) => {
 			parentPort.postMessage(info)
 		}

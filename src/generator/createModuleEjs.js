@@ -33,6 +33,7 @@ export async function createModuleEjs(context, options) {
 		}
 
 		const variables = {
+			timeGenerated: context.timeGenerated,
 			moduleName: moduleName,
 			sections: sections,
 

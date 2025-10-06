@@ -27,6 +27,7 @@ export async function createModuleExtenderMjs(context, options) {
 
 		// start geneate program code		
 		const variables = {
+			timeGenerated: context.timeGenerated,
 			moduleName: moduleName,
 		}
 
