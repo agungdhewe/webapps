@@ -119,25 +119,7 @@ class Module {
 			return result 
 		} catch (err) {
 			this.processError(err)
-			// const currentUrl = window.location.href;
-			// if (err.status==401) {
-			// 	console.error(err)
-			// 	await $fgta5.MessageBox.error(err.message)
-			// 	if (inFrane) {
-			// 		window.parent.postMessage({
-			// 			action:'REDIRECT_TO_LOGIN',
-			// 			href: '/login',
-			// 			nexturl: currentUrl
-
-			// 		}, '*')
-			// 	} else {
-			// 		location.href = `/login?nexturl=${currentUrl}`
-			// 	}
-			// 	await this.sleep(10000)
-			// 	throw err				
-			// } else {
-			// 	throw err
-			// }
+			throw err
 		}
 	}
 

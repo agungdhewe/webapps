@@ -10,5 +10,9 @@ export default {
 	Sections: {
 		generatorList: 'generatorList-section',
 		generatorEdit: 'generatorEdit-section'
+	},
+	SectionMap: {
+		'generatorList-section' : 'generatorList',
+		'generatorEdit-section' : 'generatorEdit'
 	}
 }

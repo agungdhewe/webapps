@@ -62,6 +62,15 @@ export async function openSelectedData(self, params) {
 }
 
 
+export function keyboardAction(self, actionName) {
+	if (actionName=='save') {
+		btn_save.click()
+	} else if (actionName=='escape') {
+		const listSection = Crsl.Items[Context.Sections.generatorList]
+		listSection.show({direction:1})
+	}
+}
+
 async function openData(self, id) {
 	const apiOpen = new $fgta5.ApiEndpoint(`/${Context.moduleName}/open`)
 	try {

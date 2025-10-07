@@ -67,6 +67,18 @@ export async function render(self) {
 	console.log('generatorList render')
 }
 
+export function keyboardAction(self, actionName) {
+	if (actionName=='up') {
+		tbl.previousRecord()
+	} else if (actionName=='down') {
+		tbl.nextRecord()
+	} else if (actionName=='enter') {
+		const generatorEdit = self.Modules.generatorEdit
+		generatorEdit.Section.show({}, (evt)=>{
+			openRow(self, tbl.CurrentRow)
+		})		
+	}
+}
 
 export async function loadData(self) {
 	await tbl.clear()

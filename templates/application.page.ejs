@@ -116,7 +116,11 @@
 				} catch (err) {
 					console.error(err)
 					const mainapp = document.getElementById('mainapp')
-					mainapp.innerHTML = '<div><h1 style="color:red">Module Error</h1><div>' + err.message + '</div></div>'
+					if (err.status==401) {
+						mainapp.innerHTML = '<div><h1 style="color:red">Need Authentication Access</h1><div>' + err.message + '</div></div>'
+					} else {
+						mainapp.innerHTML = '<div><h1 style="color:red">Module Error</h1><div>' + err.message + '</div></div>'
+					}
 				} finally {
 					removeLoadingIndicator()
 				}
