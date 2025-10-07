@@ -374,11 +374,11 @@ function AppGenIO_GetEntityData(self, entity_id) {
 
 
 
-	entity.name = elName.innerHTML
+	entity.name = elName.innerHTML.toLowerCase()
 	entity.isheader = entity.name=='header' ? true : false;
 	entity.title = elTitle.innerHTML
-	entity.table = elTable.innerHTML
-	entity.pk = elPK.innerHTML
+	entity.table = elTable.innerHTML.toLowerCase()
+	entity.pk = elPK.innerHTML.toLowerCase()
 	entity.descr = elInputDescr.value
 	entity.allowRowAdd = elChkRowAdd.checked ? true : false
 	entity.allowRowRemove = elChkRowRemove.checked ? true : false
@@ -458,7 +458,7 @@ function AppGenIO_GetFieldData(self, el) {
 	
 	field.component = el.getAttribute(ATTR_COMPNAME)
 	field.data_fieldname = getValueFrom(el, 'input[name="fieldname"]', 'value')
-	field.name = field.data_fieldname
+	field.name = field.data_fieldname.toLowerCase()
 
 	// ambil type variable
 	var sel_datatyle = el.querySelector('select[name="datatype"]')

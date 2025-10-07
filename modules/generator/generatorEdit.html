@@ -6,7 +6,7 @@
 * -->
 <div id="appgen-datadesign-layout">
 	<div id="layout-definition">
-		<div class="subtitle" style="grid-column: span 3;">Program Definition</div>
+		<div class="subtitle" style="grid-column: span 3;">Module Definition</div>
 		
 		<label for="obj_programid">ID</label>
 		<input type="text" id="obj_programid" placeholder="[auto-id]"  disabled>
@@ -170,13 +170,14 @@
 	<div></div>
 	<div>
 		<button id="generatorEdit-btn_save">Save</button>
+		
 		<button id="generatorEdit-btn_new" data-action="generator-new">New</button>
 
-		<button id="btnAppGenLoad">
+		<button id="btnAppGenLoad" class="hidden">
 			Import<input id="input-file" type="file" style="display: none;">
 		</button>
 
-		<button id="btnAppGenSave">Export</button>
+		<button id="btnAppGenSave" class="hidden">Export</button>
 
 		<button id="generatorEdit-btn_generate">Generate</button>
 	</div>

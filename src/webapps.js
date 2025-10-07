@@ -176,14 +176,10 @@ async function main(self, options) {
 					callback(new Error('Not allowed by CORS'));
 				}
 			},
-
 			// methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 			// allowedHeaders: ['Content-Type', 'Authorization'],
 			// credentials: true
 		}));
-
-
-
 	} else {
 		app.use(cors());
 	}
@@ -197,12 +193,11 @@ async function main(self, options) {
 	app.use(session);
 
 
-	// Routing /public  untuk serve halaman-halaman static
-	
-	
+	// framework ini menggunakan library fgta5 untuk ui di client
 	app.use('/public/libs/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'libs', 'fgta5js')));
 	app.use('/public/libs/webmodule', ExpressServer.static(path.join(__dirname, '..', 'libs', 'webmodule')));
 	
+	// Routing /public  untuk serve halaman-halaman static
 	app.use('/public', rejectEjsFiles);
 	app.use('/public', ExpressServer.static(path.join(__rootDirectory, 'public')));
 	app.use('/', router)

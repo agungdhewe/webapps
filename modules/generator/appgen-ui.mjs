@@ -112,8 +112,9 @@ export default class AppGenUI {
 		await AppGenLayout_NewData(this)
 	}
 
-	async Init() {
-		await AppGenLayout_Render(this)
+	async Init(context) {
+		this.Context = context
+		await AppGenLayout_Render(this, context)
 		AppGenLayout_NewData(this)
 	}
 
@@ -145,7 +146,7 @@ export default class AppGenUI {
 
 
 
-async function AppGenLayout_Render(self) {
+async function AppGenLayout_Render(self, context) {
 	ME.IconButton = document.getElementById('upload-icon') 
 	ME.ComponentList = document.getElementById('crud-component-list')
 	ME.DesignTemplate = document.getElementById('DESIGNTEMPLATE')
@@ -167,6 +168,9 @@ async function AppGenLayout_Render(self) {
 	AppGenLayout_setUniqueME(ME)
 	AppGenLayout_setSearchME(ME)
 	
+	console.log(context.appsUrls)
+
+
 	IO.Setup({
 		AddEntity: (data) => {
 			AppGenLayout_AddEntity(self, data)

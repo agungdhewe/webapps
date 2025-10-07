@@ -45,14 +45,15 @@ async function generator_init(self, body) {
 
 	try {
 		// ambil data app dari database
-		const sql = 'select apps_id, apps_url, apps_directory from core."apps"'
+		const sql = 'select apps_id, apps_url, apps_name, apps_directory from core."apps"'
 		const result = await db.any(sql)
 
 		const appsUrls = {}
 		for (let row of result) {
 			appsUrls[row.apps_id] = {
 				url: row.apps_url,
-				directory: row.apps_directory
+				directory: row.apps_directory,
+				name: row.apps_name
 			}
 		}
 
@@ -91,8 +92,14 @@ async function generator_list(self, body) {
 			}
 		}
 
+		// const orderby =  {
+		// 	_modifydate: 'desc',
+		// 	...sort
+		// }
 
-		var max_rows = limit==0 ? 10 : limit
+		sort._modifydate = 'desc'
+
+		var max_rows = limit==0 ? 50 : limit
 		const tablename = 'core."generator"'
 		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
 		const sql = sqlUtil.createSqlSelect({tablename, columns, whereClause, sort, limit:max_rows+1, offset, queryParams})

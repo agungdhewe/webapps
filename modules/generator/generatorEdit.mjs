@@ -33,7 +33,7 @@ export async function init(self, args) {
 
 	obj_appname.addEventListener('change', (evt)=>{ obj_appname_change(self, evt) })
 
-	await ui.Init()
+	await ui.Init(Context)
 
 	ui.pauseAutoSave(true)
 

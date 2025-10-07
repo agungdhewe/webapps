@@ -4,6 +4,8 @@
 	padding: 5px 10px 5px 10px;
 }
 
+
+#obj_appname,
 input[type="text"],
 input[type="number"]
 {
@@ -239,9 +241,9 @@ button:hover {
 .designer-info div[name="col_title"] {
 	grid-column: span 2;
 	border: 0;
-	margin-bottom: 5px;
+	margin-bottom: 25px;
 	font-weight: bold;
-	font-size: .9rem;
+	font-size: 2.5rem;
 }
 
 .designer-info [data-tag="label"] {
@@ -392,6 +394,12 @@ button:hover {
 	margin-left: 0;
 } 
 
+
+.design-data-field input[type="text"][name="fieldname"] {
+	background-color: #fcffd1;
+	text-transform: lowercase;
+
+}
 
 .design-data-field input[type="text"] {
 	width: calc(100% - 10px);

@@ -129,12 +129,14 @@ async function generate(id, data) {
 	try {
 
 		await checkEntitiy(context)
-		process.exit(0)
+		// process.exit(0)
 
 
 		await prepareDirectory(context, {overwrite:true})
 		await sleep(jedaWaktu)
 
+
+		
 		const iconFileName = await createIcon(context, {overwrite:true})
 
 		await createProgramData(context, {iconFileName})
@@ -308,6 +310,14 @@ async function checkEntitiy(context) {
 		throw err
 	}
 
+
+	// cek appname
+	if (apps[context.appname]==null) {
+		throw new Error(`App Name: '${context.appname}' tidak valid. Cek di data apps`)
+	}
+
+
+	// process.exit(1)
 
 	for (let entityName in context.entities) {
 		const entity = context.entities[entityName]
