@@ -77,6 +77,8 @@ async function render(self) {
 		const footerButtonsContainer =  document.getElementsByClassName('footer-buttons-container')
 		Module.renderFooterButtons(footerButtonsContainer)
 	
+		Crsl.setIconUrl('/generator/generator.png')
+
 		Crsl.addEventListener($fgta5.SectionCarousell.EVT_SECTIONSHOWING, (evt)=>{
 			var sectionId = evt.detail.commingSection.Id
 			for (let cont of footerButtonsContainer) {

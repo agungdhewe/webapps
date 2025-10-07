@@ -161,7 +161,7 @@ async function generate(id, data) {
 		await sleep(jedaWaktu)
 
 		
-		await createModuleMjs(context, {overwrite:true})
+		await createModuleMjs(context, {overwrite:true, iconFileName})
 		await sleep(jedaWaktu)
 
 

@@ -9,5 +9,8 @@ export default {
 	Crsl: Crsl,
 	Sections: { <% sections.forEach(section => { %>
 		<%= section.sectionName %>: '<%= section.sectionElementId %>', <% }) %>
+	},
+	SectionMap: { <% sections.forEach(section => { %>
+		'<%= section.sectionElementId %>' : '<%= section.sectionName %>', <% }) %>
 	}
 }

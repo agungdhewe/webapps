@@ -159,6 +159,17 @@ export function headerUnlocked(self) {
 }
 
 
+export function keyboardAction(self, actionName) {
+	if (actionName=='up') {
+		tbl.previousRecord()
+	} else if (actionName=='down') {
+		tbl.nextRecord()
+	} else if (actionName=='enter') {
+		console.log('open record')
+	}
+}
+
+
 function setCurrentRow(self, tr) {
 	CurrentState.SelectedRow = tr
 }

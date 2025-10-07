@@ -171,6 +171,25 @@ export function disablePrevButton(self, disabled=true) {
 	btn_prev.disabled = disabled
 }
 
+export function keyboardAction(self, actionName) {
+	if (actionName=='save') {
+		btn_save.click()
+	} else if (actionName=='escape') {
+		if (frm.isLocked()) {
+			backToList(self)
+		} else {
+			btn_edit.click() // untuk lock data
+		}
+	} else if (actionName=='togleEdit') {
+		btn_edit.click()
+	} else if (actionName=='right') {
+		btn_next.click()
+	} else if (actionName=='left') {
+		btn_prev.click()
+	}
+}
+
+
 async function newData(self, datainit) {
 	try {
 		<% if (headerHasUpload) { %>

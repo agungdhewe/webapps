@@ -12,6 +12,7 @@ export async function createModuleMjs(context, options) {
 	const moduleName = context.moduleName
 	const title = context.title
 	const targetFile = path.join(context.moduleDir, `${moduleName}.mjs`)
+	const iconUrl = context.icon=='' ? '' : `public/modules/${moduleName}/${options.iconFileName}`
 
 	try {
 		// cek dulu apakah file ada
@@ -33,10 +34,13 @@ export async function createModuleMjs(context, options) {
 			sections.push(getSectionData(moduleName, entityName, context.entities[entityName], 'edit'))
 		}
 
+		
+
 		const variables = {
 			timeGenerated: context.timeGenerated,
 			title: title,
 			moduleName: moduleName,
+			iconUrl,
 			sections: sections
 		}
 		

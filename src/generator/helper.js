@@ -23,7 +23,11 @@ export async function isFileExist(filepath) {
 
 export function getSectionData(moduleName, entityName, data, sectionPart) {
 	const sectionName = kebabToCamel(`${moduleName}-${entityName}-${sectionPart}`)
-	const sectionTitle = capitalizeWords(`${sectionPart} ${data.title}`)
+	
+	let sectionTitle = capitalizeWords(`${sectionPart} ${data.title}`)
+	if (entityName=='header' && sectionPart=='list') {
+		sectionTitle = capitalizeWords(data.title)
+	} 
 
 	return {
 		sectionName: sectionName,
