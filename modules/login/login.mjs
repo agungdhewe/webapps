@@ -22,6 +22,25 @@ export default class extends Module {
 			btn_login_click(self, evt)
 		})
 		
+		obj_username.addEventListener('keypress', evt=>{
+			const key = evt.key.toLowerCase()
+			if (key=='enter' && obj_username.value.trim()!='') {
+				obj_password.focus()
+			}
+		})
+
+		obj_password.addEventListener('keypress', evt=>{
+			const key = evt.key.toLowerCase()
+			if (key=='enter' && obj_password.value.trim()!='') {
+				btn_login.click()
+			}
+		})
+
+		setTimeout(()=>{
+			obj_username.focus()
+		}, 500)
+		
+
 		try {
 			// inisiasi sisi server
 			try {

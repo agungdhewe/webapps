@@ -109,6 +109,8 @@ export async function createTable(schema, tablename, tabledescr, pk) {
 			} else {
 				type = `${datatype}(${length}) not null`
 			}
+		} else if(datatype=='smallint') {
+			type = `${datatype} not null`
 		} else {
 			throw new Error(`datatype '${datatype}' currently is not supported by generator`)
 		}
@@ -193,7 +195,7 @@ function defaultValueOf(datatype, defaultvalue, allownull) {
 		} else {
 			return `'${defaultvalue}'`	
 		}
-	} else if (['int', 'bigint', 'decimal'].includes(datatype)) {
+	} else if (['int', 'smallint', 'bigint', 'decimal'].includes(datatype)) {
 		if (defaultvalue=='') {
 			if (allownull) {
 				return null

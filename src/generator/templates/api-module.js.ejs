@@ -302,7 +302,11 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			%>// generate data <%= identifierPrefix %> reset perbulan
 			const seqdata = await sequencer.monthly('<%= identifierPrefix %>')<% } %>	
 			data.<%= headerPrimaryKey %> = seqdata.id
-			
+
+			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
+			if (typeof Extender.headerCreating === 'function') {
+				await Extender.headerCreating(self, tx, data, seqdata)
+			}			
 			
 			<% } else if (usesequencerline) { %>
 			// buat short sequencer	
@@ -318,14 +322,16 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			const id = await sequencer.yearlyshort('<%= identifierPrefix %>')
 			data.<%= headerPrimaryKey %> = id
 
-			const seqdata = {}
-			<% } %>	
-
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
 			if (typeof Extender.headerCreating === 'function') {
-				await Extender.headerCreating(self, tx, data, seqdata)
+				await Extender.headerCreating(self, tx, data)
 			}
 
+			<% } else { %>	
+			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
+			if (typeof Extender.headerCreating === 'function') {
+				await Extender.headerCreating(self, tx, data)
+			}<% } %>
 
 			<% if (autoid) { 
 			%><% if (usesequencer || usesequencerline) { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data, ['<%= headerPrimaryKey %>'])<% } %><% 

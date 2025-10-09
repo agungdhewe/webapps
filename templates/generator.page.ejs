@@ -77,6 +77,17 @@
 		</main>
 	</body>
 
+	<script>
+		// // prevent back button
+		history.pushState(null, null, window.location.pathname);
+		window.addEventListener('popstate', function(ev) {
+			history.pushState(null, null, window.location.pathname);
+		}, false);	
+
+
+		
+	</script>
+
 	<script type="module">
 
 		function removeLoadingIndicator() {
@@ -98,10 +109,16 @@
 					const Application = await import('./generator/generator.mjs')
 					const $app = new Application.default();
 					await $app.main();
+
+					window.Application = $app
 				} catch (err) {
 					console.error(err)
 					const mainapp = document.getElementById('mainapp')
-					mainapp.innerHTML = '<div><h1 style="color:red">Module Error</h1><div>' + err.message + '</div></div>'
+					if (err.status==401) {
+						mainapp.innerHTML = '<div><h1 style="color:red">Need Authentication Access</h1><div>' + err.message + '</div></div>'
+					} else {
+						mainapp.innerHTML = '<div><h1 style="color:red">Module Error</h1><div>' + err.message + '</div></div>'
+					}
 				} finally {
 					removeLoadingIndicator()
 				}

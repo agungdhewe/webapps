@@ -69,7 +69,9 @@ export async function init(self, args) {
 		const fn_<%= hnd.eventname %>_name = '<%= field.inputname %>_<%= hnd.eventname %>'
 		const fn_<%= hnd.eventname %> = Extender[fn_<%= hnd.eventname %>_name]
 		if (typeof fn_<%= hnd.eventname %> === 'function') {
-			fn_<%= hnd.eventname %>(self, <%= field.inputname %>, evt)
+			// create function di Extender<% if (field.component=='Combobox' && hnd.eventname=='selecting') { %> (jika perlu)<% } %>:
+			// export async function <%= field.inputname %>_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt)
+			fn_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt)
 		} else {<% if (field.component=='Combobox' && hnd.eventname=='selecting') { %>
 			// default selecting
 			const cbo = evt.detail.sender
@@ -108,7 +110,8 @@ export async function init(self, args) {
 			<% } else { %>	
 			console.warn('Extender.<%= field.inputname %>_<%= hnd.eventname %> is not implemented')<% } %>
 		}		
-	})<% }) %>
+	})
+	<% }) %>
 	<% }) %>	
 	
 }
@@ -155,7 +158,13 @@ export async function openSelectedData(self, params) {
 	}
 }
 
-export function getHeaderForm() {
+
+
+export function getHeaderForm(self) {
+	return frm
+}
+
+export function getForm(self) {
 	return frm
 }
 
@@ -173,14 +182,20 @@ export function disablePrevButton(self, disabled=true) {
 
 export function keyboardAction(self, actionName) {
 	if (actionName=='save') {
+		frm.acceptInput()
 		btn_save.click()
+	} else if (actionName=='new') {
+		frm.acceptInput()
+		btn_new.click()
 	} else if (actionName=='escape') {
-		if (frm.isLocked()) {
+		frm.acceptInput()
+		if (frm.isLocked() || frm.isNew()) {
 			backToList(self)
 		} else {
 			btn_edit.click() // untuk lock data
 		}
 	} else if (actionName=='togleEdit') {
+		frm.acceptInput()
 		btn_edit.click()
 	} else if (actionName=='right') {
 		btn_next.click()
@@ -286,6 +301,14 @@ async function  frm_locked(self, evt) {
 	btn_prev.disabled = false
 	btn_next.disabled = false
 
+	
+	// Extender untuk event locked
+	const fn_name = '<%= modulePart %>_formLocked'
+	const fn = Extender[fn_name]
+	if (typeof fn === 'function') {
+		fn(self, frm, CurrentState)
+	}
+
 	if (CurrentState.editDisabled) {
 		// jika karena suatu kondisi data mengharuskan data tidak boleh diedit
 		btn_edit.disabled = true
@@ -304,7 +327,6 @@ async function  frm_unlocked(self, evt) {
 
 	if (frm.isNew()) {
 		CurrentSection.Title = TitleWhenNew
-
 	} else {
 		CurrentSection.Title = TitleWhenEdit
 	}
@@ -318,6 +340,14 @@ async function  frm_unlocked(self, evt) {
 	btn_reset.disabled = false
 	btn_prev.disabled = true
 	btn_next.disabled = true
+
+
+	// Extender untuk event Unlocked
+	const fn_name = '<%= modulePart %>_formUnlocked'
+	const fn = Extender[fn_name]
+	if (typeof fn === 'function') {
+		fn(self, frm)
+	}
 
 	<% entitiesDetil.forEach(entity => { %>
 	// trigger unlock event di <%= entity.name %>
@@ -449,6 +479,14 @@ async function btn_new_click(self, evt) {
 
 async function btn_save_click(self, evt) {
 	console.log('btn_save_click')
+
+
+	// Extender Autofill
+	const fn_autofill_name = '<%= modulePart %>_autofill'
+	const fn_autofill = Extender[fn_autofill_name]
+	if (typeof fn_autofill === 'function') {
+		await fn_autofill(self, frm)
+	}
 
 	// cek apakah data valid
 	const valid = frm.validate()
@@ -680,7 +718,7 @@ async function btn_recordstatus_click(self, evt) {
 			const fn_addrecordinfo_name = '<%= modulePart %>_addRecordInfo'
 			const fn_addrecordinfo = Extender[fn_addrecordinfo_name]
 			if (typeof fn_addrecordinfo === 'function') {
-				await fn_addrecordinfo(data)
+				await fn_addrecordinfo(self, data)
 			}
 
 		} catch (err) {

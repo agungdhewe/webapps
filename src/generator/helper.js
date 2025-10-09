@@ -30,6 +30,7 @@ export function getSectionData(moduleName, entityName, data, sectionPart) {
 	} 
 
 	return {
+		partName: sectionPart,
 		sectionName: sectionName,
 		sectionElementId: `${sectionName}-section`,
 		sectionTitle: sectionTitle,
@@ -108,6 +109,10 @@ export function createAdditionalAttributes(item) {
 				cfg.push(`invalid-message-max="${item.Validation.messageMaximum}"`)
 			}
 		}
+
+		if (item.data_type=='smallint') {
+			cfg.push(`digitgrouping="false"`)
+		} 
 
 	} else if (item.component=='Checkbox') {
 		cfg.push(`type="checkbox"`)

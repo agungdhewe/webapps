@@ -71,6 +71,14 @@
 		</div>
 	</body>
 
+	<script>
+		// // prevent back button
+		history.pushState(null, null, window.location.pathname);
+		window.addEventListener('popstate', function(ev) {
+			history.pushState(null, null, window.location.pathname);
+		}, false);	
+	</script>
+
 	<script type="module">
 
 		function removeLoadingIndicator() {
@@ -113,6 +121,8 @@
 					const Application = await import('./public/modules/<%= `${moduleName}/${mjsFileName}` %>'	)
 					const $app = new Application.default();
 					await $app.main();
+
+					// window.onbeforeunload = function() { return "Your work will be lost."; };
 				} catch (err) {
 					console.error(err)
 					const mainapp = document.getElementById('mainapp')

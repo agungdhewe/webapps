@@ -35,12 +35,22 @@ export async function createModuleMjs(context, options) {
 		}
 
 		
+		const entityNameArray = []
+		for (let s of sections) {
+				if (s.partName=='edit') {
+				const sectionName = s.sectionName
+				entityNameArray.push(sectionName)
+			}
+		}
+
+		const entityNameList = `'${entityNameArray.join("\', \'")}'`
 
 		const variables = {
 			timeGenerated: context.timeGenerated,
 			title: title,
 			moduleName: moduleName,
 			iconUrl,
+			entityNameList,
 			sections: sections
 		}
 		

@@ -42,6 +42,7 @@
 				<option value="auto-yearly">Auto Yearly (for Document) </option>
 				<option value="auto-monthly">Auto Monthly (for Document)</option>
 				<option value="auto-yearly-short">Auto Yearly (short, for entity)</option>
+				<option value="auto-custom">Auto Custom Sequencer</option>
 			</select>
 
 			<label style="margin-left: 40px; margin-right: 5px;">Prefix</label>
@@ -194,7 +195,9 @@ ishandlekeydown
 				<option value="varchar">varchar</option>
 				<option value="char">char</option>
 				<option value="int">integer</option>
+				<option value="smallint">small integer</option>
 				<option value="bigint">big integer</option>
+				<option value="timestamp">timestamp</option>
 			</select>
 		</div>  
 		
@@ -422,8 +425,9 @@ ishandlekeydown
 		
 		<label>Type</label>
 		<div>
-			<select name="datatype">
+			<select name="datatype" onchange="window.Application.numberboxDatatypeChange(this)">
 				<option value="int" selected>integer</option>
+				<option value="smallint">small integer</option>
 				<option value="bigint">big integer</option>
 				<option value="decimal">decimal</option>
 			</select>
@@ -1080,7 +1084,7 @@ ishandlekeydown
 		<div style="grid-column: span 5;" name="validation">
 
 			<label style="grid-column: span 2; transform: translateY(5px); ">Formatter</label>
-			<input name="gridformatter" type="text">
+			<input name="gridformatter" type="text" value="dateshort(v)">
 			
 			<label style="grid-column: span 2; transform: translateY(5px); ">CSS</label>
 			<input name="gridcss" type="text">

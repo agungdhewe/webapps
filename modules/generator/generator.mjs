@@ -59,15 +59,38 @@ export default class extends Module {
 			// render dan setup halaman
 			await render(self)
 
+			// listen keyboard action
 			listenUserKeys(self)	
 
-
+			// kalau user melakukan reload, konfirm dulu
+			const isFormDirty = true
+			window.onbeforeunload = (evt)=>{ 
+				if (isFormDirty) {
+					evt.preventDefault();
+					return  "Changes you made may not be saved."
+				}
+			};
 		} catch (err) {
 			throw err
 		}
 	}
 
 
+	numberboxDatatypeChange(el) {
+		const datatype = el.value
+		const designField = el.closest('div[name="design-data-field"]');
+		const gridFormatter = designField.querySelector('input[name="gridformatter"]')
+
+		// datatype: int, smallint, bigint, decimal
+		// format: decimal, int
+		if (datatype=='smallint') {
+			gridFormatter.value = 'int(v)'
+		} else if (datatype=='decimal') {
+			gridFormatter.value = 'decimal(v, 2)'
+		} else {
+			gridFormatter.value = 'decimal(v, 0)'
+		}
+	}
 }
 
 
