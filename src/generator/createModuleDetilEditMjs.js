@@ -49,6 +49,7 @@ export async function createModuleDetilEditMjs(context, options) {
 			const fieldHandles = []
 			const defaultInits = []
 			const uploadFields = []
+			const comboboxList = []
 			let detilHasUpload = false
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
@@ -69,6 +70,10 @@ export async function createModuleDetilEditMjs(context, options) {
 					uploadFields.push({
 						elementId,
 						fieldname,
+						inputname
+					})
+				} else if (component=='Combobox') {
+					comboboxList.push({
 						inputname
 					})
 				}				
@@ -150,7 +155,8 @@ export async function createModuleDetilEditMjs(context, options) {
 				fieldHandles,
 				defaultInits,
 				detilHasUpload,
-				uploadFields
+				uploadFields,
+				comboboxList
 			}
 
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilEdit.mjs.ejs')

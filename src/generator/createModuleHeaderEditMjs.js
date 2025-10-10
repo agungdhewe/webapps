@@ -70,6 +70,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 			const fieldHandles = []
 			const defaultInits = []
 			const uploadFields = []
+			const comboboxList = []
 			let headerHasUpload = false
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
@@ -93,6 +94,10 @@ export async function createModuleHeaderEditMjs(context, options) {
 						inputname
 					})
 
+				} else if (component=='Combobox') {
+					comboboxList.push({
+						inputname
+					})
 				}
 
 				// setup handles
@@ -171,7 +176,8 @@ export async function createModuleHeaderEditMjs(context, options) {
 				headerPrimaryKey,
 				headerHasUpload,
 				entitiesDetil,
-				uploadFields
+				uploadFields,
+				comboboxList
 			}
 
 			

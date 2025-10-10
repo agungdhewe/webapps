@@ -121,6 +121,8 @@ export async function openSelectedData(self, params) {
 
 	let mask = $fgta5.Modal.createMask()
 	try {
+		<% comboboxList.forEach(cbo => { %><%= cbo.inputname %>.clear()
+		<% }) %>
 		const id = params.keyvalue
 		const data = await openData(self, id)
 
