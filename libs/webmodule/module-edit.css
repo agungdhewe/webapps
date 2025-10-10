@@ -25,6 +25,7 @@
 @media screen and (max-width: 500px) {
 	.input-field {
 		flex-direction: column;
+		flex-basis: 100%;
 	}
 
 	.input-field > div[label],
@@ -33,6 +34,10 @@
 		margin-bottom: 5px;
 		width: fit-content;
 		min-width: unset;
+	}
+
+	.fgta5-entry-container[fgta5-component=Combobox] {
+		width: 100%
 	}
 }
 
