@@ -70,6 +70,7 @@ export default class WebApplication {
 		}
 
 		context.setRootDirectory(this.__rootDirectory)	
+		context.setFnParseModuleRequest(options.fnParseModuleRequest)
 
 		if (this.#startedOnce) {
 			throw new Error('start already called!')

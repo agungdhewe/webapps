@@ -60,6 +60,7 @@ async function login_doLogin(self, body) {
 		const userName = row.user_name
 		const userFullname = row.user_fullname
 		const hashedPassword = row.user_password
+		const developerAccess = row.user_isdev
 
 		const match = await bcrypt.compare(password, hashedPassword);
 		if (!match) {
@@ -72,6 +73,7 @@ async function login_doLogin(self, body) {
 			userId,
 			userName,
 			userFullname,
+			developerAccess,
 			isLogin: true
 		}
 

@@ -60,6 +60,7 @@ export async function createModuleDetilEditHtml(context, options) {
 				const elementId = `${modulePart}-${item.input_name}`
 				const placeholder = item.input_placeholder
 				const label = item.input_label
+				const tabindex = item.input_index
 				const binding = item.data_fieldname
 				const additionalAttributes = createAdditionalAttributes(item)
 				const cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}` 
@@ -71,6 +72,7 @@ export async function createModuleDetilEditHtml(context, options) {
 					elementId,
 					placeholder,
 					label,
+					tabindex,
 					binding,
 					additionalAttributes
 				})

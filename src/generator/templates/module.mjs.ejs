@@ -181,6 +181,20 @@ function openDetilSection(self, sectionTargetName, sectionCurrentName) {
 
 
 function listenUserKeys(self) {
+
+	// capture tombol
+	const allowedKeys = /^[a-zA-Z0-9 ]$/; // huruf, angka, spasi
+	document.addEventListener('keydown', (evt) => {
+		// Tangani huruf, angka, spasi, backspace dan delete
+		if (allowedKeys.test(evt.key) || evt.key === 'Backspace' || evt.key === 'Delete') {
+			const id = Crsl.CurrentSection.Id
+			const moduleId = Context.SectionMap[id]
+			const module = self.Modules[moduleId]
+			keyboardAction(self, module, 'typing', evt)
+		}
+	}, true)
+
+	// handle keyboard event	
 	document.addEventListener('keydown', (evt) => {
 		const id = Crsl.CurrentSection.Id
 		const moduleId = Context.SectionMap[id]

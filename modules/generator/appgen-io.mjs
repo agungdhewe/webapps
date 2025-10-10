@@ -485,6 +485,7 @@ function AppGenIO_GetFieldData(self, el) {
 
 	// object related
 	field.input_name = getValueFrom(el, 'input[name="objectname"]', 'value') ?? ''
+	field.input_index = getValueFrom(el, 'input[name="index"]', 'value') ?? ''
 	field.input_label = getValueFrom(el, 'input[name="labeltext"]', 'value') ?? ''
 	field.input_placeholder = getValueFrom(el, 'input[name="placeholder"]', 'value') ?? ''
 	field.input_caption = getValueFrom(el, 'input[name="caption"]', 'value') ?? ''
@@ -715,8 +716,13 @@ function AppGenIO_FillDataField(self, datafield, field) {
 	setValueTo(field.description, datafield, 'input[name="description"]', 'value')
 
 
+	if (field.input_index===undefined) {
+		field.input_index = '0'
+	}
+
 	// object related
 	setValueTo(field.input_name, datafield, 'input[name="objectname"]', 'value')
+	setValueTo(field.input_index, datafield, 'input[name="index"]', 'value')
 	setValueTo(field.input_label, datafield, 'input[name="labeltext"]', 'value')
 	setValueTo(field.input_placeholder, datafield, 'input[name="placeholder"]', 'value')
 	setValueTo(field.input_caption, datafield, 'input[name="caption"]', 'value')

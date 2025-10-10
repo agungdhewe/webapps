@@ -62,13 +62,16 @@ export function createBasicRouter() {
 	router.get('/generator', generatorPage)
 	router.get('/generator/:requestedAsset', generatorAsset)
 	router.post('/generator/:method', generatorApi)
+
 	
+	// debug
+	// router.get('/debug/:modulename', modulePage)
+	// router.post('/debug/:modulename/:method', moduleApi)
+
+
 	// modul
 	router.get('/:modulename', modulePage)
-	router.post('/:modulename/:method', moduleApi)
-
-
-
+	router.post('/:modulename/:method', moduleApi)	
 
 	return router
 }

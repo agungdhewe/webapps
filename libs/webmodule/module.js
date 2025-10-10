@@ -160,6 +160,33 @@ class Module {
 	}	
 
 
+
+	static insertAtCursor(input, char) {
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		const value = input.value;
+		input.value = value.slice(0, start) + char + value.slice(end);
+		input.setSelectionRange(start + 1, start + 1);
+	}
+
+	static deleteAtCursor(input, mode) {
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		const value = input.value;
+
+		if (start === end) {
+			if (mode === 'backspace' && start > 0) {
+			input.value = value.slice(0, start - 1) + value.slice(end);
+			input.setSelectionRange(start - 1, start - 1);
+			} else if (mode === 'delete' && start < value.length) {
+			input.value = value.slice(0, start) + value.slice(end + 1);
+			input.setSelectionRange(start, start);
+			}
+		} else {
+			input.value = value.slice(0, start) + value.slice(end);
+			input.setSelectionRange(start, start);
+		}
+	}
 }
 
 

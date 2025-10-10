@@ -55,6 +55,14 @@ export async function modulePage(req, res) {
 	const ejsModuleExist = await helper.isFileExists(ejsPath) 
 
 	try {
+
+		// coba cek request halaman
+		const fnParseModuleRequest = context.getFnParseModuleRequest()
+		if (typeof fnParseModuleRequest==='function') {
+			await fnParseModuleRequest(req, res)
+		}		
+
+
 		// load halaman html-nya
 		if (!ejsModuleExist) {
 			const err = new Error(`requested module '${moduleName}' is not found`)

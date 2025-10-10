@@ -58,6 +58,11 @@ export function createAdditionalAttributes(item) {
 		}
 	}
 
+	if (item.input_index!='' && item.input_index!='0') {
+		cfg.push(`data-tabindex="${item.input_index}"`)
+	}
+
+
 	if (item.input_inlinestyle.trim()!='') {
 		cfg.push(`style="${item.input_inlinestyle}"`)
 	}

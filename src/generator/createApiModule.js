@@ -83,7 +83,8 @@ export async function createApiModule(context, options) {
 		}
 
 		const usesequencerline = entityHeader.identifierMethod=='auto-yearly-short' || entitiesDetil.length>0 ? true : false
-		const autoid = usesequencer || usesequencerline ? true : false
+		// const autoid = usesequencer || usesequencerline ? true : false
+		const autoid = ['auto-by-default', 'auto-always', 'auto-yearly', 'auto-monthly', 'auto-yearly-short'].includes(entityHeader.identifierMethod)
 
 
 		const variables = {

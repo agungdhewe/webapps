@@ -56,6 +56,18 @@ export async function init(self, args) {
 			SearchParams[binding] =  new $fgta5[componentname](id)
 		}
 
+		// saat user ketik tombol enter di text search, lakukan load data
+		const obj_searchtext = document.getElementById('<%= modulePart %>-txt_searchtext')
+		const btn_load = document.getElementById('<%= modulePart %>-btn_gridload')
+		obj_searchtext.addEventListener('keydown', (evt)=>{
+			if (evt.key.toLowerCase()=='enter') {
+				evt.stopPropagation()
+				btn_load.click()
+				obj_searchtext.blur()
+			}
+		})
+
+
 		// <%= modulePart %>-ext.mjs, export function initSearchParams(self, SearchParams) {} 
 		const fn_initSearchParams_name = '<%= sectionName %>List_initSearchParams'
 		const fn_initSearchParams = Extender[fn_initSearchParams_name]
@@ -145,16 +157,30 @@ export function setPagingButton(self,  editModule) {
 
 }
 
-export function keyboardAction(self, actionName) {
+export function keyboardAction(self, actionName, evt) {
 	if (actionName=='up') {
 		tbl.previousRecord()
 	} else if (actionName=='down') {
 		tbl.nextRecord()
 	} else if (actionName=='enter') {
 		const <%= moduleEdit %> = self.Modules.<%= moduleEdit %>
-		<%= moduleEdit %>.Section.show({}, (evt)=>{
+		<%= moduleEdit %>.Section.show({}, ()=>{
 			openRow(self, tbl.CurrentRow)
 		})		
+	} else if (actionName=='typing') {
+		evt.preventDefault();
+		evt.stopPropagation();
+
+		const obj_searchtext = document.getElementById('<%= modulePart %>-txt_searchtext')
+		const key = evt.key
+		obj_searchtext.focus()
+		if (key=='Backspace') {
+			Module.deleteAtCursor(obj_searchtext, 'backspace');
+		} else if (key=='Delete') {
+			Module.deleteAtCursor(obj_searchtext, 'delete');
+		} else {
+			Module.insertAtCursor(obj_searchtext, evt.key);
+		}
 	}
 }
 
