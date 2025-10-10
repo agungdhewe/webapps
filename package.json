@@ -1,6 +1,6 @@
 {
   "name": "@agung_dhewe/webapps",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "library javascript (nodejs+express) untuk pengembangan applikasi web",
   "type": "module",
   "main": "./src/webapps.js",
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/agungdhewe/webapps#readme",
   "dependencies": {
+    "@agung_dhewe/pgsqlc": "^1.1.5",
     "bcrypt": "^6.0.0",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.5",
@@ -41,9 +42,5 @@
     "redis": "^5.5.6",
     "serve-favicon": "^2.5.0",
     "ws": "^8.18.3"
-  },
-  "devDependencies": {
-    "@agung_dhewe/pgsqlc": "file:../pgsqlc",
-    "dotenv": "^17.1.0"
   }
 }
