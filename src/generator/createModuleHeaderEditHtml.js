@@ -62,9 +62,13 @@ export async function createModuleHeaderEditHtml(context, options) {
 
 			// ambil data field header
 			const fields = []
+			let index = 0
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
+				index++
 
+
+				item.index = index
 				// if (item.data_fieldname=='grouptype_id') {
 				// 	console.log(item)
 				// }

@@ -41,6 +41,7 @@
 	.input-field > label {
 		text-align: right;
 		width: 80px;
+		min-width: 80px;
 	}
 }
 

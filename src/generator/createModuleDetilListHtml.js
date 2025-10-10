@@ -38,13 +38,35 @@ export async function createModuleDetilListHtml(context, options) {
 			const entityData = context.entities[entityName]
 			const sectionData = getSectionData(moduleName, entityName, entityData, 'list')
 		
-			const fields = []
+			const itemsList = []
 			for (var fieldName in entityData.Items) {
+				const item = entityData.Items[fieldName]
+				if (!item.showInGrid) {
+					continue
+				}
+				item._fieldName = fieldName
+				item._columnIndex = Number(item.input_index)
+				itemsList.push(item)
+			}
+
+			// urutkan data
+			itemsList.sort((a, b) => a._columnIndex - b._columnIndex);
+
+			const sortedItems = {}
+			for (let item of itemsList) {
+				sortedItems[item._fieldName] = item
+			}
+		
+
+			const fields = []
+			for (var fieldName in sortedItems) {
 				const item = entityData.Items[fieldName]
 
 				if (!item.showInGrid) {
 					continue
 				}
+
+				// console.log(item.input_index)
 
 				const component = item.component
 				const dataName = item.name
