@@ -6,6 +6,12 @@ import * as helper from './../helper.js'
 import { handleError } from './handleError.js';
 
 
+
+async function getCurrentVersion(filepath) {
+	const previousVersionNumber = await fs.readFile(filepath, 'utf8');
+	return previousVersionNumber
+}
+
 export async function modulePage(req, res) {
 	const moduleName = req.params.modulename;
 	const fullUrlWithHostHeader = `${req.protocol}://${req.headers.host}${req.originalUrl}`;
@@ -18,14 +24,15 @@ export async function modulePage(req, res) {
 	const moduleDir = path.join(__rootDir, 'public', 'modules', moduleName)
 	const ejsPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.ejs`)
 	const cssPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.css`);
-	
+
 
 	// const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
 	let mjsFileName
 	if (appDebugMode) {
 		// Default Debug
 		if (req.query.mode=='release') {
-			mjsFileName = `${moduleName}.min.mjs`
+			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
+			mjsFileName = `${moduleName}-${version}.min.mjs`
 		} else {
 			mjsFileName = `${moduleName}.mjs`
 		}
@@ -34,7 +41,8 @@ export async function modulePage(req, res) {
 		if (req.query.mode=='debug') {
 			mjsFileName = `${moduleName}.mjs`
 		} else {
-			mjsFileName = `${moduleName}.min.mjs`
+			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
+			mjsFileName = `${moduleName}-${version}.min.mjs`
 		}
 	}
 	const mjsPath = path.join(__rootDir, 'public', 'modules', moduleName, mjsFileName);

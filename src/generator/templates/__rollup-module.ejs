@@ -11,6 +11,10 @@
 
  
 import terser from '@rollup/plugin-terser';
+import { writeFileSync } from 'fs';
+import { readFile, unlink, access } from 'fs/promises';
+import { join } from 'path';
+import { constants } from 'fs';
 
 const currentdate = (new Date()).toISOString().split('T')[0]
 const banner = `<%=moduleName%>
@@ -18,10 +22,28 @@ const banner = `<%=moduleName%>
 * build at ${currentdate}
 `
 
+const filename = `version.txt`;
+const filepath = join('public/modules/<%=moduleName%>', filename);
+
+/* Hapus versi sebelumnya */
+if (await isExists(filepath)) {
+	const previousVersionNumber = await readFile(filepath, 'utf8');
+	const previousFile = `public/modules/<%=moduleName%>/<%=moduleName%>-${previousVersionNumber}.min.mjs`
+	await unlink(previousFile);
+}
+
+/* Create New Version */
+const newVersionNumber = getTimestampYYMMDDHHII()
+
+
+// Simpan ke file
+writeFileSync(filepath, newVersionNumber, 'utf8')
+
+
 export default {
 	input: "public/modules/<%=moduleName%>/<%=moduleName%>.mjs", // File utama yang menjadi entry point
 	output: {
-		file: `public/modules/<%=moduleName%>/<%=moduleName%>.min.mjs`, // Lokasi output file hasil bundle
+		file: `public/modules/<%=moduleName%>/<%=moduleName%>-${newVersionNumber}.min.mjs`, // Lokasi output file hasil bundle
 		format: "esm", // Format modul ECMAScript
 		banner: `/*! ${banner}*/`,
 		// manualChunks: (id) => {
@@ -45,3 +67,24 @@ export default {
 	]
 }
 
+
+function getTimestampYYMMDDHHII() {
+	const now = new Date();
+	const yy = String(now.getFullYear()).slice(-2);
+	const mm = String(now.getMonth() + 1).padStart(2, '0');
+	const dd = String(now.getDate()).padStart(2, '0');
+	const hh = String(now.getHours()).padStart(2, '0');
+	const ii = String(now.getMinutes()).padStart(2, '0');
+	return `${yy}${mm}${dd}${hh}${ii}`;
+};
+
+
+async function isExists(filepath) {
+	try {
+		await access(filepath, constants.F_OK);
+		return true
+	} catch {
+		return false
+	}
+
+}
