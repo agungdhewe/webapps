@@ -11,6 +11,9 @@ const tbl =  new $fgta5.Gridview('generatorList-tbl')
 const pnl_search = document.getElementById('generatorList-pnl_search')
 const btn_gridload = new $fgta5.ActionButton('generatorList-btn_gridload') 
 
+
+
+
 export const Section = CurrentSection
 export const SearchParams = {}
 
@@ -50,6 +53,30 @@ export async function init(self, args) {
 		} else {
 			console.warn(`'initSearchParams' tidak diimplementasikan di extender`)
 		}
+
+
+		// keyboard listener  in search parameter
+		const el_txt_appname = document.getElementById('generatorList-txt_appname')
+		const el_txt_searchtext = document.getElementById('generatorList-txt_searchtext')
+		const el_btn_search = document.getElementById('generatorList-btn_gridload')
+
+		el_txt_appname.addEventListener('keydown', evt=>{
+			if (evt.key=='Enter') {
+				el_txt_searchtext.focus()
+				evt.stopPropagation()
+				evt.preventDefault()
+			}
+		})
+
+		el_txt_searchtext.addEventListener('keydown', evt=>{
+			if (evt.key=='Enter') {
+				el_btn_search.click()	
+				el_txt_searchtext.blur()
+				evt.stopPropagation()
+				evt.preventDefault()
+			}
+		})
+
 		
 	} catch (err) {
 		throw err

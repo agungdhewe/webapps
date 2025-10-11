@@ -11,6 +11,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 	const overwrite = options.overwrite===true
 	const moduleName = context.moduleName
 	const title = context.title
+	const actions = context.actions
 	const sectionPart = 'edit'
 	const timeGenerated = context.timeGenerated
 
@@ -158,7 +159,15 @@ export async function createModuleHeaderEditMjs(context, options) {
 			}
 
 		
-
+			// ambil data actions
+			const actionList = []
+			for (let action of context.actions) {
+				const buttonName = kebabToCamel(`btn_action-${action.name}`)
+				const elid = `${modulePart}-${buttonName}`
+				action.buttonName = buttonName
+				action.elementId = elid
+				actionList.push(action)
+			}
 
 
 			const variables = {
@@ -177,7 +186,8 @@ export async function createModuleHeaderEditMjs(context, options) {
 				headerHasUpload,
 				entitiesDetil,
 				uploadFields,
-				comboboxList
+				comboboxList,
+				actionList
 			}
 
 			

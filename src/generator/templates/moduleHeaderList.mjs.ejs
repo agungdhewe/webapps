@@ -164,9 +164,12 @@ export function keyboardAction(self, actionName, evt) {
 		tbl.nextRecord()
 	} else if (actionName=='enter') {
 		const <%= moduleEdit %> = self.Modules.<%= moduleEdit %>
-		<%= moduleEdit %>.Section.show({}, ()=>{
-			openRow(self, tbl.CurrentRow)
-		})		
+		if (tbl.CurrentRow!=null) {
+			<%= moduleEdit %>.Section.show({}, ()=>{
+				openRow(self, tbl.CurrentRow)
+			})
+		}	
+		
 	} else if (actionName=='typing') {
 		evt.preventDefault();
 		evt.stopPropagation();
@@ -187,9 +190,14 @@ export function keyboardAction(self, actionName, evt) {
 
 function setCurrentRow(self, tr) {
 	CurrentState.SelectedRow = tr
+	tbl.CurrentRow = tr
 }
 
 async function openRow(self, tr) {
+	if (tr==null) {
+		return
+	}
+
 	const keyvalue = tr.getAttribute('keyvalue')
 	const key = tr.getAttribute('key')
 

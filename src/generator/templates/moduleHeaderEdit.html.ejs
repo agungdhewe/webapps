@@ -11,6 +11,10 @@
 <% }) %>	
 </form>
 
+<% if (actionList.length>0) { %><div class="panel-action"><% actionList.forEach(action => { %>
+	<button id="<%= action.elementId %>"><%= action.title %></button><% }) %>
+</div><% } %>
+
 
 <div id="panel-detil-selector" class="panel-detil <% if (detilCount==0) { %>hidden<% } %>">
 	<div panel-title>

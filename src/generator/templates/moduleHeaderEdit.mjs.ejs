@@ -23,6 +23,8 @@ const btn_reset = new $fgta5.ActionButton('<%= modulePart %>-btn_reset')
 const btn_prev = new $fgta5.ActionButton('<%= modulePart %>-btn_prev')
 const btn_next = new $fgta5.ActionButton('<%= modulePart %>-btn_next')
 
+<%if (actionList.length>0) {%><% actionList.forEach(action => { %>const <%= action.buttonName %> = new $fgta5.ActionButton('<%= action.elementId %>')
+<% }) %><% } %>
 const btn_recordstatus = document.getElementById('<%= moduleSection %>-btn_recordstatus')
 const btn_logs = document.getElementById('<%= moduleSection %>-btn_logs')
 const btn_about = document.getElementById('<%= moduleSection %>-btn_about')
@@ -62,6 +64,23 @@ export async function init(self, args) {
 	btn_logs.addEventListener('click', evt=>{ btn_logs_click(self, evt) })	
 	btn_about.addEventListener('click', evt=>{ btn_about_click(self, evt) })
 
+	// set actions
+	CurrentState.Actions = {
+		edit: btn_edit,<% actionList.forEach(action => { %>
+		<%= action.name %>: <%= action.buttonName %>,<% }) %>	
+	}
+
+	<%if (actionList.length>0) {%>// buat di Extender: export function setupActionButtonEvent(self, buttons)
+	const fn_setupactionbuttonevent_name = 'setupActionButtonEvent'
+	const fn_setupactionbuttonevent = Extender[fn_setupactionbuttonevent_name]
+	if (typeof fn_setupactionbuttonevent === 'function') {
+		fn_setupactionbuttonevent(self, {<% actionList.forEach(action => { %>
+			<%= action.buttonName %>,<% }) %>
+		})
+	} else {
+		console.warn('Extender.setupActionButtonEvent is not implemented')
+		console.log('buat function di extender: export function setupActionButtonEvent(self, buttons)')
+	}<% } %>
 
 	<% fieldHandles.forEach(field => { %>
 	// <%= field.component %>: <%= field.inputname %><% field.handles.forEach(hnd => { %>
@@ -148,7 +167,8 @@ export async function openSelectedData(self, params) {
 		const fn_formopened_name = '<%= modulePart %>_formOpened'
 		const fn_formopened = Extender[fn_formopened_name]
 		if (typeof fn_formopened === 'function') {
-			fn_formopened(self, frm, CurrentState)
+			// export async function <%= modulePart %>_formOpened(self, frm, CurrentState)
+			await fn_formopened(self, frm, CurrentState)
 		}
 
 	} catch (err) {
@@ -289,8 +309,6 @@ async function backToList(self, evt) {
 }
 
 async function  frm_locked(self, evt) {
-	console.log('frm_locked')
-
 	CurrentSection.Title = TitleWhenView
 
 	btn_edit.setText(EditModeText)
@@ -303,6 +321,8 @@ async function  frm_locked(self, evt) {
 	btn_prev.disabled = false
 	btn_next.disabled = false
 
+	<%if (actionList.length>0) {%>// Enable action: action hanya bisa dilakukan saat posisi edit off<% actionList.forEach(action => { %>
+	<%= action.buttonName %>.disabled = false<% }) %><% } %>
 	
 	// Extender untuk event locked
 	const fn_name = '<%= modulePart %>_formLocked'
@@ -325,8 +345,6 @@ async function  frm_locked(self, evt) {
 }
 
 async function  frm_unlocked(self, evt) {
-	console.log('frm_unlocked')
-
 	if (frm.isNew()) {
 		CurrentSection.Title = TitleWhenNew
 	} else {
@@ -343,12 +361,14 @@ async function  frm_unlocked(self, evt) {
 	btn_prev.disabled = true
 	btn_next.disabled = true
 
+	<%if (actionList.length>0) {%>// Disable action: action hanya bisa dilakukan saat posisi edit off<% actionList.forEach(action => { %>
+	<%= action.buttonName %>.disabled = true<% }) %><% } %>
 
 	// Extender untuk event Unlocked
 	const fn_name = '<%= modulePart %>_formUnlocked'
 	const fn = Extender[fn_name]
 	if (typeof fn === 'function') {
-		fn(self, frm)
+		fn(self, frm, CurrentState)
 	}
 
 	<% entitiesDetil.forEach(entity => { %>
@@ -465,6 +485,10 @@ async function btn_new_click(self, evt) {
 
 		// buka lock, agar user bisa edit
 		frm.lock(false)
+
+		// jika edit di suspend, enable dulu
+		btn_edit.suspend(false)
+
 
 		// matikan tombol edit dan del saat kondisi form adalah data baru 
 		btn_edit.disabled = true

@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 export async function createModuleHeaderEditHtml(context, options) {
 	const overwrite = options.overwrite===true
 	const moduleName = context.moduleName
+	const actions = context.actions
 	const title = context.title
 	const sectionPart = 'edit'
 
@@ -119,6 +120,15 @@ export async function createModuleHeaderEditHtml(context, options) {
 			}
 
 
+			// ambil data actions
+			const actionList = []
+			for (let action of context.actions) {
+				const namepart = kebabToCamel(`btn_action-${action.name}`)
+				const elid = `${modulePart}-${namepart}`
+				action.elementId = elid
+				actionList.push(action)
+			}
+
 			const variables = {
 				timeGenerated: context.timeGenerated,
 				title: title,
@@ -130,6 +140,7 @@ export async function createModuleHeaderEditHtml(context, options) {
 				primaryKeyElementId: primaryKeyElementId,
 				fields: fields,
 				sectionDetils: sectionDetils,
+				actionList,
 				detilCount
 			}
 			

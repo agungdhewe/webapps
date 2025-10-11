@@ -51,6 +51,9 @@ export async function openSelectedData(self, params) {
 		const data = result.generator_data
 
 		data.id = result.generator_id
+
+		const el_title = document.getElementById('application-title')
+		el_title.innerHTML = `Generator: ${data.title}`
 	
 		ui.load(data)
 	} catch (err) {
@@ -68,6 +71,9 @@ export function keyboardAction(self, actionName) {
 	} else if (actionName=='escape') {
 		const listSection = Crsl.Items[Context.Sections.generatorList]
 		listSection.show({direction:1})
+
+		const el_title = document.getElementById('application-title')
+		el_title.innerHTML = `Generator`
 	}
 }
 
@@ -88,6 +94,8 @@ async function backToList(self, evt) {
 	let goback = true
 	if (goback) {
 		evt.detail.fn_ShowNextSection()
+		const el_title = document.getElementById('application-title')
+		el_title.innerHTML = `Generator`
 	}
 }
 

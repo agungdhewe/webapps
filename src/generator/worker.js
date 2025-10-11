@@ -97,6 +97,7 @@ async function generate(id, data) {
 		appname: data.appname,
 		moduleName: data.name,
 		entities: data.entities,
+		actions: data.actions,
 		icon: data.icon,
 		timeGenerated: formattedTime,
 		postMessage: (info) => {
