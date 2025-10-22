@@ -187,26 +187,34 @@ button:hover {
 }
 
 #tbl_entity [name="col_table"] {
-	width: 100px;
+	width: 200px;
 }
 
 #tbl_entity [name="col_pk"] {
-	width: 100px;
+	width: 150px;
 }
 
 #tbl_entity [name="col_btndesign"] {
-	width: 100px;
+	width: 80px;
+}
+
+#tbl_entity [name="col_btndesign"] input[type="button"] {
+	font-size: 0.7rem;
+	height: 1.5rem;
 }
 
 #tbl_entity [name="col_btnremove"] {
-	width: 100px;
+	width: 80px;
 }
 
-#tbl_entity [name="col_btnremove"] {
-	width: 100px;
+#tbl_entity [name="col_btnremove"] input[type="button"] {
+	font-size: 0.8rem;
+	height: 1.5rem;
 }
+
 
 #tbl_entity [name="col_id"] {
+	display: none;
 	width: 100px; 
 	max-width: 100px;
 	white-space: nowrap; 

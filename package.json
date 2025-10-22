@@ -41,6 +41,7 @@
     "pg-promise": "^11.14.0",
     "redis": "^5.5.6",
     "serve-favicon": "^2.5.0",
+    "session-file-store": "^1.5.0",
     "ws": "^8.18.3"
   }
 }

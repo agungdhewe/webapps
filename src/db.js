@@ -24,21 +24,11 @@ const configDb = {
     password: process.env.DB_PASS,
 }
 
-const configDbLog = {
-    port: process.env.LOGGER_DB_PORT,
-    host:  process.env.LOGGER_DB_HOST,
-    database: process.env.LOGGER_DB_NAME,
-    user: process.env.LOGGER_DB_USER,
-    password: process.env.LOGGER_DB_PASS,
-}
+
 
 
 const db = pgpInstance(configDb);
 export default db
-
-export const dblog = pgpInstance(configDbLog);
-
-
 
 db.connect()
 	.then(obj => {
@@ -50,12 +40,31 @@ db.connect()
 		process.exit(1);
 	});
 
-dblog.connect()
-	.then(obj => {
-		console.log('Connected to Logger Database!');
-		obj.done(); // Klien dikembalikan ke pool
-	})
-	.catch(error => {
-		console.error('\n\x1b[31mError!\x1b[0m cannot\nconnect to Logger Database:', error.message || error, "\n");
-		process.exit(1);
-	});
+
+
+
+
+
+const configDbLog = {
+	port: process.env.LOGGER_DB_PORT,
+	host:  process.env.LOGGER_DB_HOST,
+	database: process.env.LOGGER_DB_NAME,
+	user: process.env.LOGGER_DB_USER,
+	password: process.env.LOGGER_DB_PASS,
+}
+
+export const dblog = pgpInstance(configDbLog);
+
+if (configDbLog.host!==undefined) {
+
+	dblog.connect()
+		.then(obj => {
+			console.log('Connected to Logger Database!');
+			obj.done(); // Klien dikembalikan ke pool
+		})
+		.catch(error => {
+			console.error('\n\x1b[31mError!\x1b[0m cannot\nconnect to Logger Database:', error.message || error, "\n");
+			process.exit(1);
+		});
+}	
+

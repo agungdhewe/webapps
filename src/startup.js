@@ -7,7 +7,8 @@ export async function authorizeRequest(db, req) {
 
 		// jika belum login
 		if (req.session.user==null) {
-			const err = new Error(`Belum login. Anda harus <a href="login">login</a> dulu untuk mengakses resource ini`)
+			const nextUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+			const err = new Error(`Belum login. Anda harus <a href="login?nexturl=${nextUrl}">login</a> dulu untuk mengakses resource ini`)
 			err.status = 401
 			err.code = 401
 			throw err
