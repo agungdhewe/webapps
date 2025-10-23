@@ -96,7 +96,7 @@ export async function init(self, args) {
 			const cbo = evt.detail.sender
 			const dialog = evt.detail.dialog
 			const searchtext = evt.detail.searchtext!=null ? evt.detail.searchtext : ''
-			const url = `${Context.appsUrls.<%= hnd.appId %>.url}/<%- hnd.path %>`
+			const url = <% if (hnd.appId=='/') { %>'<%- hnd.path %>'<% } else { %>`${Context.appsUrls.<%= hnd.appId %>.url}/<%- hnd.path %>`<% } %>
 			const criteria = {
 				searchtext: searchtext,
 			}

@@ -145,9 +145,6 @@ async function generate(id, data) {
 		await createTable(context, {overwrite:true})
 		await sleep(jedaWaktu)
 		
-		await createApiModule(context, {overwrite:true})
-		await sleep(jedaWaktu)
-
 
 		
 		await createModuleRollup(context, {overwrite:true})
@@ -205,9 +202,6 @@ async function generate(id, data) {
 
 
 		// Extender
-		await createApiExtenderModule(context, {overwrite:false})
-		await sleep(jedaWaktu)
-
 		await createModuleExtenderHtml(context, {overwrite:false})
 		await sleep(jedaWaktu)
 
@@ -219,8 +213,13 @@ async function generate(id, data) {
 
 		await createInfoRecordExtender(context, {overwrite:false})
 		await sleep(jedaWaktu)
-		
-	
+
+		// Api
+		await createApiModule(context, {overwrite:true})
+		await sleep(jedaWaktu)
+
+		await createApiExtenderModule(context, {overwrite:false})
+		await sleep(jedaWaktu)
 
 
 		// Selesai
@@ -372,7 +371,9 @@ async function checkEntitiy(context) {
 				}
 
 				if (apps[loaderApiModule]==null) {
-					throw new Error(`loader API Name: '${loaderApiModule}' untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak valid. Cek di data apps`)
+					if (loaderApiModule!='/') {
+						throw new Error(`loader API Name: '${loaderApiModule}' untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak valid. Cek di data apps`)
+					}
 				}
 
 				if(loaderApiPath=='') {

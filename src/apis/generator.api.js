@@ -213,7 +213,7 @@ async function generator_generate(self, body) {
 			user_name: user_name,
 			ipaddress: ipaddress,
 			timeout: generateTimeoutMs,
-			jeda: 0.5, // jeda 1 detik per masing-masing generate
+			jeda: 0.5, // jeda 0.5 detik per masing-masing generate
 		})
 
 

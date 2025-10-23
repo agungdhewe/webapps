@@ -16,6 +16,24 @@ export async function init(self, args) {
 		}
 	}
 	*/	
+
+
+	
+	/* // contoh menambahkan custom validator
+	// pada html, tambahkan validator="cobaFunction:paramValue"
+	const frm = self.Modules.coaHeaderEdit.getHeaderForm()
+	const obj_coa_normal = frm.Inputs['coaHeaderEdit-obj_coa_normal']
+	$validators.addCustomValidator('cobaFunction', (v, param)=>{
+	 	console.log(v)
+	 	setTimeout(()=>{
+	 		obj_coa_normal.setError('ini error')
+	 	}, 500)
+	})	
+
+
+	*/
+
+
 }
 
 

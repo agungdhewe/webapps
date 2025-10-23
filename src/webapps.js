@@ -163,6 +163,7 @@ async function main(self, options) {
 	if (options.allowedOrigins!=null) {
 		const allowedOrigins = options.allowedOrigins
 		app.use(cors({
+			credentials: true,
 			origin: function (origin, callback) {
 				if (!origin) return callback(null, true); // untuk server-side atau curl
 				const isAllowed = allowedOrigins.some(o => {
