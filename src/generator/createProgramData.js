@@ -64,8 +64,9 @@ export async function createProgramData(context, options) {
 			if (row==null) {
 				// insert
 				const sequencer = createSequencerLine(tx, {})
-				const program_id = await sequencer.yearlyshort('CNT')
-				
+				const seqdata = await sequencer.yearlyshort('PROG')
+				const program_id = seqdata.id
+
 				obj.program_id = program_id
 				obj._createby =  user_id
 				obj._createdate =  (new Date()).toISOString()

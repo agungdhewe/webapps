@@ -11,6 +11,13 @@ const initOptions = {
     // error: (err, e) => {
     //     console.log('ERROR:', err, e.query);
     // }
+	
+	connect: (client, dc, isFresh) => {
+        client.on('notice', msg => {
+            // Ini akan menangkap semua pesan NOTICE, WARNING, dsb.
+			// console.warn('PostgreSQL Notice:', msg.message);
+        });
+    }
 };
 
 const pgpInstance = pgp(initOptions); // <-- Panggil pgp() hanya satu kali di sini

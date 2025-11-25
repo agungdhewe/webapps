@@ -216,10 +216,10 @@ async function generate(id, data) {
 
 		// Api
 		await createApiModule(context, {overwrite:true})
-		await sleep(jedaWaktu)
+		// await sleep(jedaWaktu)
 
 		await createApiExtenderModule(context, {overwrite:false})
-		await sleep(jedaWaktu)
+		// await sleep(jedaWaktu)
 
 
 		// Selesai

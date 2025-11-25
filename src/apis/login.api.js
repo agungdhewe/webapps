@@ -44,6 +44,7 @@ async function login_init(self, body) {
 }
 
 async function login_doLogin(self, body) {
+	const req = self.req
 	try {
 		const {username, password} = body
 		

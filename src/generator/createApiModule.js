@@ -82,9 +82,11 @@ export async function createApiModule(context, options) {
 
 		}
 
+		// const headerusesequencerline = entityHeader.identifierMethod=='auto-yearly-short'  ? true : false
 		const usesequencerline = entityHeader.identifierMethod=='auto-yearly-short' || entitiesDetil.length>0 ? true : false
-		// const autoid = usesequencer || usesequencerline ? true : false
 		const autoid = ['auto-by-default', 'auto-always', 'auto-yearly', 'auto-monthly', 'auto-yearly-short'].includes(entityHeader.identifierMethod)
+		const shortsequencer = entityHeader.identifierMethod=='auto-yearly-short' 
+
 
 
 		const variables = {
@@ -94,6 +96,7 @@ export async function createApiModule(context, options) {
 			autoid,
 			usesequencer,
 			usesequencerline,
+			shortsequencer,
 			yearly,
 			identifierPrefix,
 			identifierBlock,

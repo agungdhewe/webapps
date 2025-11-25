@@ -130,17 +130,17 @@ export async function createTable(context, options) {
 function createRecordColumns() {
 	const records = {
 		_createby: {
-			data_fieldname: '_createby', data_type: 'bigint', data_allownull: false, description: 'user yang pertama kali membuat record ini',
+			data_fieldname: '_createby', data_type: 'integer', data_allownull: false, description: 'user yang pertama kali membuat record ini',
 			Reference: {table: '',pk: ''}
 		},
 		
 		_createdate: {
-			data_fieldname: '_createdate', data_type: 'timestamp', data_allownull: false, description: 'waktu record dibuat pertama kali',
+			data_fieldname: '_createdate', data_type: 'timestamp', data_allownull: false, data_defaultvalue: 'now()', description: 'waktu record dibuat pertama kali',
 			Reference: {table: '',pk: ''}
 		},
 		
 		_modifyby: {
-			data_fieldname: '_modifyby', data_type: 'bigint', data_allownull: true, description: 'user yang terakhir modifikasi record ini',
+			data_fieldname: '_modifyby', data_type: 'integer', data_allownull: true, description: 'user yang terakhir modifikasi record ini',
 			Reference: {table: '',pk: ''}
 		},
 

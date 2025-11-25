@@ -8,6 +8,10 @@ import cors from 'cors';
 import favicon from 'serve-favicon';
 import * as path from 'node:path';
 import * as helper from './helper.js'
+import http from 'http'
+import https from 'https'
+import fs from 'fs'
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -211,9 +215,13 @@ async function main(self, options) {
 	app.use(handleModuleNotfound)
 	
 
-	const server = app.listen(port, ()=>{
-		console.log('\n\n' + startingMessage);
-	});
+	// const server = app.listen(port, ()=>{
+	// 	console.log('\n\n' + startingMessage);
+	// });
+
+	// Buat server
+	const server = createApplicationServer(app, port, startingMessage, appConfig)
+
 
 	// Tangani event 'error' pada objek server
 	server.on('error', (err) => {
@@ -227,6 +235,27 @@ async function main(self, options) {
 	});
 }
 
+
+function createApplicationServer(app, port, startingMessage, appConfig) {
+	const useSSL = appConfig.useSSL
+	const sslKey = appConfig.sslKey
+	const sslCertificate = appConfig.sslCertificate
+
+	if (useSSL) {
+		const sslOptions = {
+			key: fs.readFileSync(sslKey), // path ke private key
+			cert: fs.readFileSync(sslCertificate)     // path ke sertifikat
+		};
+
+		return https.createServer(sslOptions, app).listen(port, () => {
+			console.log('\n\n' + startingMessage + ' (https)');
+		});
+	} else {
+		return http.createServer({}, app).listen(port, () => {
+			console.log('\n\n' + startingMessage);
+		});
+	}
+}
 
 function rejectEjsFiles(req, res, next) {
 	const excludedExtensions = ['.ejs']; 

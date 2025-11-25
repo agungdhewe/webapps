@@ -63,6 +63,7 @@ async function generateId(self, year, month, doc_id, short=false) {
 	const options = self.options
 	const db = self.db
 	const searchMap = {
+		seqclust: 'sequencer_cluster=\${seqclust}',
 		seqnum: `sequencer_seqnum=\${seqnum}`,
 		year: `sequencer_year=\${year}`,
 		month: `sequencer_month=\${month}`
@@ -74,10 +75,15 @@ async function generateId(self, year, month, doc_id, short=false) {
 
 		// ambil code doc
 		const docparam = { doc_id }
-		const sqldoc = `select doc_seqnum from core.doc where doc_id=\${doc_id}`
+		const sqldoc = `select doc_prefix, doc_seqclust, doc_seqnum from core.doc where doc_id=\${doc_id}`
 		const row = await db.oneOrNone(sqldoc, docparam)
+		const prefix = row!=null ? row.doc_prefix : ''
+		const seqclust = row!=null ? row.doc_seqclust : 0
 		const seqnum = row!=null ? row.doc_seqnum : 0
 
+		if (seqclust<0 || seqclust>999) {
+			throw new Error(`doc_id: '${doc_id}' has doc seqclust '${seqclust}' that is invalid. doc seqnum have to in range 0-999 `)
+		}
 
 		if (seqnum<0 || seqnum>99) {
 			throw new Error(`doc_id: '${doc_id}' has doc seqnum '${seqnum}' that is invalid. doc seqnum have to in range 1-99 `)
@@ -110,6 +116,7 @@ async function generateId(self, year, month, doc_id, short=false) {
 				throw new Error(`Total length of sequencer (${ln}) is mre than max length allowed(9)`)
 			}
 		} else {
+
 			if (ln > MAX_LENGTH) {
 				throw new Error(`Total length of sequencer (${ln}) is mre than max length allowed(${MAX_LENGTH})`)
 			}
@@ -118,13 +125,14 @@ async function generateId(self, year, month, doc_id, short=false) {
 
 		// ambil data sequencer
 		{
-			const criteria = { year, month, seqnum }
+			const criteria = { year, month, seqnum, seqclust }
 			const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
 	
 			const columns = [
 				'sequencer_id',
 				'sequencer_year',
 				'sequencer_month',
+				'sequencer_cluster',
 				'sequencer_seqnum',
 				'sequencer_number',
 				'EXTRACT(YEAR FROM sequencer_lastdate) AS lastyear',
@@ -150,6 +158,7 @@ async function generateId(self, year, month, doc_id, short=false) {
 				obj.sequencer_year = year,
 				obj.sequencer_month = month
 				obj.sequencer_seqnum = seqnum
+				obj.sequencer_cluster = seqclust
 				obj.sequencer_number = 1
 				obj.sequencer_lastdate = (new Date()).toISOString()
 				obj.sequencer_remark = doc_id
@@ -186,8 +195,11 @@ async function generateId(self, year, month, doc_id, short=false) {
 			const numlen = maxlen - idpref.length
 			tokennum.push(String(obj.sequencer_number).padStart(numlen, '0'))
 
-			const s =  tokennum.join('')
-			return s
+			const ret = {
+				id: tokennum.join(''),
+				doc: `${prefix}${tokennum.join('')}`
+			}
+			return ret
 		}
 	} catch (err) {
 		throw err

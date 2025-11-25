@@ -66,15 +66,22 @@ async function <%= moduleName %>_init(self, body) {
 			}
 		}
 
-		return {
+		const initialData = {
 			userId: req.session.user.userId,
 			userName: req.session.user.userName,
 			userFullname: req.session.userFullname,
 			sid: req.session.sid ,
 			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
 			notifierSocket: req.app.locals.appConfig.notifierSocket,
-			appsUrls: appsUrls
+			appsUrls: appsUrls,
+			setting: {}
 		}
+		
+		if (typeof Extender.coa_init === 'function') {
+			await Extender.coa_init(self, initialData)
+		}
+
+		return initialData
 		
 	} catch (err) {
 		throw err
@@ -308,7 +315,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 				await Extender.headerCreating(self, tx, data, seqdata)
 			}			
 			
-			<% } else if (usesequencerline) { %>
+			<% } else if (shortsequencer) { %>
 			// buat short sequencer	
 			const sequencer = createSequencerLine(tx, {})
 
@@ -319,12 +326,12 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			}
 
 			// generate short id untuk <%= identifierPrefix %> reset pertahun
-			const id = await sequencer.yearlyshort('<%= identifierPrefix %>')
-			data.<%= headerPrimaryKey %> = id
+			const seqdata = await sequencer.yearlyshort('<%= identifierPrefix %>')
+			data.<%= headerPrimaryKey %> = seqdata.id
 
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
 			if (typeof Extender.headerCreating === 'function') {
-				await Extender.headerCreating(self, tx, data)
+				await Extender.headerCreating(self, tx, data, seqdata)
 			}
 
 			<% } else { %>	
@@ -334,7 +341,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			}<% } %>
 
 			<% if (autoid) { 
-			%><% if (usesequencer || usesequencerline) { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data, ['<%= headerPrimaryKey %>'])<% } %><% 
+			%><% if (usesequencer || shortsequencer) { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data, ['<%= headerPrimaryKey %>'])<% } %><% 
 		    } else { %>const cmd = sqlUtil.createInsertCommand(tablename, data)<% } %>
 			const ret = await cmd.execute(data)
 
@@ -634,12 +641,12 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 			sqlUtil.connect(tx)
 
 			const sequencer = createSequencerLine(tx, {})
-			const id = await sequencer.increment('<%= identifierPrefix %>')
-			data.<%= entity.pk %> = id
+			const seqdata = await sequencer.increment('<%= identifierPrefix %>')
+			data.<%= entity.pk %> = seqdata.id
 
 			// apabila ada keperluan pengolahan data SEBELUM disimpan
 			if (typeof Extender.<%= entity.name %>Creating === 'function') {
-				await Extender.<%= entity.name %>Creating(self, tx, data)
+				await Extender.<%= entity.name %>Creating(self, tx, data, seqdata)
 			}
 
 			const cmd = sqlUtil.createInsertCommand(tablename, data)

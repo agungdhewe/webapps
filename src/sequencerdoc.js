@@ -17,7 +17,6 @@ class Sequencer {
 	#defaultOptions = {
 		COMPANY_CODE: '00',
 		blockLength: 3,
-		clusterLength: 2,
 		numberLength: 6
 	}
 
@@ -44,24 +43,24 @@ class Sequencer {
 	}
 
 
-	async yearly(doc_id, block=0, cluster=0) {
+	async yearly(doc_id, block=0) {
 		const self = this
 		const db = self.db
 		try {
 			const { year } = await getDbCurrentDate(db)
 			const month = 0
-			return await generateId(self, year, month, doc_id, block, cluster)
+			return await generateId(self, year, month, doc_id, block)
 		} catch (err) {
 			throw err
 		}		
 	}
 
-	async monthly(doc_id, block=0, cluster=0) {
+	async monthly(doc_id, block=0) {
 		const self = this
 		const db = self.db
 		try {
 			const { year, month } = await getDbCurrentDate(db)
-			return await generateId(self, year, month, doc_id, block, cluster)
+			return await generateId(self, year, month, doc_id, block)
 		} catch (err) {
 			throw err
 		}
@@ -78,13 +77,13 @@ function isValidDigitMax(n, length) {
 }
  
 
-async function generateId(self, year, month, doc_id, block, cluster) {
+async function generateId(self, year, month, doc_id, block) {
 	const options = self.options
 	const db = self.db
 	const searchMap = {
 		seqnum: `sequencer_seqnum=\${seqnum}`,
 		block: `sequencer_block=\${block}`,
-		cluster: 'sequencer_cluster=\${cluster}',
+		seqclust: 'sequencer_cluster=\${seqclust}',
 		year: `sequencer_year=\${year}`,
 		month: `sequencer_month=\${month}`
 	};
@@ -96,30 +95,26 @@ async function generateId(self, year, month, doc_id, block, cluster) {
 			throw new Error(`block value: '${block}' is not integer`)
 		}
 
-		if (!Number.isInteger(cluster)) {
-			throw new Error(`cluster value: '${cluster}' is not integer`)
-		}
-
 		if (block<0 || !isValidDigitMax(block, options.blockLength)) {
 			throw new Error(`block value: '${block}' is invalid. max length: ${options.blockLength} `)
 		}
 
-		if (cluster<0 || !isValidDigitMax(cluster, options.clusterLength)) {
-			throw new Error(`cluster value: '${cluster}' is invalid. max length: ${options.clusterLength} `)
-		}
-
-
-
 
 		// ambil code doc
 		const docparam = { doc_id }
-		const sqldoc = `select doc_seqnum from core.doc where doc_id=\${doc_id}`
+		const sqldoc = `select doc_prefix, doc_seqclust, doc_seqnum from core.doc where doc_id=\${doc_id}`
 		const row = await db.oneOrNone(sqldoc, docparam)
+		const prefix = row!=null ? row.doc_prefix : null
+		const seqclust = row!=null ? row.doc_seqclust : 0
 		const seqnum = row!=null ? row.doc_seqnum : 0
 
 
+		if (seqclust<0 || seqclust>999) {
+			throw new Error(`doc_id: '${doc_id}' has doc seqclust '${seqclust}' that is invalid. doc seqnum have to in range 0-999 `)
+		}
+
 		if (seqnum<0 || seqnum>99) {
-			throw new Error(`doc_id: '${doc_id}' has doc seqnum '${seqnum}' that is invalid. doc seqnum have to in range 1-99 `)
+			throw new Error(`doc_id: '${doc_id}' has doc seqnum '${seqnum}' that is invalid. doc seqnum have to in range 0-99 `)
 		}
 
 
@@ -141,10 +136,6 @@ async function generateId(self, year, month, doc_id, block, cluster) {
 			nlength += self.options.blockLength
 		}
 
-		if (cluster>0) {
-			nlength += self.options.clusterLength
-		}
-
 
 		// 250901000402 0000009
 
@@ -159,13 +150,9 @@ async function generateId(self, year, month, doc_id, block, cluster) {
 
 		// ambil data sequencer
 		{
-			const criteria = { year, month, seqnum, block, cluster }
+			const criteria = { year, month, seqnum, block, seqclust }
 			if (block==null) {  
 				criteria.block = 0 
-			}
-
-			if (cluster==null) {
-				criteria.cluster = 0
 			}
 
 
@@ -204,7 +191,7 @@ async function generateId(self, year, month, doc_id, block, cluster) {
 				obj.sequencer_month = month
 				obj.sequencer_seqnum = seqnum
 				obj.sequencer_block = block
-				obj.sequencer_cluster = cluster
+				obj.sequencer_cluster = seqclust
 				obj.sequencer_number = 1
 				obj.sequencer_lastdate = (new Date()).toISOString()
 				obj.sequencer_remark = doc_id
@@ -221,15 +208,12 @@ async function generateId(self, year, month, doc_id, block, cluster) {
 			const tokennum = []
 			
 
-			if (options.COMPANY_CODE!='00') {
-				if (seqnum>0) {
-					tokendoc.push(doc_id)
-					tokendoc.push(options.COMPANY_CODE)
-				}
-			} else {
-				if (seqnum>0) {
-					tokendoc.push(doc_id)
-				}
+			if (prefix!=null) {
+				tokendoc.push(prefix)
+			}
+
+			if (options.COMPANY_CODE!='00' && options.COMPANY_CODE!=null) {
+				tokendoc.push(options.COMPANY_CODE)
 			}
 
 
@@ -261,14 +245,6 @@ async function generateId(self, year, month, doc_id, block, cluster) {
 				tokendoc.push(codeBlock)
 
 				tokennum.push(codeBlock)
-			}
-
-			if (cluster>0) {
-				const codeCluster = String(cluster).padStart(self.options.clusterLength, '0')
-				tokendoc.push('.')
-				tokendoc.push(codeCluster)
-
-				tokennum.push(codeCluster)
 			}
 
 			
