@@ -62,6 +62,9 @@ export async function modulePage(req, res) {
 
 	const ejsModuleExist = await helper.isFileExists(ejsPath) 
 
+	const additionalHeaderPath = path.join(__rootDir, 'public', 'modules', moduleName, `_htmlheader.ejs`);
+	const additionalHeaderExists = await helper.isFileExists(additionalHeaderPath) 
+
 	try {
 
 		// coba cek request halaman
@@ -89,6 +92,8 @@ export async function modulePage(req, res) {
 				mjsFileName,
 				htmlExtenderExists,
 				htmlExtenderPath,
+				additionalHeaderPath,
+				additionalHeaderExists
 			}
 		}
 

@@ -52,6 +52,12 @@
 		</style>
 
 
+		<!-- additional header -->
+		<% if (additionalHeaderExists) { %>
+			<%- include(additionalHeaderPath) %>
+		<% } %>
+
+
 	</head>
 	<body>
 		<div id="loadingindicator">
