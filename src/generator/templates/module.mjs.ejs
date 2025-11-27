@@ -138,7 +138,16 @@ async function render(self) {
 			const sectionTargetName = link.getAttribute('data-target-section')
 			const sectionCurrentName = link.getAttribute('data-current-section')
 			
+			// Detil bisa dibuka apabila data sudah di save
 			link.addEventListener('click', (evt)=>{
+				const moduleHeaderEdit = self.Modules[sectionCurrentName]
+				const form = moduleHeaderEdit.getForm()
+				if (form.isNew()) {
+					console.warn('tidak bisa buka detil jika data baru')	
+					$fgta5.MessageBox.warning('Detil bisa dibuka setelah data disimpan')
+					return;
+				}
+
 				openDetilSection(self, sectionTargetName, sectionCurrentName)
 			})
 

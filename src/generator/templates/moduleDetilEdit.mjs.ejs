@@ -79,19 +79,24 @@ export async function init(self, args) {
 			const dialog = evt.detail.dialog
 			const searchtext = evt.detail.searchtext!=null ? evt.detail.searchtext : ''
 			const url = <% if (hnd.appId=='/') { %>'<%- hnd.path %>'<% } else { %>`${Context.appsUrls.<%= hnd.appId %>.url}/<%- hnd.path %>`<% } %>
+			const sort = {}
 			const criteria = {
 				searchtext: searchtext,
 			}
 
+			
+			// buat function di extender:
+			// export function <%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, criteria, sort) {}
 			const fn_<%= hnd.eventname %>_criteria_name = '<%= field.inputname %>_<%= hnd.eventname %>_criteria'
 			const fn_<%= field.inputname %>_<%= hnd.eventname %>_criteria = Extender[fn_<%= hnd.eventname %>_criteria_name]
 			if (typeof fn_<%= hnd.eventname %>_criteria === 'function') {
-				fn_<%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, criteria)
+				fn_<%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, criteria, sort)
 			}
 
 			cbo.wait()
 			try {
 				const result = await Module.apiCall(url, {
+					sort,
 					criteria,
 					offset: evt.detail.offset,
 					limit: evt.detail.limit,
@@ -716,6 +721,12 @@ async function btn_recordstatus_click(self, evt) {
 		sectionReturn: CurrentSection
 	}
 	
+	if (frm.isNew()) {
+		console.warn('tidak bisa buka rescord status jika data baru')	
+		$fgta5.MessageBox.warning('Record Status bisa dibuka setelah data disimpan')
+		return;
+	}
+
 	pageHelper.openSection(self, 'fRecord-section', params, async ()=>{
 
 		let mask = $fgta5.Modal.createMask()
@@ -755,6 +766,12 @@ async function btn_logs_click(self, evt) {
 	const params = {
 		Context,
 		sectionReturn: CurrentSection
+	}
+
+	if (frm.isNew()) {
+		console.warn('tidak bisa buka logs jika data baru')	
+		$fgta5.MessageBox.warning('Logs bisa dibuka setelah data disimpan')
+		return;
 	}
 
 	pageHelper.openSection(self, 'fLogs-section', params, async ()=>{
