@@ -1,6 +1,9 @@
 import Context from './<%= moduleName %>-context.mjs'
-import * as Extender from './<%= moduleName %>-ext.mjs'
+import * as Ext from './<%= moduleName %>-ext.mjs'
 import * as pageHelper from '/public/libs/webmodule/pagehelper.mjs'
+
+const Extender = Ext.extenderHeader ?? Ext
+
 
 const CurrentState = {}
 const Crsl =  Context.Crsl
@@ -31,10 +34,11 @@ const btn_about = document.getElementById('<%= moduleSection %>-btn_about')
 
 const frm = new $fgta5.Form('<%= modulePart %>-frm');<% fields.forEach(field => { %>
 const <%= field.inputname %> = frm.Inputs['<%= field.elementId %>']<% }) %>	
-const obj_createby = document.getElementById('fRecord-section-createby')
-const obj_createdate = document.getElementById('fRecord-section-createdate')
-const obj_modifyby = document.getElementById('fRecord-section-modifyby')
-const obj_modifydate = document.getElementById('fRecord-section-modifydate')
+const rec_createby = document.getElementById('fRecord-section-createby')
+const rec_createdate = document.getElementById('fRecord-section-createdate')
+const rec_modifyby = document.getElementById('fRecord-section-modifyby')
+const rec_modifydate = document.getElementById('fRecord-section-modifydate')
+const rec_id = document.getElementById('fRecord-section-id')
 
 
 export const Section = CurrentSection
@@ -89,7 +93,7 @@ export async function init(self, args) {
 		const fn_<%= hnd.eventname %> = Extender[fn_<%= hnd.eventname %>_name]
 		if (typeof fn_<%= hnd.eventname %> === 'function') {
 			// create function di Extender<% if (field.component=='Combobox' && hnd.eventname=='selecting') { %> (jika perlu)<% } %>:
-			// export async function <%= field.inputname %>_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt)
+			// export async function <%= field.inputname %>_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt) {}
 			fn_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt)
 		} else {<% if (field.component=='Combobox' && hnd.eventname=='selecting') { %>
 			// default selecting
@@ -102,18 +106,19 @@ export async function init(self, args) {
 				searchtext: searchtext,
 			}
 
+			evt.detail.url = url 
 			
 			// buat function di extender:
-			// export function <%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, criteria, sort) {}
+			// export function <%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, frm, criteria, sort, evt) {}
 			const fn_<%= hnd.eventname %>_criteria_name = '<%= field.inputname %>_<%= hnd.eventname %>_criteria'
 			const fn_<%= hnd.eventname %>_criteria = Extender[fn_<%= hnd.eventname %>_criteria_name]
 			if (typeof fn_<%= hnd.eventname %>_criteria === 'function') {
-				fn_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, criteria, sort)
+				fn_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, frm, criteria, sort, evt)
 			}
 
 			cbo.wait()
 			try {
-				const result = await Module.apiCall(url, {
+				const result = await Module.apiCall(evt.detail.url, {
 					sort,
 					criteria,
 					offset: evt.detail.offset,
@@ -482,6 +487,7 @@ async function btn_new_click(self, evt) {
 		const fn_newdata_name = '<%= modulePart %>_newData'
 		const fn_newdata = Extender[fn_newdata_name]
 		if (typeof fn_newdata === 'function') {
+			// export async function <%= modulePart %>_newData(self, datainit, frm) {}
 			await fn_newdata(self, datainit, frm)
 		}
 
@@ -553,6 +559,7 @@ async function btn_save_click(self, evt) {
 	const fn_datasaving_name = '<%= modulePart %>_dataSaving'
 	const fn_datasaving = Extender[fn_datasaving_name]
 	if (typeof fn_datasaving === 'function') {
+		// export async function <%= modulePart %>_dataSaving(self, dataToSave, frm) {}
 		await fn_datasaving(self, dataToSave, frm)
 	}
 
@@ -609,6 +616,7 @@ async function btn_save_click(self, evt) {
 		const fn_datasaved_name = '<%= modulePart %>_dataSaved'
 		const fn_datasaved = Extender[fn_datasaved_name]
 		if (typeof fn_datasaved === 'function') {
+			// export async function <%= modulePart %>_dataSaved(self, data, frm) {}
 			await fn_datasaved(self, data, frm)
 		}
 
@@ -747,10 +755,11 @@ async function btn_recordstatus_click(self, evt) {
 			const id = pk.value
 			const data = await openData(self, id)
 
-			obj_createby.innerHTML = data._createby
-			obj_createdate.innerHTML = data._createdate
-			obj_modifyby.innerHTML = data._modifyby
-			obj_modifydate.innerHTML = data._modifydate
+			rec_id.innerHTML = id
+			rec_createby.innerHTML = data._createby
+			rec_createdate.innerHTML = data._createdate
+			rec_modifyby.innerHTML = data._modifyby
+			rec_modifydate.innerHTML = data._modifydate
 
 			const fn_addrecordinfo_name = '<%= modulePart %>_addRecordInfo'
 			const fn_addrecordinfo = Extender[fn_addrecordinfo_name]

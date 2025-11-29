@@ -1,6 +1,7 @@
 import Context from './<%= moduleName %>-context.mjs'
-import * as Extender from './<%= moduleName %>-ext.mjs'
+import * as Ext from './<%= moduleName %>-ext.mjs'
 
+const Extender = Ext.extenderHeader ?? Ext
 
 const Crsl =  Context.Crsl
 const CurrentSectionId = Context.Sections.<%= modulePart %>

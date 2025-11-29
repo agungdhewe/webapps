@@ -8,10 +8,14 @@ body {
 
 }
 
+#fRecord-section [name="value"] {
+	user-select: text;
+}
 
 
 #fRecord-section  [name="panel"] {
 	display: flex;
+	margin-bottom: 15px;
 }
 
 

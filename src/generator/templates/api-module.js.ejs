@@ -77,8 +77,9 @@ async function <%= moduleName %>_init(self, body) {
 			setting: {}
 		}
 		
-		if (typeof Extender.coa_init === 'function') {
-			await Extender.coa_init(self, initialData)
+		if (typeof Extender.<%= moduleName %>_init === 'function') {
+			// export async function <%= moduleName %>_init(self, initialData) {}
+			await Extender.<%= moduleName %>_init(self, initialData)
 		}
 
 		return initialData
@@ -169,9 +170,12 @@ async function <%= moduleName %>_headerList(self, body) {
 			}
 		}
 
+		const args = { db, criteria }
+
 		// apabila ada keperluan untuk recompose criteria
 		if (typeof Extender.headerListCriteria === 'function') {
-			await Extender.headerListCriteria(self, db, searchMap, criteria, sort, columns)
+			// export async function headerListCriteria(self, db, searchMap, criteria, sort, columns, args) {}
+			await Extender.headerListCriteria(self, db, searchMap, criteria, sort, columns, args)
 		}
 
 		var max_rows = limit==0 ? 10 : limit
@@ -194,7 +198,8 @@ async function <%= moduleName %>_headerList(self, body) {
 			<% }) %>
 			// pasang extender di sini
 			if (typeof Extender.headerListRow === 'function') {
-				await Extender.headerListRow(self, row)
+				// export async function headerListRow(self, row, args) {}
+				await Extender.headerListRow(self, row, args)
 			}
 
 			data.push(row)
@@ -259,8 +264,10 @@ async function <%= moduleName %>_headerOpen(self, body) {
 		}
 		
 		// pasang extender untuk olah data
+		// export async function headerOpen(self, db, data) {}
 		if (typeof Extender.headerOpen === 'function') {
-			await Extender.headerOpen(self, data)
+			// export async function headerOpen(self, db, data) {}
+			await Extender.headerOpen(self, db, data)
 		}
 
 		return data
@@ -299,6 +306,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			if (typeof Extender.sequencerSetup === 'function') {
 				// jika ada keperluan menambahkan code block/cluster di sequencer
 				// dapat diimplementasikan di exterder sequencerSetup 
+				// export async function sequencerSetup(self, tx, sequencer, data) {}
 				await Extender.sequencerSetup(self, tx, sequencer, data)
 			}
 
@@ -312,6 +320,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
 			if (typeof Extender.headerCreating === 'function') {
+				// export async function headerCreating(self, tx, data, seqdata) {}
 				await Extender.headerCreating(self, tx, data, seqdata)
 			}			
 			
@@ -322,6 +331,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			if (typeof Extender.sequencerSetup === 'function') {
 				// jika ada keperluan menambahkan code block/cluster di sequencer
 				// dapat diimplementasikan di exterder sequencerSetup 
+				// export async function sequencerSetup(self, tx, sequencer, data) {}
 				await Extender.sequencerSetup(self, tx, sequencer, data)
 			}
 
@@ -331,12 +341,14 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
 			if (typeof Extender.headerCreating === 'function') {
+				// export async function headerCreating(self, tx, data, seqdata)
 				await Extender.headerCreating(self, tx, data, seqdata)
 			}
 
 			<% } else { %>	
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
 			if (typeof Extender.headerCreating === 'function') {
+				// export async function headerCreating(self, tx, data) {}
 				await Extender.headerCreating(self, tx, data)
 			}<% } %>
 
@@ -357,6 +369,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
 			if (typeof Extender.headerCreated === 'function') {
+				// export async function headerCreated(self, tx, ret, data, logMetadata) {}
 				await Extender.headerCreated(self, tx, ret, data, logMetadata)
 			}
 
@@ -394,6 +407,7 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
 			if (typeof Extender.headerUpdating === 'function') {
+				// export async function headerUpdating(self, tx, data) {}
 				await Extender.headerUpdating(self, tx, data)
 			}
 
@@ -413,6 +427,7 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
 			if (typeof Extender.headerUpdated === 'function') {
+				// export async function headerUpdated(self, tx, ret, data, logMetadata) {}
 				await Extender.headerUpdated(self, tx, ret, data, logMetadata)
 			}			
 
@@ -446,6 +461,7 @@ async function <%= moduleName %>_headerDelete(self, body) {
 
 			// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender headerDeleting
 			if (typeof Extender.headerDeleting === 'function') {
+				// export async function headerDeleting(self, tx, dataToRemove) {}
 				await Extender.headerDeleting(self, tx, dataToRemove)
 			}
 
@@ -457,6 +473,7 @@ async function <%= moduleName %>_headerDelete(self, body) {
 				for (let row<%= entity.name %> of rows) {
 					// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
 					if (typeof Extender.<%= entity.name %>Deleting === 'function') {
+						// export async function <%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata) {}
 						await Extender.<%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata)
 					}
 
@@ -466,6 +483,7 @@ async function <%= moduleName %>_headerDelete(self, body) {
 
 					// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
 					if (typeof Extender.<%= entity.name %>Deleted === 'function') {
+						// export async function <%= entity.name %>Deleted(self, tx, deletedRow, logMetadata) {}
 						await Extender.<%= entity.name %>Deleted(self, tx, deletedRow, logMetadata)
 					}					
 
@@ -487,6 +505,7 @@ async function <%= moduleName %>_headerDelete(self, body) {
 
 			// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender headerDeleted
 			if (typeof Extender.headerDeleted === 'function') {
+				// export async function headerDeleted(self, tx, ret, logMetadata) {}
 				await Extender.headerDeleted(self, tx, ret, logMetadata)
 			}
 
@@ -524,9 +543,12 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 			}
 		}
 
+		const args = { db, criteria }
+
 		// apabila ada keperluan untuk recompose criteria
-		if (typeof Extender.<%= moduleName %>ListCriteria === 'function') {
-			await Extender.<%= moduleName %>ListCriteria(self, db, searchMap, criteria, sort, columns)
+		if (typeof Extender.<%= entity.name %>ListCriteria === 'function') {
+			// export async function <%= entity.name %>ListCriteria(self, db, searchMap, criteria, sort, columns, args) {}
+			await Extender.<%= entity.name %>ListCriteria(self, db, searchMap, criteria, sort, columns, args)
 		}
 
 		var max_rows = limit==0 ? 10 : limit
@@ -550,7 +572,8 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 
 			// pasang extender di sini
 			if (typeof Extender.detilListRow === 'function') {
-				await Extender.detilListRow(row)
+				// export async function detilListRow(self, row, args) {}
+				await Extender.detilListRow(self, row, args)
 			}
 
 			data.push(row)
@@ -646,6 +669,7 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 
 			// apabila ada keperluan pengolahan data SEBELUM disimpan
 			if (typeof Extender.<%= entity.name %>Creating === 'function') {
+				// export async function <%= entity.name %>Creating(self, tx, data, seqdata) {}
 				await Extender.<%= entity.name %>Creating(self, tx, data, seqdata)
 			}
 
@@ -663,6 +687,7 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
 			if (typeof Extender.<%= entity.name %>Created === 'function') {
+				// export async function <%= entity.name %>Created(self, tx, ret, data, logMetadata) {}
 				await Extender.<%= entity.name %>Created(self, tx, ret, data, logMetadata)
 			}
 
@@ -700,6 +725,7 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 
 			// apabila ada keperluan pengolahan data SEBELUM disimpan
 			if (typeof Extender.<%= entity.name %>Updating === 'function') {
+				// export async function <%= entity.name %>Updating(self, tx, data) {}
 				await Extender.<%= entity.name %>Updating(self, tx, data)
 			}			
 			
@@ -717,6 +743,7 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
 			if (typeof Extender.<%= entity.name %>Updated === 'function') {
+				// export async function <%= entity.name %>Updated(self, tx, ret, data, logMetadata) {}
 				await Extender.<%= entity.name %>Updated(self, tx, ret, data, logMetadata)
 			}
 
@@ -751,6 +778,7 @@ async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
 
 			// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
 			if (typeof Extender.<%= entity.name %>Deleting === 'function') {
+				// export async function <%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata) {}
 				await Extender.<%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata)
 			}
 
@@ -760,6 +788,7 @@ async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
 
 			// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
 			if (typeof Extender.<%= entity.name %>Deleted === 'function') {
+				// export async function <%= entity.name %>Deleted(self, tx, deletedRow, logMetadata) {}
 				await Extender.<%= entity.name %>Deleted(self, tx, deletedRow, logMetadata)
 			}					
 
@@ -795,6 +824,7 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 
 				// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
 				if (typeof Extender.<%= entity.name %>Deleting === 'function') {
+					// async function <%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata) {}
 					await Extender.<%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata)
 				}
 
@@ -804,6 +834,7 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 
 				// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
 				if (typeof Extender.<%= entity.name %>Deleted === 'function') {
+					// export async function <%= entity.name %>Deleted(self, tx, deletedRow, logMetadata) {}
 					await Extender.<%= entity.name %>Deleted(self, tx, deletedRow, logMetadata)
 				}					
 

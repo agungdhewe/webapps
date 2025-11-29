@@ -29,6 +29,7 @@ export async function createModuleDetilEditMjs(context, options) {
 			}
 
 			const sectionName = entityName
+			const extenderDetil = kebabToCamel(`extender-${sectionName}`)
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
 			const targetFile = path.join(context.moduleDir, `${modulePart}.mjs`)
 
@@ -146,6 +147,7 @@ export async function createModuleDetilEditMjs(context, options) {
 				modulePart,
 				moduleName,
 				sectionName,
+				extenderDetil,
 				entityName,
 				headerPrimaryKey,
 				detilPrimaryKey,
