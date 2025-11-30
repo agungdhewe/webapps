@@ -43,3 +43,12 @@ export function renderLog(tbody, data) {
 		tbody.appendChild(tr)
 	}
 }
+
+
+export async function sleep(ms) {
+	return new Promise((resolve)=>{
+		setTimeout(()=>{
+			resolve()
+		}, ms)
+	})
+}

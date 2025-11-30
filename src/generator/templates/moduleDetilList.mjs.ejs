@@ -33,6 +33,7 @@ export async function init(self, args) {
 
 	// tambahkan event lain di extender: rowrender, rowremoving
 	// dapatkan parameternya di evt.detail
+	// export function <%= sectionName %>List_addTableEvents(self, tbl) {}
 	const fn_addTableEvents_name = '<%= sectionName %>List_addTableEvents'
 	const fn_addTableEvents = Extender[fn_addTableEvents_name]
 	if (typeof fn_addTableEvents === 'function') {
@@ -49,6 +50,7 @@ export async function init(self, args) {
 	btn_delrow.addEventListener('click', (evt)=>{ btn_delrow_click(self, evt) })
 	
 	// Extend list detil
+	// export function <%= modulePart %>_init(self) {}
 	const fn_name = '<%= modulePart %>_init'
 	const fn_<%= modulePart %>_init = Extender[fn_name]
 	if (typeof fn_<%= modulePart %>_init === 'function') {
@@ -69,6 +71,7 @@ export async function openList(self, params) {
 	// apabila mau menambahkan informasi saat detil list dibuka,
 	// misalnya menambahkan informasi beberapa data dari formHeader
 	// bisa di set pada Extender.<%= modulePart %>_openList :  bisa menggunakan template untuk di embed ke header pada detil list
+	// export function <%= modulePart %>_openList(self, headerForm) {}
 	const fn_name = '<%= modulePart %>_openList'
 	const fn_<%= modulePart %>_openList = Extender[fn_name]
 	if (typeof fn_<%= modulePart %>_openList === 'function') {
@@ -218,13 +221,22 @@ async function openRow(self, tr) {
 
 async function listRows(self, criteria, offset, limit, sort) {
 	const url = `/${Context.moduleName}/<%= sectionName %>-list`
+	const evt = { url, limit }
+
+	// export function <%= sectionName %>List_dataLoad(self, criteria, sort, evt) {}
+	const fn_dataLoad_name = '<%= sectionName %>List_dataLoad'
+	const fn_dataLoad = Extender[fn_dataLoad_name]
+	if (typeof fn_dataLoad === 'function') {
+		fn_dataLoad(self, criteria, sort, evt)
+	}
+
 	try {
 		const columns = []
-		const result = await Module.apiCall(url, {  
+		const result = await Module.apiCall(evt.url, {  
 			columns,
 			criteria,
 			offset,
-			limit,
+			limit: evt.limit,
 			sort
 		}) 
 		return result 

@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 export async function createModuleDetilEditMjs(context, options) {
 	const overwrite = options.overwrite===true
 	const moduleName = context.moduleName
-	const title = context.title
+	// const title = context.title // ini title header
 	const sectionPart = 'edit'
 
 	try {
@@ -28,6 +28,7 @@ export async function createModuleDetilEditMjs(context, options) {
 				continue
 			}
 
+			const title = entityData.title
 			const sectionName = entityName
 			const extenderDetil = kebabToCamel(`extender-${sectionName}`)
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)

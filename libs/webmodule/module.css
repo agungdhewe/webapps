@@ -2,6 +2,12 @@
 @import url('./module-edit.css');
 @import url('./module-footer.css');
 
+:root {
+	--max-mobile-width: 500px;
+	--min-desktop-width: 501px;
+}
+
+
 
 body {
 	overflow-x: hidden;

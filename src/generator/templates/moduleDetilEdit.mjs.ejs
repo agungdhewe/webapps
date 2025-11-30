@@ -65,6 +65,11 @@ export async function init(self, args) {
 
 	CurrentState.headerFormLocked = true 
 	CurrentState.editDisabled = false
+	CurrentState.getHeaderForm = () => {
+		const <%= moduleName %>HeaderEdit = self.Modules.<%= moduleName %>HeaderEdit
+		const frmHeader = <%= moduleName %>HeaderEdit.getHeaderForm()
+		return frmHeader
+	}
 
 
 	<% fieldHandles.forEach(field => { %>
@@ -72,10 +77,10 @@ export async function init(self, args) {
 	<%= field.inputname %>.addEventListener('<%= hnd.eventname %>', <% if (hnd.eventname=='selecting') { %>async <% } %>(evt)=>{
 		const fn_<%= hnd.eventname %>_name = '<%= field.inputname %>_<%= hnd.eventname %>'
 		const fn_<%= hnd.eventname %> = Extender[fn_<%= hnd.eventname %>_name]
-		if (typeof fn_<%= field.inputname %>_<%= hnd.eventname %> === 'function') {
+		if (typeof fn_<%= hnd.eventname %> === 'function') {
 			// create function di Extender<% if (field.component=='Combobox' && hnd.eventname=='selecting') { %> (jika perlu)<% } %>:
 			// export async function <%= field.inputname %>_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt) {}
-			fn_<%= field.inputname %>_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt)
+			fn_<%= hnd.eventname %>(self, <%= field.inputname %>, frm, evt)
 		} else {<% if (field.component=='Combobox' && hnd.eventname=='selecting') { %>
 			// default selecting
 			const cbo = evt.detail.sender
@@ -88,13 +93,14 @@ export async function init(self, args) {
 			}
 
 			evt.detail.url = url 
+			evt.detail.CurrentState = CurrentState
 			
 			// buat function di extender:
 			// export function <%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, frm, criteria, sort, evt) {}
 			const fn_<%= hnd.eventname %>_criteria_name = '<%= field.inputname %>_<%= hnd.eventname %>_criteria'
-			const fn_<%= field.inputname %>_<%= hnd.eventname %>_criteria = Extender[fn_<%= hnd.eventname %>_criteria_name]
+			const fn_<%= hnd.eventname %>_criteria = Extender[fn_<%= hnd.eventname %>_criteria_name]
 			if (typeof fn_<%= hnd.eventname %>_criteria === 'function') {
-				fn_<%= field.inputname %>_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, frm, criteria, sort, evt)
+				fn_<%= hnd.eventname %>_criteria(self, <%= field.inputname %>, frm, criteria, sort, evt)
 			}
 
 			cbo.wait()
@@ -158,6 +164,8 @@ export async function openSelectedData(self, params) {
 		frm.acceptChanges()
 		frm.lock()
 
+
+		// export function <%= modulePart %>_formOpened(self, frm, CurrentState) {}
 		const fn_formopened_name = '<%= modulePart %>_formOpened'
 		const fn_formopened = Extender[fn_formopened_name]
 		if (typeof fn_formopened === 'function') {
@@ -325,6 +333,7 @@ async function  frm_locked(self, evt) {
 
 
 	// Extender untuk event locked
+	// export function <%= modulePart %>_formLocked(self, frm, CurrentState) {}
 	const fn_name = '<%= modulePart %>_formLocked'
 	const fn = Extender[fn_name]
 	if (typeof fn === 'function') {
@@ -361,6 +370,7 @@ async function  frm_unlocked(self, evt) {
 	btn_next.disabled = true
 
 	// Extender untuk event Unlocked
+	// export function <%= modulePart %>_formUnlocked(self, frm) {}
 	const fn_name = '<%= modulePart %>_formUnlocked'
 	const fn = Extender[fn_name]
 	if (typeof fn === 'function') {
@@ -467,19 +477,20 @@ async function btn_new_click(self, evt) {
 		const <%= headerPrimaryKey %> = header_pk.value
 
 		// inisiasi data baru
-		let datainit = {
+		const datainit = {
 			<%= headerPrimaryKey %>,<% defaultInits.forEach(setdefault => { %>
-			<%- setdefault %>,
-		<% }) %>}
+			<%- setdefault %>,<% }) %>
+		}
 
 
 		// jika perlu modifikasi data initial,
 		// atau dialog untuk opsi data baru, 
 		// dapat dibuat di Extender.newData
+		// export async function <%= modulePart %>_newData(self, datainit, frm, CurrentState) {}
 		const fn_newdata_name = '<%= modulePart %>_newData'
 		const fn_newdata = Extender[fn_newdata_name]
 		if (typeof fn_newdata === 'function') {
-			await fn_newdata(self, datainit, frm)
+			await fn_newdata(self, datainit, frm, CurrentState)
 		}
 
 		// buat data baru
@@ -506,6 +517,7 @@ async function btn_save_click(self, evt) {
 	console.log('btn_save_click')
 
 	// Extender Autofill
+	// export async function <%= modulePart %>_autofill(self, frm) {}
 	const fn_autofill_name = '<%= modulePart %>_autofill'
 	const fn_autofill = Extender[fn_autofill_name]
 	if (typeof fn_autofill === 'function') {
@@ -556,6 +568,7 @@ async function btn_save_click(self, evt) {
 
 
 	// Extender Saving
+	// export async function <%= modulePart %>_dataSaving(self, dataToSave, frm) {}
 	const fn_datasaving_name = '<%= modulePart %>_dataSaving'
 	const fn_datasaving = Extender[fn_datasaving_name]
 	if (typeof fn_datasaving === 'function') {
@@ -602,6 +615,7 @@ async function btn_save_click(self, evt) {
 
 
 		// Extender Saving
+		// export async function <%= modulePart %>_dataSaved(self, data, frm) {}
 		const fn_datasaved_name = '<%= modulePart %>_dataSaved'
 		const fn_datasaved = Extender[fn_datasaved_name]
 		if (typeof fn_datasaved === 'function') {
@@ -750,6 +764,7 @@ async function btn_recordstatus_click(self, evt) {
 			// jika mau menambah beberapa informasi mengenai record,
 			// misalnya commit by, postby, dll
 			// melalui extender <%= modulePart %>_addRecordInfo
+			// export async function <%= modulePart %>_addRecordInfo(self,  data) {}
 			const fn_addrecordinfo_name = '<%= modulePart %>_addRecordInfo'
 			const fn_addrecordinfo = Extender[fn_addrecordinfo_name]
 			if (typeof fn_addrecordinfo === 'function') {
