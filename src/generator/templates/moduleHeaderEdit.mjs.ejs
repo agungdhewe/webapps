@@ -70,15 +70,16 @@ export async function init(self, args) {
 
 	// set actions
 	CurrentState.Actions = {
+		newdata: btn_new,
 		edit: btn_edit,<% actionList.forEach(action => { %>
 		<%= action.name %>: <%= action.buttonName %>,<% }) %>	
 	}
 
-	<%if (actionList.length>0) {%>// buat di Extender: export function setupActionButtonEvent(self, buttons)
+	<%if (actionList.length>0) {%>// buat di Extender: export function setupActionButtonEvent(self, frm, CurrentState, buttons) { }
 	const fn_setupactionbuttonevent_name = 'setupActionButtonEvent'
 	const fn_setupactionbuttonevent = Extender[fn_setupactionbuttonevent_name]
 	if (typeof fn_setupactionbuttonevent === 'function') {
-		fn_setupactionbuttonevent(self, {<% actionList.forEach(action => { %>
+		fn_setupactionbuttonevent(self, frm, CurrentState, {<% actionList.forEach(action => { %>
 			<%= action.buttonName %>,<% }) %>
 		})
 	} else {
@@ -89,6 +90,9 @@ export async function init(self, args) {
 	<% fieldHandles.forEach(field => { %>
 	// <%= field.component %>: <%= field.inputname %><% field.handles.forEach(hnd => { %>
 	<%= field.inputname %>.addEventListener('<%= hnd.eventname %>', <% if (hnd.eventname=='selecting') { %>async <% } %>(evt)=>{
+		
+		evt.detail.CurrentState = CurrentState
+		
 		const fn_<%= hnd.eventname %>_name = '<%= field.inputname %>_<%= hnd.eventname %>'
 		const fn_<%= hnd.eventname %> = Extender[fn_<%= hnd.eventname %>_name]
 		if (typeof fn_<%= hnd.eventname %> === 'function') {

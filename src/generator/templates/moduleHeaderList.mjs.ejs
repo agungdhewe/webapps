@@ -210,17 +210,18 @@ async function openRow(self, tr) {
 		CurrentState.SelectedRow.keyValue = keyvalue
 		CurrentState.SelectedRow.key = key
 		await <%= moduleEdit %>.openSelectedData(self, {key:key, keyvalue:keyvalue})
-	} catch (err) {
-		console.error(err)
-		await $fgta5.MessageBox.error(err.message)
 
+		// matikan atau nyalakan button prev/next sesuai kondisi
+		setPagingButton(self, <%= moduleEdit %>)
+
+	} catch (err) {
 		setCurrentRow(self, null)
 		CurrentSection.show() // kembalikan ke list kalau error saat buka data
+
+		console.error(err)
+		await $fgta5.MessageBox.error(err.message)
 	}
-
-
-	// matikan atau nyalakan button prev/next sesuai kondisi
-	setPagingButton(self, <%= moduleEdit %>)
+	
 }
 
 async function listRows(self, criteria, offset, limit, sort) {

@@ -118,7 +118,7 @@ class Module {
 			const result = await api.execute(args, formData)
 			return result 
 		} catch (err) {
-			this.processError(err)
+			await this.processError(err)
 			throw err
 		}
 	}
@@ -129,8 +129,10 @@ class Module {
 		const currentUrl = window.location.href;
 		if (err.status==401) {
 			console.error(err)
-			await $fgta5.MessageBox.error(err.message)
+			window.onbeforeunload = null
+
 			if (inFrane) {
+				await $fgta5.MessageBox.error(`${err.message}!`)  // perlu tambah tanda seru !, agar gak diproses reload di messagebox
 				window.parent.postMessage({
 					action:'REDIRECT_TO_LOGIN',
 					href: '/login',
@@ -138,9 +140,13 @@ class Module {
 
 				}, '*')
 			} else {
-				location.href = `/login?nexturl=${currentUrl}`
+				
+				document.body.innerHTML = `<div style="font-size: 18px; padding: 30px;">Your session was expired.<br>You need to <a href="/login?nexturl=${currentUrl}">relogin</a></div>`
+				setTimeout(()=>{
+					location.href = `/login?nexturl=${currentUrl}`
+				}, 100000)
 			}
-			await this.sleep(10000)
+			// await this.sleep(10000)
 			throw err				
 		} else {
 			throw err
