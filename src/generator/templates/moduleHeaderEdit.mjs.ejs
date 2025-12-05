@@ -174,16 +174,20 @@ export async function openSelectedData(self, params) {
 		// disable primary key
 		setPrimaryKeyState(self, {disabled:true})
 
+		// isi form dengan data
 		frm.setData(data)
-		frm.acceptChanges()
-		frm.lock()
 
+		// jika ada kebutuhan untuk oleh lagi form dan data, bisa lakukan di extender
+		// export async function <%= modulePart %>_formOpened(self, frm, CurrentState)
 		const fn_formopened_name = '<%= modulePart %>_formOpened'
 		const fn_formopened = Extender[fn_formopened_name]
 		if (typeof fn_formopened === 'function') {
-			// export async function <%= modulePart %>_formOpened(self, frm, CurrentState)
 			await fn_formopened(self, frm, CurrentState)
 		}
+
+		// finally, accept changes dan lock form
+		frm.acceptChanges()
+		frm.lock()
 
 	} catch (err) {
 		CurrentState.currentOpenedId = null
@@ -339,6 +343,7 @@ async function  frm_locked(self, evt) {
 	<%= action.buttonName %>.disabled = false<% }) %><% } %>
 	
 	// Extender untuk event locked
+	// export function <%= modulePart %>_formLocked(self, frm, CurrentState) {}
 	const fn_name = '<%= modulePart %>_formLocked'
 	const fn = Extender[fn_name]
 	if (typeof fn === 'function') {
@@ -379,6 +384,7 @@ async function  frm_unlocked(self, evt) {
 	<%= action.buttonName %>.disabled = true<% }) %><% } %>
 
 	// Extender untuk event Unlocked
+	// export function <%= modulePart %>_formUnlocked(self, frm, CurrentState) {}
 	const fn_name = '<%= modulePart %>_formUnlocked'
 	const fn = Extender[fn_name]
 	if (typeof fn === 'function') {
