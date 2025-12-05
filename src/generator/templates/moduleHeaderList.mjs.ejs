@@ -42,7 +42,7 @@ export async function init(self, args) {
 
 	try {
 		// extract custom search panel from template
-		const tplSearchPanel = document.querySelector('template[name="custom-search-panel"]')
+		const tplSearchPanel = document.getElementById('tpl-custom-search-panel')
 		if (tplSearchPanel!=null) {
 			const clone = tplSearchPanel.content.cloneNode(true); // salin isi template
 			pnl_search.prepend(clone)

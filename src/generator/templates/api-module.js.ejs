@@ -644,6 +644,14 @@ async function <%= moduleName %>_<%= entity.name %>Open(self, body) {
 			data._modifyby = user_fullname ?? ''
 		}	
 
+
+		// pasang extender untuk olah data
+		// export async function <%= entity.name %>Open(self, db, data) {}
+		if (typeof Extender.<%= entity.name %>Open === 'function') {
+			// export async function <%= entity.name %>Open(self, db, data) {}
+			await Extender.<%= entity.name %>Open(self, db, data)
+		}
+
 		return data
 	} catch (err) {
 		throw err

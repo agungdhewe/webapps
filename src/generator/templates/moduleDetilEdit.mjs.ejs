@@ -595,13 +595,19 @@ async function btn_save_click(self, evt) {
 
 
 	// Extender Saving
-	// export async function <%= modulePart %>_dataSaving(self, dataToSave, frm) {}
+	// export async function <%= modulePart %>_dataSaving(self, dataToSave, frm, args) {}
+	const args = { cancelSave: false }
 	const fn_datasaving_name = '<%= modulePart %>_dataSaving'
 	const fn_datasaving = Extender[fn_datasaving_name]
 	if (typeof fn_datasaving === 'function') {
-		await fn_datasaving(self, dataToSave, frm)
+		await fn_datasaving(self, dataToSave, frm, args)
 	}
 
+	// batalkan save, jika ada request cancel
+	if (args.cancelSave) {
+		console.log('save is canceled')
+		return
+	}
 
 
 	let mask = $fgta5.Modal.createMask()

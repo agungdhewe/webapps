@@ -11,6 +11,10 @@
 <% }) %>	
 </form>
 
+
+<div id="<%= modulePart %>-footer">
+</div>
+
 <div id="<%= modulePart %>-panelaction" class="panel-action"><% if (actionList.length>0) { %><% actionList.forEach(action => { %>
 	<button id="<%= action.elementId %>"><%= action.title %></button><% }) %>
 <% } %></div>
@@ -21,7 +25,7 @@
 		Information Detil
 	</div>
 	<div panel-content><% sectionDetils.forEach(detil => { %>
-		<div class="panel-detil-row">
+		<div class="panel-detil-row" id="<%= modulePart %>-info-<%= detil.entityName %>-row">
 			<div data-label><a href="javascript:void(0)" data-target-section="<%= detil.listModulePart %>" data-current-section="<%= modulePart %>"><%= detil.title %></a></div>
 			<div data-info>&nbsp</div>
 		</div><% }) %>

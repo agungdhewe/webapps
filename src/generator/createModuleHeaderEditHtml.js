@@ -115,7 +115,8 @@ export async function createModuleHeaderEditHtml(context, options) {
 				const title = entityData.title
 				sectionDetils.push({
 					listModulePart,
-					title
+					title,
+					entityName: detilEntityName
 				})
 			}
 
