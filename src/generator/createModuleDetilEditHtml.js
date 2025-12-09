@@ -14,6 +14,9 @@ export async function createModuleDetilEditHtml(context, options) {
 	const sectionPart = 'edit'
 
 	try {
+
+		const entityHeader = context.entities['header']
+		
 		for (let entityName in context.entities) {
 			// process selain header
 			if (entityName=='header') {
@@ -67,7 +70,15 @@ export async function createModuleDetilEditHtml(context, options) {
 				const tabindex = item.input_index
 				const binding = item.data_fieldname
 				const additionalAttributes = createAdditionalAttributes(item)
-				const cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}` 
+				
+				let cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}` 
+
+
+
+				if (fieldName==entityHeader.pk) {
+					cssContainer += ' hidden'
+				}
+
 
 				fields.push({  
 					component,

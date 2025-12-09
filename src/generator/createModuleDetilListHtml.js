@@ -15,6 +15,8 @@ export async function createModuleDetilListHtml(context, options) {
 	
 
 	try {
+
+		const entityHeader = context.entities['header']
 		
 		for (let entityName in context.entities) {
 			// process selain header
@@ -110,14 +112,19 @@ export async function createModuleDetilListHtml(context, options) {
 				}
 
 
+				const addToFields = fieldName!=entityHeader.pk
+
 				// masukkan ke fields
-				fields.push({  
-					component,
-					dataName: columnDataName, //bindingDisplay!=null ? bindingDisplay : dataName, 
-					binding: columnDataBinding, //bindingDisplay!=null ? bindingDisplay : binding,
-					label,
-					additionalAttributes
-				})
+				if (addToFields) {
+					fields.push({  
+						component,
+						dataName: columnDataName, //bindingDisplay!=null ? bindingDisplay : dataName, 
+						binding: columnDataBinding, //bindingDisplay!=null ? bindingDisplay : binding,
+						label,
+						additionalAttributes
+					})
+				}
+				
 			}
 
 
