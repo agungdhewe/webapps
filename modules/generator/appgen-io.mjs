@@ -470,6 +470,9 @@ function AppGenIO_GetFieldData(self, el) {
 	// allownull
 	field.data_allownull = getCheckedFrom(el, 'input[name="allownull"]')
 
+	// multiline
+	field.input_multiline = getCheckedFrom(el, 'input[name="multiline"]')
+
 	// get defaul value
 	if (field.component=='Checkbox') {
 		var defaultChecked = getCheckedFrom(el, 'input[name="defaultvalue"]')
@@ -707,6 +710,8 @@ function AppGenIO_FillDataField(self, datafield, field) {
 	setValueTo(field.data_precision, datafield, 'input[name="dataprecission"]', 'value')
 
 	setCheckedTo(field.data_allownull, datafield, 'input[name="allownull"]')
+
+	setCheckedTo(field.input_multiline, datafield, 'input[name="multiline"]')
 
 	if (field.component=='Checkbox') {
 		setCheckedTo(field.data_defaultvalue, datafield, 'input[name="defaultvalue"]')

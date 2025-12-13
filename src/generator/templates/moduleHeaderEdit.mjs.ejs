@@ -75,6 +75,15 @@ export async function init(self, args) {
 		<%= action.name %>: <%= action.buttonName %>,<% }) %>	
 	}
 
+
+	// export async function <%= modulePart %>_init(self, CurrentState)
+	const fn_init_name = '<%= modulePart %>_init'
+	const fn_init = Extender[fn_init_name]
+	if (typeof fn_init === 'function') {
+		await fn_init(self, CurrentState)
+	}
+
+
 	<%if (actionList.length>0) {%>// buat di Extender: export function setupActionButtonEvent(self, frm, CurrentState, buttons) { }
 	const fn_setupactionbuttonevent_name = 'setupActionButtonEvent'
 	const fn_setupactionbuttonevent = Extender[fn_setupactionbuttonevent_name]
@@ -164,6 +173,7 @@ export async function openSelectedData(self, params) {
 
 		CurrentState.currentOpenedId = id
 
+		// export async function <%= modulePart %>_isEditDisabled(self, data)
 		const fn_iseditdisabled_name = '<%= modulePart %>_isEditDisabled'
 		const fn_iseditdisabled = Extender[fn_iseditdisabled_name]
 		if (typeof fn_iseditdisabled === 'function') {

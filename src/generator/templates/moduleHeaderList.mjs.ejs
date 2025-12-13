@@ -313,6 +313,14 @@ async function tbl_loadData(self, params={}) {
 		}
 		tbl.addRows(result.data)
 		tbl.setNext(result.nextoffset, result.limit)
+
+		// export function headerList_tableDataLoaded(self, tbl, result) {}
+		const fn_name = 'headerList_tableDataLoaded'
+		const fn = Extender[fn_name]
+		if (typeof fn === 'function') {
+			fn(self, tbl, result)
+		}
+
 	} catch (err) {
 		console.error(err)
 		$fgta5.MessageBox.error(err.message)

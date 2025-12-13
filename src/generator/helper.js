@@ -84,6 +84,14 @@ export function createAdditionalAttributes(item) {
 	}
 
 
+	// multiline, hanya untuk textbox
+	if (item.component=='Textbox') {
+		if (item.input_multiline) {
+			cfg.push('multiline')
+		}
+	}
+
+
 	// data length in character
 	if (item.component=='Textbox') {
 		cfg.push(`autocomplete="off" spellcheck="false"`)
