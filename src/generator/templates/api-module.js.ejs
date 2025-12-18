@@ -297,7 +297,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			sqlUtil.connect(tx)
 
 
-			const args = { section: 'header' }
+			const args = { section: 'header', prefix:'<%= identifierPrefix %>' }
 
 			<% if (usesequencer) { %>// set default document prefix
 			args.prefix = '<%= identifierPrefix %>'	

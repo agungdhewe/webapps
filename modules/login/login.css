@@ -2,10 +2,18 @@
 	margin: 10px
 }
 
+.loginbox h1 {
+	padding-left: 2px;
+}
+
 .loginbox input {
-	margin-bottom: 5px;
+	padding: 5px;
+	margin: 3px;
 }
 
 .loginbox button {
-	margin-top: 5px;
+	margin: 8px 3px 3px 3px;
+	padding: 8px 30px 8px 30px;
+	font-weight: bold;
+	cursor: pointer;
 }

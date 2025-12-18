@@ -52,3 +52,51 @@ export async function sleep(ms) {
 		}, ms)
 	})
 }
+
+
+export function setCssRule(selector, properties) {
+	let found = false;
+
+	for (const sheet of document.styleSheets) {
+		for (let i = 0; i < sheet.cssRules.length; i++) {
+		const rule = sheet.cssRules[i];
+
+		if (rule.selectorText === selector) {
+			for (const [prop, val] of Object.entries(properties)) {
+			rule.style[prop] = val;
+			}
+			found = true;
+		}
+		}
+	}
+
+	// jika rule belum ada, tambahkan
+	if (!found) {
+		const firstSheet = document.styleSheets[0];
+		const props = Object.entries(properties)
+		.map(([p, v]) => `${p}: ${v}`)
+		.join('; ');
+		firstSheet.insertRule(`${selector} { ${props} }`, firstSheet.cssRules.length);
+	}
+}
+
+
+export function formatDecimal(num, prec) {
+	return new Intl.NumberFormat("en-EN", {
+		minimumFractionDigits: prec,
+		maximumFractionDigits: prec
+	}).format(num);
+}
+
+export function setVisibility(el_name, visible) {
+	const el = document.getElementById(el_name)
+	if (el==null) {
+		return
+	}
+
+	if (visible==true) {
+		el.classList.remove('hidden')
+	} else {
+		el.classList.add('hidden')
+	}
+}
