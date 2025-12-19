@@ -10,12 +10,16 @@ const __dirname = path.dirname(__filename);
 export async function createModuleHeaderEditMjs(context, options) {
 	const overwrite = options.overwrite===true
 	const moduleName = context.moduleName
-	const title = context.title
+	
 	const actions = context.actions
 	const sectionPart = 'edit'
 	const timeGenerated = context.timeGenerated
 
 	try {
+
+
+		const headerEntityData = context.entities['header']
+		const title = headerEntityData.title
 
 		// Data Detil
 		const entitiesDetil = []

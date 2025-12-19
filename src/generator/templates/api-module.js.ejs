@@ -540,6 +540,11 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 	};
 
 
+	if (Object.keys(sort).length === 0) {
+		sort.<%= entity.pk %> = 'asc'
+	}
+
+
 	try {
 	
 		// hilangkan criteria '' atau null

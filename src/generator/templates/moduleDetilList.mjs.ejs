@@ -298,6 +298,9 @@ async function tbl_loadData(self, params={}) {
 		if (offset===0) {
 			tbl.clear()
 		}
+
+
+		tbl.setCriteria(criteria)
 		tbl.addRows(result.data)
 		tbl.setNext(result.nextoffset, result.limit)
 
