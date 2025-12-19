@@ -1,0 +1,32 @@
+<!-- SEARCH-DESIGN -->
+<div name="designer-search" class="designer-search hidden">
+	Jika search tidak didefinisikan, akan otomatis ditambahkan search criteria exact berdasarkan id<br><br>
+	<table name="tbl-search">
+		<tr>
+			<td style="vertical-align: top;">
+				<input name="criteria_name" class="action-input" placeholder="criteria name">
+				<div style="padding-left: 6px; font-size: 0.8rem;">
+					<a name="btnNew" href="javascript:void(0)">new</a>
+				</div>
+			</td>
+			<td style="vertical-align: top;">
+				<input name="criteria_label" class="action-input" placeholder="criteria label">
+			</td>			
+			<td style="vertical-align: top;">
+				<div>
+					<input name="criteria_fields" class="action-input" style="width: 400px" placeholder="fields">
+				</div>
+				<div style="font-size: 0.8em; font-style: italic; padding-left: 5px;">
+					untuk multiple fields, pisahkan dengan koma (,)<br>
+					ketikkan <b>namafield</b> untuk exact search,<br>
+					atau ketikkan <b>%namafield</b> untuk search like
+				</div>
+				
+			</td>
+			<td style="vertical-align: top;">
+				<button name="btnAdd" class="action-button-add">Add</button>
+			</td>
+		</tr>
+
+	</table>
+</div>

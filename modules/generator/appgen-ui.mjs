@@ -611,16 +611,43 @@ function AppGenLayout_addDesigner(self, ID, isheader) {
 	if (isheader===true) {
 		chka.disabled = true
 		chkr.disabled = true
-		const dcs = elinfo.querySelectorAll('[data-control]')
-		for (var dc of dcs) {
-			dc.classList.add('hidden')
+		
+		// sembunykan data-control di header
+		{
+			const elems = elinfo.querySelectorAll('[data-control]')
+			for (var el of elems) {
+				el.classList.add('hidden')
+			}
 		}
 
-	} else {
-		const dai = elinfo.querySelectorAll('[data-autoid]')
-		for (var ai of dai) {
-			ai.classList.add('hidden')
+		// tampilkan data-bindhead di header
+		{
+			const elems = elinfo.querySelectorAll('[data-bindhead]')
+			for (var el of elems) {
+				el.classList.remove('hidden')
+			}			
 		}
+
+
+	} else {
+
+		// tampilkan data-control di header
+		{
+			const elems = elinfo.querySelectorAll('[data-autoid]')
+			for (var el of elems) {
+				el.classList.add('hidden')
+			}
+		}
+		
+
+		// sembunyikan data-bindhead di header
+		{
+			const elems = elinfo.querySelectorAll('[data-bindhead]')
+			for (var el of elems) {
+				el.classList.add('hidden')
+			}			
+		}
+
 	}
 
 	// setup designer uniq & search

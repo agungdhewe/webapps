@@ -207,6 +207,9 @@ function AppGenIO_updateCache(data) {
 
 function AppGenIO_AutoSave(self) {
 	// autosave ke local storage per 10 detik
+
+	// AUTO SAVE tidak digunaka lagi
+	/*
 	const svr = setInterval(async ()=>{
 		try {
 			if (!self.autoSavePaused) {
@@ -218,6 +221,7 @@ function AppGenIO_AutoSave(self) {
 			console.log(err.message)
 		}
 	}, 10000)
+	*/
 }
 
 /*
@@ -371,6 +375,9 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	var elIdBlock = editor.querySelector('div[name="designer-info"] input[name="identifier-block"]')
 	var elIdLength = editor.querySelector('div[name="designer-info"] input[name="identifier-length"]')
 
+	var elBindHTitle = editor.querySelector('div[name="designer-info"] input[name="bind_head_title"]')
+	var elBindHDescr = editor.querySelector('div[name="designer-info"] input[name="bind_head_descr"]')
+
 
 
 
@@ -386,7 +393,8 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	entity.identifierPrefix = elIdfPrefix.value
 	entity.identifierBlock = elIdBlock.value
 	entity.identifierLength = elIdLength.value
-	
+	entity.bindHeadTitle = elBindHTitle.value
+	entity.bindHeadDescr = elBindHDescr.value
 
 	entity.Items = {}
 
@@ -432,7 +440,7 @@ function AppGenIO_GetEntityUnique(self, editor) {
 }
 
 function AppGenIO_GetEntitySearch(self, editor) {
-	console.log('get entity search')
+	// console.log('get entity search')
 
 	const search = {}
 	const tbl = editor.querySelector('table[name="tbl-search"]')
@@ -658,6 +666,10 @@ async function AppGenIO_Load(self, data) {
 		setValueTo(entity.identifierPrefix, editor, 'div[name="designer-info"] input[name="identifier-prefix"]', 'value')
 		setValueTo(entity.identifierBlock , editor, 'div[name="designer-info"] input[name="identifier-block"]', 'value')
 		setValueTo(entity.identifierLength, editor, 'div[name="designer-info"] input[name="identifier-length"]', 'value')
+		
+		setValueTo(entity.bindHeadTitle??'', editor, 'div[name="designer-info"] input[name="bind_head_title"]', 'value')
+		setValueTo(entity.bindHeadDescr??'', editor, 'div[name="designer-info"] input[name="bind_head_descr"]', 'value')
+
 
 		// ambil drop target dari entity
 		let droptarget = elEntityDesign.querySelector(`div[name="entity-editor"][${ATTR_ENTITYID}="${entity.id}"] div[name="drop-target"]`)

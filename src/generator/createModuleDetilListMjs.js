@@ -19,6 +19,8 @@ export async function createModuleDetilListMjs(context, options) {
 		const headerEntityData = context.entities['header']
 		const headerModulePartEdit = kebabToCamel(`${moduleName}-header-edit`)
 		const headerPrimaryKey = headerEntityData.pk
+		const bindHeadTitle = headerEntityData.bindHeadTitle ?? ''
+		const bindHeadDescr = headerEntityData.bindHeadDescr ?? ''
 
 		for (let entityName in context.entities) {
 			// process selain header
@@ -58,6 +60,8 @@ export async function createModuleDetilListMjs(context, options) {
 				extenderDetil,
 				headerModulePartEdit,
 				headerPrimaryKey,
+				bindHeadTitle,
+				bindHeadDescr,
 				moduleEdit: kebabToCamel(`${moduleName}-${sectionName}-edit`),
 
 			}

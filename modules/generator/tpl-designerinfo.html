@@ -1,0 +1,71 @@
+<!-- DESIGNER INFO -->
+<div name="designer-info" class="designer-info">
+	<div name="col_title" data-tag="content">
+		{title}
+	</div>
+
+	<div data-tag="label" style="margin-top: 8px">Name</div>
+	<div data-tag="content" name="col_name" style="margin-top: 8px">{name}</div>
+
+	<div data-tag="label" style="margin-top: 15px">Table</div>
+	<div data-tag="content" name="col_table" style="margin-top: 15px">{table}</div>
+	
+	<div data-tag="label">PK</div>
+	<div data-tag="content" name="col_pk">{pk}</div>
+
+	<div data-tag="label" style="margin-top: 15px">Table Desc</div>
+	<div data-tag="content" style="border: 0; margin-top: 15px">
+		<input name="table-descr" type="text" style="padding: 3px 0 3px 3px; width: 100%;">
+	</div>
+
+	<div data-tag="label" style="margin-top: 15px" data-bindhead>bind h.title</div>
+	<div data-tag="content" style="border: 0; margin-top: 15px" data-bindhead>
+		<input name="bind_head_title" type="text" style="padding: 3px 0 3px 3px; width: 300px;">
+	</div>
+
+	<div data-tag="label" style="margin-top: 15px" data-bindhead>bind h.descr</div>
+	<div data-tag="content" style="border: 0; margin-top: 15px" data-bindhead>
+		<input name="bind_head_descr" type="text" style="padding: 3px 0 3px 3px; width: 300px;">
+	</div>	
+
+
+	<div data-tag="label" style="margin-top: 15px" data-control>Data Control</div>
+	<div data-tag="content" style="border: 0;  margin-top: 15px; display: flex; gap: 20px" data-control>
+		<label>
+			<input type="checkbox" name="allow-row-add">
+			Allow Add Row
+		</label>
+		<label>
+			<input type="checkbox" name="allow-row-remove">
+			Allow Remove Row
+		</label>
+
+	</div>
+
+	<div data-tag="label" style="margin-top: 15px" data-autoid>Row Identifier</div>
+	<div data-tag="content" style="border: 0;  margin-top: 15px; display: flex; gap: 20px" data-autoid>
+		<div>
+			<select name="identifier-method">
+				<option value="manual" selected>Manual</option>
+				<option value="auto-by-default">Auto By Default (Numeric Only)</option>
+				<option value="auto-always">Auto Always (Numeric Only)</option>
+				<option value="auto-yearly">Auto Yearly (for Document) </option>
+				<option value="auto-monthly">Auto Monthly (for Document)</option>
+				<option value="auto-yearly-short">Auto Yearly (short, for entity)</option>
+				<option value="auto-custom">Auto Custom Sequencer</option>
+			</select>
+
+			<label style="margin-left: 40px; margin-right: 5px;">Prefix (doc_id)</label>
+			<input name="identifier-prefix" type="text" style="width: 40px; padding: 3px 0 3px 3px;" maxlength="4">
+
+			<label style="margin-left: 15px; margin-right: 5px;">Block</label>
+			<input name="identifier-block" type="text" style="width: 30px; padding: 3px 0 3px 3px;" value="3">
+
+			<label style="margin-left: 15px; margin-right: 5px;">Length</label>
+			<input name="identifier-length" type="number" style="width: 30px; padding: 3px 0 3px 3px;" value="6">
+		</div>
+
+
+	</div>
+
+</div>

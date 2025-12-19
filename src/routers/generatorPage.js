@@ -13,6 +13,7 @@ export async function generatorPage(req, res, next) {
 		const generatorListPath = path.join(__dirname, 'modules', 'generator', 'generatorList.html')
 		const generatorEditPath = path.join(__dirname, 'modules', 'generator', 'generatorEdit.html')
 		const generatorDesignPath = path.join(__dirname, 'modules', 'generator', 'generator-designtemplate.html')
+		const generatorModulePath = path.join(__dirname, 'modules', 'generator')
 
 		// load halaman html-nya
 		const variables	= {
@@ -20,7 +21,8 @@ export async function generatorPage(req, res, next) {
 			...{
 				generatorListPath,
 				generatorEditPath,
-				generatorDesignPath
+				generatorDesignPath,
+				generatorModulePath
 			}
 		}
 
