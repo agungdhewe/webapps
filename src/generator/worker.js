@@ -29,6 +29,7 @@ import { createInfoLogs } from './createInfoLogs.js';
 import { createInfoRecordExtender } from './createInfoRecordExtender.js';
 import { createIcon } from './createIcon.js'
 import { createProgramData } from './createProgramData.js'
+import { createLayoutCss } from './createLayoutCss.js';
 
 
 
@@ -213,6 +214,12 @@ async function generate(id, data) {
 
 		await createInfoRecordExtender(context, {overwrite:false})
 		await sleep(jedaWaktu)
+
+
+		// Layout CSS
+		await createLayoutCss(context, {overwrite:true})
+		await sleep(jedaWaktu)		
+		
 
 		// Api
 		await createApiModule(context, {overwrite:true})

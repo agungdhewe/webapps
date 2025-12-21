@@ -394,7 +394,7 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	entity.pk = elPK.innerHTML.toLowerCase()
 	entity.descr = elInputDescr.value
 
-	entity.allowFormGridLayout = elChkFormGridLayout.checked ? true : false
+	entity.formGridLayout = elChkFormGridLayout.checked ? true : false
 	entity.allowFormNew = elChkFormNew.checked ? true : false
 	entity.allowFormEdit = elChkFormEdit.checked ? true : false
 	entity.allowRowAdd = elChkRowAdd.checked ? true : false
@@ -684,7 +684,7 @@ async function AppGenIO_Load(self, data) {
 		const editor = de.querySelector(`div[name="entity-editor"][${ATTR_ENTITYID}="${entity.id}"]`)
 		setValueTo(entity.descr, editor, 'div[name="designer-info"] input[name="table-descr"]', 'value')
 
-		setCheckedTo(entity.allowFormGridLayout??true, editor, 'div[name="designer-info"] input[name="form-grid-layout"]')
+		setCheckedTo(entity.formGridLayout??false, editor, 'div[name="designer-info"] input[name="form-grid-layout"]')
 		setCheckedTo(entity.allowFormNew??true, editor, 'div[name="designer-info"] input[name="allow-form-new"]')
 		setCheckedTo(entity.allowFormEdit??true, editor, 'div[name="designer-info"] input[name="allow-form-edit"]')
 		setCheckedTo(entity.allowRowAdd??true, editor, 'div[name="designer-info"] input[name="allow-row-add"]')
