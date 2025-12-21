@@ -104,12 +104,19 @@ export async function openList(self, params) {
 	tbl.clear()
 	tbl_loadData(self, {criteria, sort})
 
-
+	const <%= moduleEdit %> = self.Modules.<%= moduleEdit %>
+	const btn_addrow = <%= moduleEdit %>.getCurrentState().Actions.newdata
+	const btn_edit = <%= moduleEdit %>.getCurrentState().Actions.edit
+	<% if (!allowRowAdd) { %>
+	btn_addrow.suspend() <% } %><% if (!allowRowRemove) { %>
+	btn_delrow.suspend() <% } %><% if (!allowRowEdit) { %>
+	btn_edit.suspend()
+	<% } %>
 	if (CurrentState.headerFormLocked) {
- 		btn_addrow.setAttribute('disabled', '')
+ 		btn_addrow.disabled = true
 		btn_delrow.disabled = true
 	} else {
-		btn_addrow.removeAttribute('disabled')
+		btn_addrow.disabled = false
 		btn_delrow.disabled = false
 	}
 }

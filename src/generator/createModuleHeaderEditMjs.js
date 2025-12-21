@@ -91,6 +91,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 				const elementId = `${modulePart}-${item.input_name}`
 
 
+
 				if (component=='Filebox') {
 					headerHasUpload = true
 					uploadFields.push({
@@ -174,11 +175,17 @@ export async function createModuleHeaderEditMjs(context, options) {
 			}
 
 
+			const allowFormNew = entityData.allowFormNew
+			const allowFormEdit = entityData.allowFormEdit
+
+
 			const variables = {
 				timeGenerated,
 				moduleDescription: context.descr,
 				title,
 				tablename,
+				allowFormNew,
+				allowFormEdit,
 				modulePart,
 				moduleName,
 				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),

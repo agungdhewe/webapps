@@ -49,7 +49,10 @@ export async function createModuleDetilListMjs(context, options) {
 			const entityData = context.entities[entityName]
 			const sectionData = getSectionData(moduleName, entityName, entityData, 'edit')
 			const title = entityData.title
-
+			const allowRowAdd = entityData.allowRowAdd
+			const allowRowRemove = entityData.allowRowRemove
+			const allowRowEdit = entityData.allowRowEdit
+			
 
 			const variables = {
 				timeGenerated: context.timeGenerated,
@@ -62,6 +65,9 @@ export async function createModuleDetilListMjs(context, options) {
 				headerPrimaryKey,
 				bindHeadTitle,
 				bindHeadDescr,
+				allowRowAdd,
+				allowRowRemove,
+				allowRowEdit,
 				moduleEdit: kebabToCamel(`${moduleName}-${sectionName}-edit`),
 
 			}

@@ -74,8 +74,10 @@ export async function init(self, args) {
 		edit: btn_edit,<% actionList.forEach(action => { %>
 		<%= action.name %>: <%= action.buttonName %>,<% }) %>	
 	}
-
-
+	<% if (!allowFormNew) { %>
+	btn_new.suspend()<% } %><% if (!allowFormEdit) { %>
+	btn_edit.suspend()
+	<% } %>
 	// export async function <%= modulePart %>_init(self, CurrentState)
 	const fn_init_name = '<%= modulePart %>_init'
 	const fn_init = Extender[fn_init_name]
