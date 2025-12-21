@@ -367,8 +367,14 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	var elTable = editor.querySelector('div[name="designer-info"] div[name="col_table"]')
 	var elPK = editor.querySelector('div[name="designer-info"] div[name="col_pk"]')
 	var elInputDescr = editor.querySelector('div[name="designer-info"] input[name="table-descr"]')
+	
+	var elChkFormGridLayout = editor.querySelector('div[name="designer-info"] input[name="form-grid-layout"]')
+	var elChkFormNew = editor.querySelector('div[name="designer-info"] input[name="allow-form-new"]')
+	var elChkFormEdit = editor.querySelector('div[name="designer-info"] input[name="allow-form-edit"]')
+	
 	var elChkRowAdd = editor.querySelector('div[name="designer-info"] input[name="allow-row-add"]')
 	var elChkRowRemove = editor.querySelector('div[name="designer-info"] input[name="allow-row-remove"]')
+	var elChkRowEdit = editor.querySelector('div[name="designer-info"] input[name="allow-row-edit"]')
 
 	var elIdMethod = editor.querySelector('div[name="designer-info"] select[name="identifier-method"]')
 	var elIdfPrefix = editor.querySelector('div[name="designer-info"] input[name="identifier-prefix"]')
@@ -387,8 +393,14 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	entity.table = elTable.innerHTML.toLowerCase()
 	entity.pk = elPK.innerHTML.toLowerCase()
 	entity.descr = elInputDescr.value
+
+	entity.allowFormGridLayout = elChkFormGridLayout.checked ? true : false
+	entity.allowFormNew = elChkFormNew.checked ? true : false
+	entity.allowFormEdit = elChkFormEdit.checked ? true : false
 	entity.allowRowAdd = elChkRowAdd.checked ? true : false
 	entity.allowRowRemove = elChkRowRemove.checked ? true : false
+	entity.allowRowEdit = elChkRowEdit.checked ? true : false
+	
 	entity.identifierMethod = elIdMethod.value
 	entity.identifierPrefix = elIdfPrefix.value
 	entity.identifierBlock = elIdBlock.value
@@ -481,6 +493,10 @@ function AppGenIO_GetFieldData(self, el) {
 	// multiline
 	field.input_multiline = getCheckedFrom(el, 'input[name="multiline"]')
 
+
+	
+
+
 	// get defaul value
 	if (field.component=='Checkbox') {
 		var defaultChecked = getCheckedFrom(el, 'input[name="defaultvalue"]')
@@ -520,6 +536,13 @@ function AppGenIO_GetFieldData(self, el) {
 
 	var chk_showinform =  el.querySelector('input[name="showinform"]')
 	field.showInForm = chk_showinform.checked ? true : false
+
+	// desktop position
+	field.input_dposrow = getValueFrom(el, 'input[name="input-dposrow"]', 'value') ?? ''
+	field.input_dposrowspan = getValueFrom(el, 'input[name="input-dposrowspan"]', 'value') ?? ''
+	field.input_dposcol = getValueFrom(el, 'input[name="input-dposcol"]', 'value') ?? ''
+	field.input_dposcolspan = getValueFrom(el, 'input[name="input-dposcolspan"]', 'value') ?? ''
+
 
 	// grid related
 	field.grid_formatter = getValueFrom(el, 'input[name="gridformatter"]', 'value') ?? ''
@@ -660,8 +683,14 @@ async function AppGenIO_Load(self, data) {
 		// TODO: isikan data entity
 		const editor = de.querySelector(`div[name="entity-editor"][${ATTR_ENTITYID}="${entity.id}"]`)
 		setValueTo(entity.descr, editor, 'div[name="designer-info"] input[name="table-descr"]', 'value')
-		setCheckedTo(entity.allowRowAdd, editor, 'div[name="designer-info"] input[name="allow-row-add"]')
-		setCheckedTo(entity.allowRowRemove, editor, 'div[name="designer-info"] input[name="allow-row-remove"]')
+
+		setCheckedTo(entity.allowFormGridLayout??true, editor, 'div[name="designer-info"] input[name="form-grid-layout"]')
+		setCheckedTo(entity.allowFormNew??true, editor, 'div[name="designer-info"] input[name="allow-form-new"]')
+		setCheckedTo(entity.allowFormEdit??true, editor, 'div[name="designer-info"] input[name="allow-form-edit"]')
+		setCheckedTo(entity.allowRowAdd??true, editor, 'div[name="designer-info"] input[name="allow-row-add"]')
+		setCheckedTo(entity.allowRowRemove??true, editor, 'div[name="designer-info"] input[name="allow-row-remove"]')
+		setCheckedTo(entity.allowRowEdit??true, editor, 'div[name="designer-info"] input[name="allow-row-edit"]')
+		
 		setValueTo(entity.identifierMethod, editor, 'div[name="designer-info"] select[name="identifier-method"]', 'value')
 		setValueTo(entity.identifierPrefix, editor, 'div[name="designer-info"] input[name="identifier-prefix"]', 'value')
 		setValueTo(entity.identifierBlock , editor, 'div[name="designer-info"] input[name="identifier-block"]', 'value')
@@ -754,6 +783,12 @@ function AppGenIO_FillDataField(self, datafield, field) {
 	setCheckedTo(field.showInGrid, datafield, 'input[name="showingrid"]')
 	setCheckedTo(field.showInForm, datafield, 'input[name="showinform"]')
 
+
+	// desktop position
+	setValueTo(field.input_dposrow??'auto', datafield, 'input[name="input-dposrow"]', 'value')
+	setValueTo(field.input_dposrowspan??'auto', datafield, 'input[name="input-dposrowspan"]', 'value')
+	setValueTo(field.input_dposcol??'1', datafield, 'input[name="input-dposcol"]', 'value')
+	setValueTo(field.input_dposcolspan??'2', datafield, 'input[name="input-dposcolspan"]', 'value')
 
 	// grid related
 	setValueTo(field.grid_formatter, datafield, 'input[name="gridformatter"]', 'value')

@@ -602,11 +602,21 @@ function AppGenLayout_addDesigner(self, ID, isheader) {
 	editem.appendChild(eluniq)
 	editem.appendChild(elsearch)
 
+	const chkfg = elinfo.querySelector('input[type="checkbox"][name="form-grid-layout"]')
+	const chkfn = elinfo.querySelector('input[type="checkbox"][name="allow-form-new"]')
+	const chkfe = elinfo.querySelector('input[type="checkbox"][name="allow-form-edit"]')
+
 	const chka = elinfo.querySelector('input[type="checkbox"][name="allow-row-add"]')
 	const chkr = elinfo.querySelector('input[type="checkbox"][name="allow-row-remove"]')
+	const chke = elinfo.querySelector('input[type="checkbox"][name="allow-row-edit"]')
+
+	chkfg.checked = true
+	chkfn.checked = true
+	chkfe.checked = true
 
 	chka.checked = true
 	chkr.checked = true
+	chke.checked = true
 
 	if (isheader===true) {
 		chka.disabled = true
@@ -629,6 +639,14 @@ function AppGenLayout_addDesigner(self, ID, isheader) {
 		}
 
 
+		// tampilkan data-entity-header
+		{
+			const elems = elinfo.querySelectorAll('[data-entity-header]')
+			for (var el of elems) {
+				el.classList.remove('hidden')
+			}			
+		}
+
 	} else {
 
 		// tampilkan data-control di header
@@ -648,6 +666,13 @@ function AppGenLayout_addDesigner(self, ID, isheader) {
 			}			
 		}
 
+		// sembunyikan data-entity-header
+		{
+			const elems = elinfo.querySelectorAll('[data-entity-header]')
+			for (var el of elems) {
+				el.classList.add('hidden')
+			}			
+		}
 	}
 
 	// setup designer uniq & search

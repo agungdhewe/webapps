@@ -83,10 +83,19 @@
 
 		<label>Object Name</label>
 		<input type="text" name="objectname">
-		<label>Index</label>
-		<input type="text" name="index" value="0">  
-		<div style="grid-column: span 2;"></div>	
+		<div style="grid-column: span 4;"></div>	
 
+		<label>D.Position</label>
+		<div style="grid-column: span 5; display: flex; column-gap: 10px; align-items: center;">
+			<label style="transform: translateY(-1px); margin-left: 20px">Row</label>
+			<input type="text" name="input-dposrow" style="width: 30px">
+			<label style="transform: translateY(-1px);">Row Span</label>
+			<input type="text" name="input-dposrowspan" style="width: 30px">
+			<label style="transform: translateY(-1px); margin-left: 50px">Col</label>
+			<input type="text" name="input-dposcol" style="width: 30px">
+			<label style="transform: translateY(-1px);">Col Span</label>
+			<input type="text" name="input-dposcolspan" style="width: 30px">
+		</div>		
 
 		<label>Label Text</label>
 		<input type="text" name="labeltext">
@@ -124,11 +133,14 @@
 			<label style="grid-column: span 2; transform: translateY(5px); ">Inline Style</label>
 			<input name="gridinlinestyle" type="text">
 
-			<label style="grid-column: span 2; transform: translateY(5px); ">&nbsp;</label>
-			<label>
-				<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
-				Sorting
-			</label>
+			<label style="grid-column: span 2; transform: translateY(5px); ">Index</label>
+			<div style="display: flex">
+				<input type="text" name="index" value="0" style="width: 50px"> 
+				<label style="margin-left: 20px">
+					<input name="gridsorting" type="checkbox" value="1" style="transform: translateY(2px);" >
+					Sorting
+				</label>
+			</div>
 
 		</div>	
 
