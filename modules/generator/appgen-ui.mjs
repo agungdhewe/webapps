@@ -1168,9 +1168,12 @@ function AppGenGenLayout_HandleDataField(self, entity_id, comp, datafield) {
 			labeltext.value = capitalizeFirst(fieldname.value)
 		}
 
-		if (placeholder.value.trim()=='') {
-			placeholder.value = fieldname.value
+		if (placeholder!=null) {
+			if (placeholder.value.trim()=='') {
+				placeholder.value = fieldname.value
+			}
 		}
+
 	}
 
 	const nameKeydown = (evt) => {

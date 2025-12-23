@@ -38,11 +38,15 @@ export async function createTable(context, options) {
 
 			// start generate table for tis entity
 			const entity = context.entities[entityName]
-			const {table, descr, pk, identifierMethod} = entity
+			const {table, descr, pk, identifierMethod, skipRegenerateTable} = entity
 			const pkData = entity.Items[pk]
 			const {schema, tablename} = ddl.parseTableName(table)
 			const {data_fieldname, data_type, data_length, description} = pkData
 			
+
+			if (skipRegenerateTable===true) {
+				return
+			}
 
 
 			const scriptContent = []

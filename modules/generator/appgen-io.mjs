@@ -367,6 +367,8 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	var elTable = editor.querySelector('div[name="designer-info"] div[name="col_table"]')
 	var elPK = editor.querySelector('div[name="designer-info"] div[name="col_pk"]')
 	var elInputDescr = editor.querySelector('div[name="designer-info"] input[name="table-descr"]')
+	var elChkSkipRegenerateTable = editor.querySelector('div[name="designer-info"] input[name="skip-regenerate-table"]')
+
 	
 	var elChkFormGridLayout = editor.querySelector('div[name="designer-info"] input[name="form-grid-layout"]')
 	var elChkFormNew = editor.querySelector('div[name="designer-info"] input[name="allow-form-new"]')
@@ -393,6 +395,7 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	entity.table = elTable.innerHTML.toLowerCase()
 	entity.pk = elPK.innerHTML.toLowerCase()
 	entity.descr = elInputDescr.value
+	entity.skipRegenerateTable = elChkSkipRegenerateTable.checked ? true : false
 
 	entity.formGridLayout = elChkFormGridLayout.checked ? true : false
 	entity.allowFormNew = elChkFormNew.checked ? true : false
@@ -542,6 +545,7 @@ function AppGenIO_GetFieldData(self, el) {
 	field.input_dposrowspan = getValueFrom(el, 'input[name="input-dposrowspan"]', 'value') ?? ''
 	field.input_dposcol = getValueFrom(el, 'input[name="input-dposcol"]', 'value') ?? ''
 	field.input_dposcolspan = getValueFrom(el, 'input[name="input-dposcolspan"]', 'value') ?? ''
+	field.input_dposstyle = getValueFrom(el, 'input[name="input-dposstyle"]', 'value') ?? ''
 
 
 	// grid related
@@ -680,9 +684,9 @@ async function AppGenIO_Load(self, data) {
 		
 
 		// isikan data entity
-		// TODO: isikan data entity
 		const editor = de.querySelector(`div[name="entity-editor"][${ATTR_ENTITYID}="${entity.id}"]`)
 		setValueTo(entity.descr, editor, 'div[name="designer-info"] input[name="table-descr"]', 'value')
+		setCheckedTo(entity.skipRegenerateTable??false, editor, 'div[name="designer-info"] input[name="skip-regenerate-table"]')
 
 		setCheckedTo(entity.formGridLayout??false, editor, 'div[name="designer-info"] input[name="form-grid-layout"]')
 		setCheckedTo(entity.allowFormNew??true, editor, 'div[name="designer-info"] input[name="allow-form-new"]')
@@ -786,9 +790,10 @@ function AppGenIO_FillDataField(self, datafield, field) {
 
 	// desktop position
 	setValueTo(field.input_dposrow??'auto', datafield, 'input[name="input-dposrow"]', 'value')
-	setValueTo(field.input_dposrowspan??'auto', datafield, 'input[name="input-dposrowspan"]', 'value')
+	setValueTo(field.input_dposrowspan??'', datafield, 'input[name="input-dposrowspan"]', 'value')
 	setValueTo(field.input_dposcol??'1', datafield, 'input[name="input-dposcol"]', 'value')
 	setValueTo(field.input_dposcolspan??'2', datafield, 'input[name="input-dposcolspan"]', 'value')
+	setValueTo(field.input_dposstyle??'', datafield, 'input[name="input-dposstyle"]', 'value')
 
 	// grid related
 	setValueTo(field.grid_formatter, datafield, 'input[name="gridformatter"]', 'value')

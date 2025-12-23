@@ -10,13 +10,23 @@
 	<div data-tag="label" style="margin-top: 15px">Table</div>
 	<div data-tag="content" name="col_table" style="margin-top: 15px">{table}</div>
 	
-	<div data-tag="label">PK</div>
-	<div data-tag="content" name="col_pk">{pk}</div>
+	<div data-tag="label" style="margin-top: 5px">PK</div>
+	<div data-tag="content" name="col_pk" style="margin-top: 5px">{pk}</div>
 
-	<div data-tag="label" style="margin-top: 15px">Table Desc</div>
-	<div data-tag="content" style="border: 0; margin-top: 15px">
-		<input name="table-descr" type="text" style="padding: 3px 0 3px 3px; width: 100%;">
+	<div data-tag="label" style="margin-top: 10px">Table Desc</div>
+	<div data-tag="content" style="border: 0; margin-top: 10px">
+		<input name="table-descr" type="text" style="padding: 3px 0 3px 3px; width: 100%; background-color: #fcffd1; border-width: 0 0 1px 0">
 	</div>
+
+	<div data-tag="label">&nbsp;</div>
+	<div data-tag="content" style="border: 0; margin-top: 5px; display: flex; gap: 20px">
+		<label style="font-weight: normal;">
+			<input type="checkbox" name="skip-regenerate-table">
+			Skip Regenerate Table
+		</label>
+	</div>
+
+
 
 	<div data-tag="label" style="margin-top: 15px" data-bindhead>bind h.title</div>
 	<div data-tag="content" style="border: 0; margin-top: 15px" data-bindhead>

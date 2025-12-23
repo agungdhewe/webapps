@@ -52,6 +52,7 @@ export async function createLayoutCss(context, options) {
 				const dposrowspan = item.input_dposrowspan??''
 				const dposcol = item.input_dposcol??'1'
 				const dposcolspan = item.input_dposcolspan??''
+				const dposstyle = item.input_dposstyle??''
 								
 
 
@@ -61,6 +62,7 @@ export async function createLayoutCss(context, options) {
 					dposcol,
 					dposrowspan: dposrowspan.trim()!='' ? ` / span ${dposrowspan}` : '',
 					dposcolspan: dposcolspan.trim()!='' ? ` / span ${dposcolspan}` : '',
+					dposstyle
 				})
 
 			
