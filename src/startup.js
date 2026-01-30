@@ -1,12 +1,12 @@
 
 export async function authorizeRequest(db, req) {
 	const moduleName = req.params.modulename;
-	const program_id = req.query.prog; 
+	const program_id = req.query.prog;
 
 	try {
 
 		// jika belum login
-		if (req.session.user==null) {
+		if (req.session.user == null) {
 			const nextUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 			const err = new Error(`Belum login. Anda harus <a href="login?nexturl=${nextUrl}">login</a> dulu untuk mengakses resource ini`)
 			err.status = 401
@@ -21,15 +21,15 @@ export async function authorizeRequest(db, req) {
 
 		// jika punya akses developer boleh buka semuanya
 		const sqlUser = 'select * from core.user where user_id=${user_id} and user_isdev=true'
-		const rowUser = await db.oneOrNone(sqlUser, {user_id})
-		if (rowUser!=null) {
+		const rowUser = await db.oneOrNone(sqlUser, { user_id })
+		if (rowUser != null) {
 			return true  // user adalah developer
 		}
 
 		// jika tidak punya akses developer, cek apakah boleh buka program 
 		const sql = 'select * from core.get_user_programs(${user_id}) where id=${program_id}'
-		const row = await db.oneOrNone(sql, {user_id, program_id});
-		if (row!=null) {
+		const row = await db.oneOrNone(sql, { user_id, program_id });
+		if (row != null) {
 			return true  // user punya akses program
 		}
 
@@ -38,15 +38,15 @@ export async function authorizeRequest(db, req) {
 		err.code = 401
 		throw err
 
-	} catch(err) {
+	} catch (err) {
 		throw err
 	}
 }
 
-export async function getApplicationSetting(db) {
+export async function getApplicationSetting(db, tablename = 'core.setting') {
 	const setting = {}
 	try {
-		const sql = 'select setting_id, setting_value from core.setting'
+		const sql = `select setting_id, setting_value from ${tablename}`
 		const rows = await db.any(sql);
 		for (var row of rows) {
 			const setting_id = row.setting_id
