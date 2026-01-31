@@ -831,7 +831,8 @@ async function btn_logs_click(self, evt) {
 		let mask = $fgta5.Modal.createMask()
 		try {
 
-			const url = `${Context.appsUrls.core.url}/logs/list`
+			const logApp = Context.appsUrls.core ?? Context.appsUrls[Context.appName]
+			const url = `${logApp.url}/logs/list`
 			const criteria = {
 				module: Context.moduleName,
 				table: '<%= tablename %>',

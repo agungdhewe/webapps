@@ -73,6 +73,7 @@ async function <%= moduleName %>_init(self, body) {
 			sid: req.session.sid ,
 			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
 			notifierSocket: req.app.locals.appConfig.notifierSocket,
+			appName: req.app.locals.appConfig.appName,
 			appsUrls: appsUrls,
 			setting: {}
 		}
