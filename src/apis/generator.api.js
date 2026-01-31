@@ -14,7 +14,16 @@ import jwt from 'jsonwebtoken';
 const MINUTES = 60 * 1000
 
 const moduleName = 'generator'
-const generateTimeoutMs = 5 * MINUTES 
+const generateTimeoutMs = 5 * MINUTES
+
+const ModuleDbContract = {
+	apps: {
+		table: 'core."apps"'
+	},
+	generator: {
+		table: 'core.generator'
+	}
+}
 
 // api: account
 export default class extends Api {
@@ -23,6 +32,7 @@ export default class extends Api {
 		Api.cekLogin(req)
 
 	}
+
 
 	// dipanggil dengan model snake syntax
 	// contoh: header-list
@@ -45,7 +55,7 @@ async function generator_init(self, body) {
 
 	try {
 		// ambil data app dari database
-		const sql = 'select apps_id, apps_url, apps_name, apps_directory from core."apps"'
+		const sql = `select apps_id, apps_url, apps_name, apps_directory from ${ModuleDbContract.apps.table}`
 		const result = await db.any(sql)
 
 		const appsUrls = {}
@@ -61,7 +71,7 @@ async function generator_init(self, body) {
 			userId: req.session.user.userId,
 			userName: req.session.user.userName,
 			userFullname: req.session.userFullname,
-			sid: req.session.sid ,
+			sid: req.session.sid,
 			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
 			notifierSocket: req.app.locals.appConfig.notifierSocket,
 			targetDirectory: context.getRootDirectory(),
@@ -77,17 +87,17 @@ async function generator_init(self, body) {
 
 
 async function generator_list(self, body) {
-	const { criteria={}, limit=0, offset=0, columns=[], sort={} } = body
+	const { criteria = {}, limit = 0, offset = 0, columns = [], sort = {} } = body
 	const searchMap = {
 		searchtext: `generator_modulename ILIKE '%' || \${searchtext} || '%' OR generator_id=try_cast_bigint(\${searchtext}, 0)`,
 		appname: `generator_appname=\${appname}`
 	};
 
 	try {
-	
+
 		// hilangkan criteria '' atau null
 		for (var cname in criteria) {
-			if (criteria[cname]==='' || criteria[cname]===null) {
+			if (criteria[cname] === '' || criteria[cname] === null) {
 				delete criteria[cname]
 			}
 		}
@@ -99,29 +109,29 @@ async function generator_list(self, body) {
 
 		sort._modifydate = 'desc'
 
-		var max_rows = limit==0 ? 50 : limit
-		const tablename = 'core."generator"'
-		const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
-		const sql = sqlUtil.createSqlSelect({tablename, columns, whereClause, sort, limit:max_rows+1, offset, queryParams})
+		var max_rows = limit == 0 ? 50 : limit
+		const tablename = ModuleDbContract.generator.table
+		const { whereClause, queryParams } = sqlUtil.createWhereClause(criteria, searchMap)
+		const sql = sqlUtil.createSqlSelect({ tablename, columns, whereClause, sort, limit: max_rows + 1, offset, queryParams })
 		const rows = await db.any(sql, queryParams);
 
-		
+
 		var i = 0
 		const data = []
 		for (var row of rows) {
 			i++
-			if (i>max_rows) { break }
+			if (i > max_rows) { break }
 			data.push(row)
 		}
 
 		var nextoffset = null
-		if (rows.length>max_rows) {
-			nextoffset = offset+max_rows
+		if (rows.length > max_rows) {
+			nextoffset = offset + max_rows
 		}
 
 		return {
 			criteria: criteria,
-			limit:  max_rows,
+			limit: max_rows,
 			nextoffset: nextoffset,
 			data: data
 		}
@@ -132,13 +142,14 @@ async function generator_list(self, body) {
 }
 
 async function generator_open(self, body) {
+	const tablename = ModuleDbContract.generator.table
 	try {
-		const { id } = body 
-		const queryParams = {generator_id: id}
-		const sql = 'select * from core."generator" where generator_id = \${generator_id}'
+		const { id } = body
+		const queryParams = { generator_id: id }
+		const sql = `select * from ${tablename} where generator_id = \${generator_id}`
 		const data = await db.one(sql, queryParams);
 
-		if (data==null) { throw new Error("data tidak ditemukan") }	
+		if (data == null) { throw new Error("data tidak ditemukan") }
 
 		return data
 	} catch (err) {
@@ -148,7 +159,7 @@ async function generator_open(self, body) {
 
 async function generator_save(self, body) {
 	const { data } = body
-	const tablename = 'core."generator"'
+	const tablename = ModuleDbContract.generator.table
 	const req = self.req
 	const user_id = req.session.user.userId
 
@@ -168,7 +179,7 @@ async function generator_save(self, body) {
 		}
 
 		let cmd
-		if (id=='') {
+		if (id == '') {
 			obj._createby = user_id
 			obj._createdate = (new Date()).toISOString()
 			cmd = sqlUtil.createInsertCommand(tablename, obj, ['generator_id'])
@@ -196,7 +207,7 @@ async function generator_generate(self, body) {
 	const ipaddress = req.ip
 
 	try {
-		if (id=='') {
+		if (id == '') {
 			throw new Error('save data dahulu sebelum generate')
 		}
 
@@ -213,6 +224,7 @@ async function generator_generate(self, body) {
 			user_name: user_name,
 			ipaddress: ipaddress,
 			timeout: generateTimeoutMs,
+			ModuleDbContract: ModuleDbContract,
 			jeda: 0.5, // jeda 0.5 detik per masing-masing generate
 		})
 

@@ -33,16 +33,18 @@ import { createLayoutCss } from './createLayoutCss.js';
 
 
 
-const { generator_id, user_id, user_name, ipaddress, jeda } = workerData;
+const { generator_id, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
 
 
 main(generator_id)
 
 
 async function main(id) {
+	const tablename = ModuleDbContract.generator.table
+
 	try {
-		const queryParams = {generator_id: id}
-		const sql = 'select generator_data from core."generator" where generator_id = \${generator_id}'
+		const queryParams = { generator_id: id }
+		const sql = `select generator_data from ${tablename} where generator_id = \${generator_id}`
 		const data = await db.one(sql, queryParams);
 
 
@@ -51,8 +53,8 @@ async function main(id) {
 
 
 		await generate(id, data.generator_data)
-		
-		
+
+
 	} catch (err) {
 		err.message = `Generator Worker: ${err.message}`
 		throw err
@@ -60,14 +62,14 @@ async function main(id) {
 }
 
 async function sleep(s) {
-	if (s==0) {
+	if (s == 0) {
 		return
 	}
 
-	return new Promise(lanjut=>{
-		setTimeout(()=>{
+	return new Promise(lanjut => {
+		setTimeout(() => {
 			lanjut()
-		}, s*1000)	
+		}, s * 1000)
 	})
 }
 
@@ -88,9 +90,9 @@ async function generate(id, data) {
 
 
 	const context = {
-		id:id,
+		id: id,
 		user_id: user_id,
-		user_name: user_name, 
+		user_name: user_name,
 		ipaddress: ipaddress,
 		title: data.title,
 		descr: data.description,
@@ -117,7 +119,7 @@ async function generate(id, data) {
 	const headerItems = entityHeader.Items
 	for (var entityName in context.entities) {
 		// tambahkan jika bukan header
-		if (entityName!='header') {
+		if (entityName != 'header') {
 			const headerPK = structuredClone(headerItems[headerPkFieldName])
 			headerPK.Reference.pk = entityHeader.pk
 			headerPK.Reference.table = entityHeader.table
@@ -134,103 +136,103 @@ async function generate(id, data) {
 		// process.exit(0)
 
 
-		await prepareDirectory(context, {overwrite:true})
+		await prepareDirectory(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
 
-		
-		const iconFileName = await createIcon(context, {overwrite:true})
 
-		await createProgramData(context, {iconFileName})
-	
-		await createTable(context, {overwrite:true})
-		await sleep(jedaWaktu)
-		
+		const iconFileName = await createIcon(context, { overwrite: true })
 
-		
-		await createModuleRollup(context, {overwrite:true})
+		await createProgramData(context, { iconFileName })
+
+		await createTable(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
-		await createModuleContext(context, {overwrite:true})
+
+
+		await createModuleRollup(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
-		
-
-		await createModuleEjs(context, {overwrite:true})
+		await createModuleContext(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
-		
-		await createModuleMjs(context, {overwrite:true, iconFileName})
+
+
+		await createModuleEjs(context, { overwrite: true })
+		await sleep(jedaWaktu)
+
+
+		await createModuleMjs(context, { overwrite: true, iconFileName })
 		await sleep(jedaWaktu)
 
 
 
 		// Header
-		await createModuleHeaderListHtml(context, {overwrite:true})
-		await sleep(jedaWaktu)
-		
-
-		await createModuleHeaderListMjs(context, {overwrite:true})
+		await createModuleHeaderListHtml(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
-		
-		await createModuleHeaderEditHtml(context,  {overwrite:true})
+
+		await createModuleHeaderListMjs(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
-		
-		await createModuleHeaderEditMjs(context, {overwrite:true})
-		await sleep(jedaWaktu)
-	
 
-		
+		await createModuleHeaderEditHtml(context, { overwrite: true })
+		await sleep(jedaWaktu)
+
+
+		await createModuleHeaderEditMjs(context, { overwrite: true })
+		await sleep(jedaWaktu)
+
+
+
 		// Detils
-		await createModuleDetilListHtml(context, {overwrite:true})
+		await createModuleDetilListHtml(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
-		await createModuleDetilListMjs(context, {overwrite:true})
+		await createModuleDetilListMjs(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
 
-		await createModuleDetilEditHtml(context, {overwrite:true})
+		await createModuleDetilEditHtml(context, { overwrite: true })
 		await sleep(jedaWaktu)
-		
-		await createModuleDetilEditMjs(context, {overwrite:true})
-		await sleep(jedaWaktu)
-		
 
-		await createInfoLogs(context, {overwrite:true})
+		await createModuleDetilEditMjs(context, { overwrite: true })
+		await sleep(jedaWaktu)
+
+
+		await createInfoLogs(context, { overwrite: true })
 		await sleep(jedaWaktu)
 
 
 		// Extender
-		await createModuleExtenderHtml(context, {overwrite:false})
+		await createModuleExtenderHtml(context, { overwrite: false })
 		await sleep(jedaWaktu)
 
-		await createModuleExtenderMjs(context, {overwrite:false})
+		await createModuleExtenderMjs(context, { overwrite: false })
 		await sleep(jedaWaktu)
 
-		await createInfoAboutExtender(context, {overwrite:false})
+		await createInfoAboutExtender(context, { overwrite: false })
 		await sleep(jedaWaktu)
 
-		await createInfoRecordExtender(context, {overwrite:false})
+		await createInfoRecordExtender(context, { overwrite: false })
 		await sleep(jedaWaktu)
 
 
 		// Layout CSS
-		await createLayoutCss(context, {overwrite:true})
-		await sleep(jedaWaktu)		
-		
+		await createLayoutCss(context, { overwrite: true })
+		await sleep(jedaWaktu)
+
 
 		// Api
-		await createApiModule(context, {overwrite:true})
+		await createApiModule(context, { overwrite: true })
 		// await sleep(jedaWaktu)
 
-		await createApiExtenderModule(context, {overwrite:false})
+		await createApiExtenderModule(context, { overwrite: false })
 		// await sleep(jedaWaktu)
 
 
 		// Selesai
-		context.postMessage({message: `finish`, done:true})
+		context.postMessage({ message: `finish`, done: true })
 	} catch (err) {
 		throw err
 	}
@@ -244,7 +246,7 @@ async function prepareDirectory(context) {
 
 	try {
 
-		context.postMessage({message: `preparing directory`})
+		context.postMessage({ message: `preparing directory` })
 		// await sleep(1)
 
 		// cek jika directory project exists
@@ -257,20 +259,20 @@ async function prepareDirectory(context) {
 		const apiDir = path.join(directory, 'src', 'apis')
 		const apiExtenderDir = path.join(apiDir, 'extenders')
 
-		const moduleDirExists =  await directoryExists(moduleDir)
+		const moduleDirExists = await directoryExists(moduleDir)
 		if (!moduleDirExists) {
 			// direktori modul tidak ditemukan, buat dulu
-			context.postMessage({message: `creating new directory: '${moduleDir}`})
+			context.postMessage({ message: `creating new directory: '${moduleDir}` })
 			await mkdir(moduleDir, {});
 			// await sleep(1)
 		}
 
-		const apiDirExists =  await directoryExists(apiDir)
+		const apiDirExists = await directoryExists(apiDir)
 		if (!apiDirExists) {
 			throw new Error(`directory tujuan '${apiDir}' tidak ditemukan`)
 		}
 
-		const apiExtenderDirExists =  await directoryExists(apiExtenderDir)
+		const apiExtenderDirExists = await directoryExists(apiExtenderDir)
 		if (!apiExtenderDirExists) {
 			throw new Error(`directory tujuan '${apiExtenderDir}' tidak ditemukan`)
 		}
@@ -283,7 +285,7 @@ async function prepareDirectory(context) {
 			console.log("\n\n\x1b[1m\x1b[31mERROR\x1b[0m")
 			console.log('Module sudah di lock, tidak bisa digenerate ulang')
 			process.exit(1)
-		}  
+		}
 
 
 		context.moduleDir = moduleDir
@@ -319,7 +321,7 @@ async function checkEntitiy(context) {
 
 
 	// cek appname
-	if (apps[context.appname]==null) {
+	if (apps[context.appname] == null) {
 		throw new Error(`App Name: '${context.appname}' tidak valid. Cek di data apps`)
 	}
 
@@ -331,15 +333,15 @@ async function checkEntitiy(context) {
 		const entity_table = entity.table
 		const entity_pk = entity.pk
 		const Items = entity.Items
-		
-		let pkExists = false	
+
+		let pkExists = false
 
 		for (let fieldName in Items) {
 			const item = Items[fieldName]
 			const component = item.component
 
 			// Cek Primary Key
-			if (fieldName==entity_pk) {
+			if (fieldName == entity_pk) {
 				pkExists = true
 				if (!item.showInForm) {
 					throw new Error(`Primary key '${fieldName}' pada entity '${entityName}' harus di embed di form. Apabila ingin menyembunyakannya, gunakan 'hidden' di Container CSS `)
@@ -347,7 +349,7 @@ async function checkEntitiy(context) {
 			}
 
 			// Cek combobox
-			if (component=='Combobox') {
+			if (component == 'Combobox') {
 				// cek apakah konfig udah bener
 				const reference = item.Reference
 				const table = reference.table.trim()
@@ -357,33 +359,33 @@ async function checkEntitiy(context) {
 				const loaderApiModule = reference.loaderApiModule.trim()
 				const loaderApiPath = reference.loaderApiPath.trim()
 
-				if(table=='') {
+				if (table == '') {
 					throw new Error(`table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
 				}
 
-				if(pk=='') {
+				if (pk == '') {
 					throw new Error(`PK untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
 				}
-				
-				if(bindingValue=='') {
+
+				if (bindingValue == '') {
 					throw new Error(`binding value untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
 				}
 
-				if(bindingText=='') {
+				if (bindingText == '') {
 					throw new Error(`binding value untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
 				}
 
-				if(loaderApiModule=='') {
+				if (loaderApiModule == '') {
 					throw new Error(`loader API Name untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
 				}
 
-				if (apps[loaderApiModule]==null) {
-					if (loaderApiModule!='/') {
+				if (apps[loaderApiModule] == null) {
+					if (loaderApiModule != '/') {
 						throw new Error(`loader API Name: '${loaderApiModule}' untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak valid. Cek di data apps`)
 					}
 				}
 
-				if(loaderApiPath=='') {
+				if (loaderApiPath == '') {
 					throw new Error(`loader API path untuk table reference Combobox '${fieldName}' di entity '${entityName}' tidak boleh kosong`)
 				}
 			}
