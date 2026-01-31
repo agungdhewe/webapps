@@ -51,10 +51,13 @@ export async function modulePage(req, res) {
 	const htmlExtenderFile = `${moduleName}-ext.html`
 	const htmlExtenderPath = path.join(__rootDir, 'public', 'modules', moduleName, htmlExtenderFile)
 
+	const iconFileName = `${moduleName}.svg`
+	const iconFilePath = path.join(__rootDir, 'public', 'modules', moduleName, iconFileName)
 
 	const cssExists = await helper.isFileExists(cssPath)
 	const mjsExists = await helper.isFileExists(mjsPath);
 	const htmlExtenderExists = await helper.isFileExists(htmlExtenderPath);
+	const iconFileExists = await helper.isFileExists(iconFilePath);
 
 	const mjsPrerenderPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}-prerender.mjs`);
 	const mjsPrerenderExists = await helper.isFileExists(mjsPrerenderPath)
@@ -92,6 +95,8 @@ export async function modulePage(req, res) {
 				mjsFileName,
 				htmlExtenderExists,
 				htmlExtenderPath,
+				iconFileName,
+				iconFileExists,
 				additionalHeaderPath,
 				additionalHeaderExists
 			}

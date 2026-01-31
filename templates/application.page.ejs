@@ -18,6 +18,9 @@
 		<script  src="public/libs/webmodule/module.js"></script>	
 		<link rel="stylesheet" href="public/libs/webmodule/module.css" />		
 		
+		<% if (iconFileExists) { %>
+		<link rel="icon" type="image/svg+xml" href="public/modules/<%= `${moduleName}/${iconFileName}` %>" />	
+		<% } %>	
 
 		<% if (cssExists) { %>
 		<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${moduleName}.css` %>" />
