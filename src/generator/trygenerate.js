@@ -19,6 +19,14 @@ if (generator_id==null) {
 
 const workerTimeoutMs = 1*60*1000
 
+const ModuleDbContract = {
+	apps: {
+		table: 'core."apps"'
+	},
+	generator: {
+		table: 'core.generator'
+	}
+}
 
 await main(generator_id)
 
@@ -33,7 +41,8 @@ async function main(generator_id) {
 				generator_id,
 				user_id: 1,
 				user_name: 'coredeveloper',
-				ipaddress: 'local-cli'
+				ipaddress: 'local-cli',
+				ModuleDbContract: ModuleDbContract,
 			}
 		}, workerTimeoutMs) 
 

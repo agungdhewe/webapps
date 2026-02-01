@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path'
 import fs from 'fs/promises'
 import ejs from 'ejs'
+import { optimize } from 'svgo';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,8 +28,29 @@ export async function createIcon(context, options) {
 			throw new Error('data icon tidak di support, gunakan svg atau png')
 		}
 
-		const svgBuffer = Buffer.from(base64, 'base64');
-		await fs.writeFile(targetFile, svgBuffer, 'utf8');
+		const buff = Buffer.from(base64, 'base64');
+		
+		// jika icon yang di attach adalah svg
+		// optimasi svg agar ukurannya kecil
+		if (ext=='svg') {
+			const svgText = buff.toString('utf8');
+			const result = optimize(svgText, {
+				path: `${moduleName}.${ext}`, // recommended
+				multipass: true, // all other config fields are available here
+			});
+			const optimizedSvgString = result.data;
+
+			// simpan ke file dengan data yang telah dioptimasi
+			await fs.writeFile(targetFile, optimizedSvgString, 'utf8');
+		
+		} else {
+
+			// tulis ke file apa adanya
+			await fs.writeFile(targetFile, buff, 'utf8');
+		}
+
+
+		
 
 		return `${moduleName}.${ext}`
 	} catch (err) {

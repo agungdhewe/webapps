@@ -75,7 +75,7 @@ export async function createLayoutCss(context, options) {
 				fields: fields,
 			}
 
-			console.log(variables)
+			// console.log(variables)
 
 			const tplFilePath = path.join(__dirname, 'templates', 'layout.css.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
