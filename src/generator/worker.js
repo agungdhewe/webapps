@@ -231,6 +231,9 @@ async function generate(id, data) {
 		// await sleep(jedaWaktu)
 
 
+		context.postMessage({ message: `restarting service` })
+		await sleep(3)
+
 		// Selesai
 		context.postMessage({ message: `finish`, done: true })
 	} catch (err) {
