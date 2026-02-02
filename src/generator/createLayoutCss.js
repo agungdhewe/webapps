@@ -1,6 +1,6 @@
 import { kebabToCamel, isFileExist, getSectionData, createAdditionalAttributes } from './helper.js'
 import { fileURLToPath } from 'url';
-import path from 'path'
+import path, { basename } from 'path'
 import fs from 'fs/promises'
 import ejs from 'ejs'
 
@@ -12,6 +12,10 @@ export async function createLayoutCss(context, options) {
 	const moduleName = context.moduleName
 
 	try {
+
+		const targetLayoutFile =  path.join(context.moduleDir, `${moduleName}.layout.css`)
+		const layoutFiles = []
+
 		for (let entityName in context.entities) {
 			const sectionName = entityName
 			const sectionPart = 'edit'
@@ -33,6 +37,7 @@ export async function createLayoutCss(context, options) {
 			}
 
 
+			layoutFiles.push(basename(targetFile))
 
 			const fields = []
 			let index = 0
@@ -83,6 +88,18 @@ export async function createLayoutCss(context, options) {
 					
 			await fs.writeFile(targetFile, content, 'utf8');
 		}
+
+		// buat parent css
+		let content = `/* auto generated Layout CSS */\n`
+		if (layoutFiles.length>0) {
+			for (var layoutfile of layoutFiles) {
+				content += `@import url('${layoutfile}');\n`
+			}
+		}
+		await fs.writeFile(targetLayoutFile, content, 'utf8');
+		
+
+
 	} catch (err) {
 		throw err
 	}

@@ -24,6 +24,8 @@ export async function modulePage(req, res) {
 	const moduleDir = path.join(__rootDir, 'public', 'modules', moduleName)
 	const ejsPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.ejs`)
 	const cssPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.css`);
+	const cssLayoutPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.layout.css`);
+
 
 
 	// const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
@@ -54,6 +56,7 @@ export async function modulePage(req, res) {
 	const iconFileName = `${moduleName}.svg`
 	const iconFilePath = path.join(__rootDir, 'public', 'modules', moduleName, iconFileName)
 
+	const cssLayoutExists = await helper.isFileExists(cssLayoutPath)
 	const cssExists = await helper.isFileExists(cssPath)
 	const mjsExists = await helper.isFileExists(mjsPath);
 	const htmlExtenderExists = await helper.isFileExists(htmlExtenderPath);
@@ -90,6 +93,7 @@ export async function modulePage(req, res) {
 				moduleDir,
 				ejsPath,
 				mjsPrerenderExists,
+				cssLayoutExists,
 				cssExists,
 				mjsExists,
 				mjsFileName,
