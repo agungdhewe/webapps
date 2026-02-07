@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'
 import { Worker } from 'worker_threads'
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 dotenv.config()
 
@@ -9,6 +11,9 @@ console.log('Testing Generator')
 
 const args = process.argv.slice(2)
 const generator_id = args[0]
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 if (generator_id==null) {
 	console.log("\n\n\x1b[1m\x1b[31mERROR\x1b[0m")
@@ -34,8 +39,10 @@ await main(generator_id)
 async function main(generator_id) {
 	console.log(`Start to generate program id:'${generator_id}'`)
 
+
+
 	try {
-		const workerPath = './src/generator/worker.js'
+		const workerPath = path.join(__dirname, 'worker.js')
 		const worker = new Worker(workerPath, {
 			workerData: {
 				generator_id,
