@@ -11,7 +11,7 @@ import * as helper from './helper.js'
 import http from 'http'
 import https from 'https'
 import fs from 'fs'
-
+import { execSync } from 'node:child_process';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -55,11 +55,11 @@ export default class WebApplication {
 	get defaultSessionSecure() { return defaultSessionSecure }
 	get defaultSessionHttpOnly() { return defaultSessionHttpOnly }
 
-	get express() { return this.#express}
+	get express() { return this.#express }
 
 	#__rootDirectory
 	get __rootDirectory() { return this.#__rootDirectory }
-	setRootDirectory(v) { 
+	setRootDirectory(v) {
 		this.#__rootDirectory = v
 	}
 
@@ -73,7 +73,7 @@ export default class WebApplication {
 			throw new Error('__rootDirectory belum didefinisikan')
 		}
 
-		context.setRootDirectory(this.__rootDirectory)	
+		context.setRootDirectory(this.__rootDirectory)
 		context.setFnParseModuleRequest(options.fnParseModuleRequest)
 
 		if (this.#startedOnce) {
@@ -85,7 +85,7 @@ export default class WebApplication {
 		main(this, options)
 	}
 
-	
+
 }
 
 
@@ -124,7 +124,7 @@ async function main(self, options) {
 	const port = options.port ?? self.defaultPort
 	const startingMessage = options.startingMessage ?? `Starting webserver on port \x1b[1;33m${port}\x1b[0m`
 	const appConfig = options.appConfig || createDefaultAppConfig()
-	
+
 	const basicRouter = createBasicRouter()
 	const extendedRouter = options.router || ExpressServer.Router({ mergeParams: true });
 	const router = ExpressServer.Router({ mergeParams: true });
@@ -164,7 +164,7 @@ async function main(self, options) {
 	]);
 
 	// setup cors
-	if (options.allowedOrigins!=null) {
+	if (options.allowedOrigins != null) {
 		const allowedOrigins = options.allowedOrigins
 		app.use(cors({
 			credentials: true,
@@ -205,15 +205,15 @@ async function main(self, options) {
 	} else {
 		app.use('/public/libs/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'libs', 'fgta5js-dist')));
 	}
-	
+
 	app.use('/public/libs/webmodule', ExpressServer.static(path.join(__dirname, '..', 'libs', 'webmodule')));
-	
+
 	// Routing /public  untuk serve halaman-halaman static
 	app.use('/public', rejectEjsFiles);
 	app.use('/public', ExpressServer.static(path.join(__rootDirectory, 'public')));
 	app.use('/', router)
 	app.use(handleModuleNotfound)
-	
+
 
 	// const server = app.listen(port, ()=>{
 	// 	console.log('\n\n' + startingMessage);
@@ -226,7 +226,8 @@ async function main(self, options) {
 	// Tangani event 'error' pada objek server
 	server.on('error', (err) => {
 		if (err.code === 'EADDRINUSE') {
-			console.error(`\n\x1b[31mError!\x1b[0m\nPort ${port} sudah digunakan. Silakan coba port lain.\n`);
+			const pid = getPidByPort(port)
+			console.error(`\n\x1b[31mError!\x1b[0m\nPort ${port} sudah digunakan pid ${pid}. Silakan coba port lain.\nCurrent pid: ${process.pid}\n`);
 		} else {
 			console.error('\n\x1b[31mError!\x1b[0m\nTerjadi kesalahan saat memulai server:', err, "\n");
 		}
@@ -258,7 +259,7 @@ function createApplicationServer(app, port, startingMessage, appConfig) {
 }
 
 function rejectEjsFiles(req, res, next) {
-	const excludedExtensions = ['.ejs']; 
+	const excludedExtensions = ['.ejs'];
 	const ext = path.extname(req.url);
 
 	if (excludedExtensions.includes(ext)) {
@@ -267,3 +268,15 @@ function rejectEjsFiles(req, res, next) {
 
 	next();
 }
+
+
+function getPidByPort(port) {
+	try {
+		// Menggunakan lsof untuk mendapatkan PID saja (-t)
+		const pid = execSync(`lsof -t -i:${port}`).toString().trim();
+		return pid ? parseInt(pid) : null;
+	} catch (error) {
+		// Jika tidak ada proses di port tersebut, lsof mengembalikan error code non-zero
+		return null;
+	}
+};

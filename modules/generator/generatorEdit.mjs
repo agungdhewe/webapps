@@ -4,7 +4,7 @@ import * as Extender from './generator-ext.mjs'
 
 
 const CurrentState = {}
-const Crsl =  Context.Crsl
+const Crsl = Context.Crsl
 const CurrentSectionId = Context.Sections.generatorEdit
 const CurrentSection = Crsl.Items[CurrentSectionId]
 
@@ -22,16 +22,16 @@ export const Section = CurrentSection
 export async function init(self, args) {
 	console.log('initializing generatorEdit ...')
 
-	CurrentSection.addEventListener($fgta5.Section.EVT_BACKBUTTONCLICK, async (evt)=>{
-			backToList(self, evt)
-		})
+	CurrentSection.addEventListener($fgta5.Section.EVT_BACKBUTTONCLICK, async (evt) => {
+		backToList(self, evt)
+	})
 
 
-	btn_new.addEventListener('click', (evt)=>{ btn_new_click(self, evt)})
-	btn_save.addEventListener('click', (evt)=>{ btn_save_click(self, evt)})
-	btn_generate.addEventListener('click', (evt)=>{ btn_generate_click(self, evt) })
+	btn_new.addEventListener('click', (evt) => { btn_new_click(self, evt) })
+	btn_save.addEventListener('click', (evt) => { btn_save_click(self, evt) })
+	btn_generate.addEventListener('click', (evt) => { btn_generate_click(self, evt) })
 
-	obj_appname.addEventListener('change', (evt)=>{ obj_appname_change(self, evt) })
+	obj_appname.addEventListener('change', (evt) => { obj_appname_change(self, evt) })
 
 	await ui.Init(Context)
 
@@ -45,7 +45,7 @@ export async function openSelectedData(self, params) {
 	let mask = $fgta5.Modal.createMask()
 	try {
 		const id = params.keyvalue
-		
+
 		console.log(params)
 		const result = await openData(self, id)
 		const data = result.generator_data
@@ -54,7 +54,7 @@ export async function openSelectedData(self, params) {
 
 		const el_title = document.getElementById('application-title')
 		el_title.innerHTML = `Generator: ${data.title}`
-	
+
 		ui.load(data)
 	} catch (err) {
 		throw err
@@ -66,11 +66,11 @@ export async function openSelectedData(self, params) {
 
 
 export function keyboardAction(self, actionName) {
-	if (actionName=='save') {
+	if (actionName == 'save') {
 		btn_save.click()
-	} else if (actionName=='escape') {
+	} else if (actionName == 'escape') {
 		const listSection = Crsl.Items[Context.Sections.generatorList]
-		listSection.show({direction:1})
+		listSection.show({ direction: 1 })
 
 		const el_title = document.getElementById('application-title')
 		el_title.innerHTML = `Generator`
@@ -104,11 +104,11 @@ async function obj_appname_change(self, evt) {
 	const el = evt.target
 	const value = el.value
 
-	if (Context.appsUrls[value]===undefined) {
+	if (Context.appsUrls[value] === undefined) {
 		const resp = await $fgta5.MessageBox.error(`nama apps '${value}' tidak teregister di daftar apps`)
 		return
 	}
-	
+
 	// console.log(Context.appsUrls[value].directory)
 	obj_directory.value = Context.appsUrls[value].directory
 }
@@ -116,17 +116,17 @@ async function obj_appname_change(self, evt) {
 
 async function btn_new_click(self, evt) {
 	console.log('btn_new_click')
-	const sourceSection = evt.target.getAttribute('data-sectionsource') 
+	const sourceSection = evt.target.getAttribute('data-sectionsource')
 	const generatorList = self.Modules.generatorList
 	const listsecid = generatorList.Section.Id
-	const fromListSection = sourceSection===listsecid
+	const fromListSection = sourceSection === listsecid
 	if (fromListSection) {
 		// btn new di klik dari list
 		await CurrentSection.show()
 
 		// cek id, jika tidak kosong, perlu di-reset
 		const id = document.getElementById('obj_programid')
-		if (id!='') {
+		if (id != '') {
 			await ui.reset()
 			await ui.NewData()
 			ui.updateCache()
@@ -134,19 +134,19 @@ async function btn_new_click(self, evt) {
 
 	} else {
 		const resp = await $fgta5.MessageBox.confirm('apakah anda yakin akan membuat data baru?')
-		if (resp=='ok') {
+		if (resp == 'ok') {
 			await ui.reset()
 			await ui.NewData()
 			ui.updateCache()
 		}
-	} 
-	
+	}
+
 }
 
 async function btn_save_click(self, evt) {
 	console.log('btn_save_click')
 	const data = await ui.getCurrentData()
-	
+
 	let mask = $fgta5.Modal.createMask()
 	try {
 		const result = await Save(self, data)
@@ -163,15 +163,15 @@ async function btn_save_click(self, evt) {
 }
 
 
-async function btn_generate_click(self, evt)  {
+async function btn_generate_click(self, evt) {
 	console.log('btn_generate_click')
 	const data = await ui.getCurrentData()
-	
+
 	let mask = $fgta5.Modal.createMask()
 	btn_generate.disabled = true
 	ui.pauseAutoSave(true)
 	try {
-		if (data.id=='') {
+		if (data.id == '') {
 			throw new Error('save dahulu sebelum generate')
 		}
 		const result = await Generate(self, data, mask)
@@ -193,32 +193,32 @@ async function btn_generate_click(self, evt)  {
 async function Save(self, data) {
 	const url = `/${Context.moduleName}/save`
 	try {
-		const result = await Module.apiCall(url, { data }) 
-		return result 
+		const result = await Module.apiCall(url, { data })
+		return result
 	} catch (err) {
-		throw err	
-	} 
+		throw err
+	}
 }
 
 async function Generate(self, data, mask) {
-	return new Promise(async (resolve, reject)=>{
+	return new Promise(async (resolve, reject) => {
 		const jobId = Date.now()
 		const clientId = `${Context.notifierId}-${jobId}`
 		const notifierSocket = Context.notifierSocket
- 		const ws = new WebSocket(`${notifierSocket}/?clientId=${clientId}`);
- 
+		const ws = new WebSocket(`${notifierSocket}/?clientId=${clientId}`);
+
 		ws.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			if (data.status === 'done') {
 				ws.close();
 				resolve(data);
-			} else if (data.status=='error') {
+			} else if (data.status == 'error') {
 				ws.close();
 				reject(new Error(data.info.message))
-			} else if (data.status=='message') {	
+			} else if (data.status == 'message') {
 				console.log(data)
 				mask.setText(data.info.message)
-			} else if (data.status==='timeout') {
+			} else if (data.status === 'timeout') {
 				ws.close();
 				reject(new Error('generate timeout'));
 			}

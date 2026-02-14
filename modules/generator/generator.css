@@ -1,4 +1,4 @@
-.search-container button{
+.search-container button {
 	min-width: unset !important;
 	font-weight: normal !important;
 	padding: 5px 10px 5px 10px;
@@ -7,22 +7,21 @@
 
 #obj_appname,
 input[type="text"],
-input[type="number"]
-{
+input[type="number"] {
 	outline: none;
 	border: 1px solid #ccc;
 	padding: 10px;
-} 
+}
 
 input[type="number"]:focus,
 input[type="text"]:focus {
 	border-color: black;
-} 
+}
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+	-webkit-appearance: none;
+	margin: 0;
 }
 
 input::placeholder {
@@ -48,7 +47,8 @@ label {
 	font-size: 0.8rem;
 }
 
-th, td {
+th,
+td {
 	padding: 0;
 }
 
@@ -97,16 +97,16 @@ button:hover {
 #appgen-datadesign-layout {
 	display: grid;
 	grid-template-areas:
-			"def def"
-			"action action"
-			"entity entity"
-			"editor sidebar";
+		"def def"
+		"action action"
+		"entity entity"
+		"editor sidebar";
 	grid-template-columns: auto 150px;
 	grid-template-rows: auto;
 	gap: 10px;
 }
 
-#appgen-datadesign-layout > div {
+#appgen-datadesign-layout>div {
 	/* background-color: #ccc; */
 	padding: 10px;
 }
@@ -115,12 +115,12 @@ button:hover {
 	grid-area: def;
 
 	display: grid;
-	grid-template-columns: 150px auto 100px ;
+	grid-template-columns: 150px auto 100px;
 	column-gap: 10px;
 	row-gap: 10px;
 }
 
-#layout-definition > label {
+#layout-definition>label {
 	text-align: right;
 	align-self: center;
 	justify-self: end;
@@ -142,7 +142,7 @@ button:hover {
 	grid-area: sidebar;
 }
 
-#layout-sidebar > div {
+#layout-sidebar>div {
 	position: sticky;
 	top: calc(var(--fgta5-app-header-height) + 75px);
 }
@@ -151,14 +151,14 @@ button:hover {
 
 #tbl_entity {
 	width: 100%;
-	
+
 }
 
-#tbl_entity > tfoot > tr td {
+#tbl_entity>tfoot>tr td {
 	padding-top: 15px;
 }
 
-#tbl_entity td > span {
+#tbl_entity td>span {
 	margin: 5px;
 }
 
@@ -178,7 +178,7 @@ button:hover {
 	min-width: 100px;
 }
 
-#tbl_entity [name="col_name"] > input {
+#tbl_entity [name="col_name"]>input {
 	text-transform: lowercase;
 }
 
@@ -215,10 +215,10 @@ button:hover {
 
 #tbl_entity [name="col_id"] {
 	display: none;
-	width: 100px; 
+	width: 100px;
 	max-width: 100px;
-	white-space: nowrap; 
-	overflow: hidden; 
+	white-space: nowrap;
+	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
@@ -230,7 +230,7 @@ button:hover {
 
 
 .entity-editor {
-	scroll-margin-top: calc(var(--fgta5-app-header-height) + 50px) 
+	scroll-margin-top: calc(var(--fgta5-app-header-height) + 50px)
 }
 
 
@@ -267,30 +267,46 @@ button:hover {
 
 
 @keyframes tombolDiTekanMenghilang {
-	0% { opacity: 1; transform: scale(1); }
-	100% { opacity: 0; transform: scale(1.2) }
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(1.2)
+	}
 }
 
 @keyframes tombolMunculLagi {
-	0% { opacity: 0; transform: scale(0.3); }
-	100% { opacity: 1; transform: scale(1) }
+	0% {
+		opacity: 0;
+		transform: scale(0.3);
+	}
+
+	100% {
+		opacity: 1;
+		transform: scale(1)
+	}
 }
 
 @keyframes pulseHighlight {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 rgba(255, 200, 0, 0);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(255, 200, 0, 0.6);
-	border-color: rgba(255, 200, 0);
-	color: rgba(255, 200, 0);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 rgba(255, 200, 0, 0);
-  }
+	0% {
+		transform: scale(1);
+		box-shadow: 0 0 0 rgba(255, 200, 0, 0);
+	}
+
+	50% {
+		transform: scale(1.05);
+		box-shadow: 0 0 20px rgba(255, 200, 0, 0.6);
+		border-color: rgba(255, 200, 0);
+		color: rgba(255, 200, 0);
+	}
+
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 rgba(255, 200, 0, 0);
+	}
 }
 
 .drop-target {
@@ -302,7 +318,7 @@ button:hover {
 	color: #eee;
 	font-size: 2rem;
 	font-weight: bold;
-} 
+}
 
 .drop-target[data-dragover] {
 	border-color: #a7c8ff;
@@ -315,12 +331,12 @@ button:hover {
 	border-radius: 4px;
 	margin: 5px 0 15px 0;
 	padding: 0;
-	
+
 	display: flex;
 	align-items: center;
 	column-gap: 5px;
 
-	transition: transform 0.3s ease, opacity 0.5s ease, background-color 0.3s ease ;
+	transition: transform 0.3s ease, opacity 0.5s ease, background-color 0.3s ease;
 
 	/* cursor: grab; */
 	cursor: pointer;
@@ -333,16 +349,16 @@ button:hover {
 .component-icon-tool:hover {
 	/* transform: scale(1.2); */
 	background-color: #a7c8ff;
-} 
+}
 
-.component-icon-tool > div[data-icon] {
+.component-icon-tool>div[data-icon] {
 	width: 16px;
 	height: 16px;
 	margin: 8px;
 	cursor: grab;
 }
 
-.component-icon-tool > div[data-label] {
+.component-icon-tool>div[data-label] {
 	font-weight: bold;
 	font-size: 0.7rem;
 }
@@ -358,17 +374,17 @@ button:hover {
 	margin: 25px 0 25px 0;
 	/* border: 1px solid #ccc; */
 	border: 1px solid rgba(17, 37, 75, 0.2);
-	border-radius: 15px ;
+	border-radius: 15px;
 	position: relative;
 	background-color: #f9f9f9;
 	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
 }
 
-.design-data-field > div {
+.design-data-field>div {
 	margin: 10px 30px 30px 20px;
 }
 
-.design-data-field > div[data-fieldform] {
+.design-data-field>div[data-fieldform] {
 	display: grid;
 	grid-template-columns: 90px 150px 90px 150px 90px auto;
 	gap: 5px;
@@ -400,7 +416,7 @@ button:hover {
 .design-data-field input[type="checkbox"] {
 	width: 15px;
 	margin-left: 0;
-} 
+}
 
 
 .design-data-field input[type="text"][name="fieldname"] {
@@ -418,7 +434,7 @@ button:hover {
 	text-align: right;
 	margin-right: 5px;
 
-} 
+}
 
 
 .design-data-field div[name="validation"] {
@@ -453,11 +469,11 @@ button:hover {
 	background-image: url("data:image/svg+xml,%3Csvg%20version%3D%221.1%22%20viewBox%3D%220%200%2048%2048%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cg%20fill%3D%22currentColor%22%3E%0A%3Cpath%20d%3D%22m20.019%202c-2.9332%200-5.2348%202.3057-5.2348%205.2389v3.1417h-8.3806c-2.3047%200-4.1903%201.8856-4.1903%204.1903v7.9628h3.1417c3.1427%200%205.6567%202.514%205.6567%205.6567%200%203.1427-2.514%205.6567-5.6567%205.6567h-3.3547v7.9628c0%202.3047%201.8856%204.1903%204.1903%204.1903h7.9628v-3.1458c0-3.1427%202.514-5.6567%205.6567-5.6567%203.1427%200%205.6567%202.514%205.6567%205.6567v3.1458h7.9628c2.3047%200%204.1903-1.8856%204.1903-4.1903v-8.3806h3.1417c2.9332%200%205.2389-2.3057%205.2389-5.2389%200-2.9332-2.3057-5.2389-5.2389-5.2389h-3.1417v-8.3806c0-2.3047-1.8856-4.1903-4.1903-4.1903h-8.3806v-3.1417c0.20951-2.9332-2.0968-5.2389-5.03-5.2389z%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E");
 }
 
-#upload-icon:hover > label {
+#upload-icon:hover>label {
 	opacity: 1;
 }
 
-#upload-icon > label {
+#upload-icon>label {
 	display: inline-block;
 	background-color: white;
 	color: black;
@@ -566,21 +582,28 @@ button:hover {
 }
 
 @keyframes fieldDihapus {
-	0% { opacity: 1; transform: scale(1);	}
-	100% { opacity: 0; transform: scale( 0.3);}
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(0.3);
+	}
 }
 
 
 
 .design-data-field-icon {
-	width: 16px; 
+	width: 16px;
 	height: 16px;
 	margin-left: 8px;
 }
 
 
 .design-data-field-icon-pk {
-	width: 16px; 
+	width: 16px;
 	height: 16px;
 	position: absolute;
 	transform: translateX(-8px);
@@ -647,4 +670,11 @@ button:hover {
 	padding: 6px;
 	cursor: pointer;
 	border-top: 1px dotted #ddd;
+}
+
+
+
+.beri-jarak-scroll {
+	/* Memberikan jarak 100px dari atas saat di-scroll */
+	scroll-margin-top: 100px;
 }

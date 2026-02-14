@@ -224,15 +224,12 @@ async function generate(id, data) {
 
 
 		// Api
-		await createApiModule(context, { overwrite: true })
-		// await sleep(jedaWaktu)
 
 		await createApiExtenderModule(context, { overwrite: false })
-		// await sleep(jedaWaktu)
-
+		await createApiModule(context, { overwrite: true })
 
 		context.postMessage({ message: `restarting service` })
-		await sleep(3)
+		await sleep(1)
 
 		// Selesai
 		context.postMessage({ message: `finish`, done: true })

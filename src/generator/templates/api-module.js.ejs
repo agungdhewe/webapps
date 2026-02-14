@@ -29,13 +29,16 @@ export default class extends Api {
 	//         header-open-data
 	async init(body) { return await <%= moduleName %>_init(this, body) }
 
+	// extender call
+	async execute(body) { return await paymreq_execute(this, body) }
+
 	// header
 	async headerList(body) { return await <%= moduleName %>_headerList(this, body) }
 	async headerOpen(body) { return await <%= moduleName %>_headerOpen(this, body) }
 	async headerUpdate(body) { return await <%= moduleName %>_headerUpdate(this, body)}
 	async headerCreate(body) { return await <%= moduleName %>_headerCreate(this, body)}
 	async headerDelete(body) { return await <%= moduleName %>_headerDelete(this, body) }
-	
+
 	<% entitiesDetil.forEach(entity => { %>
 	// <%= entity.name %>	
 	async <%= entity.name %>List(body) { return await <%= moduleName %>_<%= entity.name %>List(this, body) }
@@ -91,6 +94,24 @@ async function <%= moduleName %>_init(self, body) {
 }
 
 
+// execute extender function
+async function paymreq_execute(self, body) {
+	const { fnName, fnParams } = body
+
+	if (fnName==null || fnName=='') {
+		throw new Error('fnName belum didefinisikan di api call') 
+	}
+
+	if (typeof Extender[fnName] === 'function') {
+		// export async function [fnName](self, db, [fnParams]) {}
+		return await Extender[fnName](self, db, fnParams)
+	} else {
+		// api function extender tidak ditemukan
+		throw new Error(`${fnName} tidak ditmukan di extender`)
+	}
+}
+
+
 // data logging
 async function <%= moduleName %>_log(self, body, startTime, tablename, id, action, data={}, remark='') {
 	const { source } = body
@@ -106,6 +127,8 @@ async function <%= moduleName %>_log(self, body, startTime, tablename, id, actio
 	const ret = await logger.log(logdata)
 	return ret
 }
+
+
 
 <% if (importbucket) { %>
 async function <%= moduleName %>_upload(self, data, files, detilName, id, fn_uploadSuccess) {
@@ -298,12 +321,9 @@ async function <%= moduleName %>_headerCreate(self, body) {
 			sqlUtil.connect(tx)
 
 
-			const args = { section: 'header', prefix:'<%= identifierPrefix %>' }
+			const args = { section: 'header', doc_id:'<%= identifierPrefix %>' }
 
-			<% if (usesequencer) { %>// set default document prefix
-			args.prefix = '<%= identifierPrefix %>'	
-				
-			// buat sequencer document	
+			<% if (usesequencer) { %>// buat sequencer document	
 			const sequencer = createSequencerDocument(tx, { 
 				COMPANY_CODE: req.app.locals.appConfig.COMPANY_CODE,
 				blockLength: <%= identifierBlock %>,
@@ -317,12 +337,12 @@ async function <%= moduleName %>_headerCreate(self, body) {
 				await Extender.sequencerSetup(self, tx, sequencer, data, args)
 			}
 
-			<%if (yearly) { %>// generate data sesuai prefix (default:  <%= identifierPrefix %>) reset pertahun
-			const seqdata = await sequencer.yearly(args.prefix)<% } 
+			<%if (yearly) { %>// generate data sesuai prefix dari doc_id (default:  <%= identifierPrefix %>) reset pertahun
+			const seqdata = await sequencer.yearly(args.doc_id)<% } 
 			else { 
 			
-			%>// generate data sesuai prefix (default: <%= identifierPrefix %>) reset perbulan
-			const seqdata = await sequencer.monthly(args.prefix)<% } %>	
+			%>// generate data sesuai prefix dari doc_id (default: <%= identifierPrefix %>) reset perbulan
+			const seqdata = await sequencer.monthly(args.doc_id)<% } %>	
 			data.<%= headerPrimaryKey %> = seqdata.id
 
 			// apabila ada keperluan pengelohan data sebelum disimpan, lakukan di extender headerCreating
@@ -811,6 +831,7 @@ async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
 			const sql = `select * from ${<%= entity.name %>TableName} where <%= entity.pk %>=\${<%= entity.pk %>}`
 			const row<%= entity.name %> = await tx.oneOrNone(sql, dataToRemove)
 
+			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
 			if (typeof Extender.<%= entity.name %>Deleting === 'function') {
@@ -850,6 +871,8 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 
 
 	try {
+
+		let <%= headerPrimaryKey %>
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
 
@@ -857,7 +880,11 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 				const dataToRemove = {<%= entity.pk %>: id}
 				const sql = `select * from ${<%= entity.name %>TableName} where <%= entity.pk %>=\${<%= entity.pk %>}`
 				const row<%= entity.name %> = await tx.oneOrNone(sql, dataToRemove)
+				<%= headerPrimaryKey %> = row<%= entity.name %>.<%= headerPrimaryKey %>
 
+				const logMetadata = {}
+
+				
 				// apabila ada keperluan pengelohan data sebelum dihapus, lakukan di extender
 				if (typeof Extender.<%= entity.name %>Deleting === 'function') {
 					// async function <%= entity.name %>Deleting(self, tx, row<%= entity.name %>, logMetadata) {}
@@ -881,6 +908,7 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 
 		const res = {
 			deleted: true,
+			<%= headerPrimaryKey %>: <%= headerPrimaryKey %>,
 			message: ''
 		}
 		return res

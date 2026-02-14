@@ -10,24 +10,24 @@ const ATTR_ROWSEARCH = 'data-rowsearch'
 
 // const Context = {}
 
-const isValidName = str => /^[_a-z0-9]+$/.test(str) ;
+const isValidName = str => /^[_a-z0-9]+$/.test(str);
 
 const timestamp = () => {
-  const now = new Date();
-  const YYYY = now.getFullYear();
-  const MM = String(now.getMonth() + 1).padStart(2, "0");
-  const DD = String(now.getDate()).padStart(2, "0");
-  const HH = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const SS = String(now.getSeconds()).padStart(2, "0");
-  return `${YYYY}${MM}${DD}${HH}${mm}${SS}`;
+	const now = new Date();
+	const YYYY = now.getFullYear();
+	const MM = String(now.getMonth() + 1).padStart(2, "0");
+	const DD = String(now.getDate()).padStart(2, "0");
+	const HH = String(now.getHours()).padStart(2, "0");
+	const mm = String(now.getMinutes()).padStart(2, "0");
+	const SS = String(now.getSeconds()).padStart(2, "0");
+	return `${YYYY}${MM}${DD}${HH}${mm}${SS}`;
 }
 
 export default class AppGenIO {
 	Setup(config) {
 		AppGenIO_Setup(this, config)
 	}
-	
+
 
 	AutoSave() {
 		AppGenIO_AutoSave(this)
@@ -42,14 +42,14 @@ export default class AppGenIO {
 	}
 
 	// cek AppGenIO_Setup untuk ovveride fungsi2 di bawah
-	AddEntity(data) {} // ini nanti di ovveride saat setup
-	startDesign(entity_id) {}
+	AddEntity(data) { } // ini nanti di ovveride saat setup
+	startDesign(entity_id) { }
 
 
 	#autoSavePaused = false
 	get autoSavePaused() { return this.#autoSavePaused }
 	pauseAutoSave(autoSavePaused) {
-		console.log(autoSavePaused? 'auto save paused' : 'auto save resume')
+		console.log(autoSavePaused ? 'auto save paused' : 'auto save resume')
 		this.#autoSavePaused = autoSavePaused
 	}
 
@@ -83,38 +83,38 @@ export default class AppGenIO {
 
 function getValueFrom(datafield, query, propertyname) {
 	var el = datafield.querySelector(query)
-	if (el==null) {
+	if (el == null) {
 		return null
 	}
-	if (el[propertyname]===undefined) {
+	if (el[propertyname] === undefined) {
 		return null
-	} 
+	}
 	return el[propertyname]
 }
 
 function getCheckedFrom(datafield, query) {
 	var el = datafield.querySelector(query)
-	if (el==null) {
+	if (el == null) {
 		return false
 	}
 
-	return el.checked===true ? true : false
+	return el.checked === true ? true : false
 }
 
 function setValueTo(value, datafield, query, propertyname) {
 	var el = datafield.querySelector(query)
-	if (el==null) {
+	if (el == null) {
 		return null
 	}
-	if (el[propertyname]===undefined) {
+	if (el[propertyname] === undefined) {
 		return null
-	} 
+	}
 	el[propertyname] = value
 }
 
 function setCheckedTo(checked, datafield, query) {
 	var el = datafield.querySelector(query)
-	if (el==null) {
+	if (el == null) {
 		return false
 	}
 	el.checked = checked
@@ -122,7 +122,7 @@ function setCheckedTo(checked, datafield, query) {
 
 function setSelectedTo(value, datafield, query) {
 	var el = datafield.querySelector(query)
-	if (el==null) {
+	if (el == null) {
 		return false
 	}
 
@@ -145,24 +145,24 @@ function AppGenIO_Setup(self, config) {
 
 
 	btn.save = document.getElementById('btnAppGenSave')
-	btn.save.addEventListener('click', async (evt)=>{
+	btn.save.addEventListener('click', async (evt) => {
 
 		const data = await AppGenIO_GetCurrentWorkData(self)
 		const suggestedName = data.name
 		const handle = await window.showSaveFilePicker({
 			suggestedName,
 			types: [
-			{
-				description: "JSON File",
-				accept: { "application/json": [".json"] },
-			},
+				{
+					description: "JSON File",
+					accept: { "application/json": [".json"] },
+				},
 			],
 		});
 
-		
+
 		const writable = await handle.createWritable();
-  		await writable.write(JSON.stringify(data, null, 2)); // prettify JSON
-  		await writable.close();
+		await writable.write(JSON.stringify(data, null, 2)); // prettify JSON
+		await writable.close();
 
 		// AppGenIO_Save(self, evt)
 	})
@@ -170,23 +170,23 @@ function AppGenIO_Setup(self, config) {
 
 
 	btn.load = document.getElementById('btnAppGenLoad')
-	btn.load.addEventListener('click', (evt)=>{
+	btn.load.addEventListener('click', (evt) => {
 		const input = document.createElement("input");
 		input.type = "file";
 		input.accept = ".json"; // opsional: filter ekstensi
 		input.style.display = "none"; // tidak perlu ditambahkan ke dokumen
-		
+
 		input.addEventListener("change", () => {
 			if (input.files.length > 0) {
 				const file = input.files[0]
 				if (!file) return;
-				
+
 				const reader = new FileReader();
 				reader.onload = function (e) {
 					const content = e.target.result;
 					AppGenIO_ReadData(self, content)
 				};
-				reader.readAsText(file); 
+				reader.readAsText(file);
 			}
 		});
 
@@ -269,7 +269,7 @@ async function AppGenIO_GetCurrentWorkData(self) {
 		uniques: {},
 		search: {},
 	}
-	
+
 	try {
 		AppGenIO_GetDef(self, PROG)
 		AppGenIO_GetActions(self, PROG)
@@ -296,7 +296,7 @@ function AppGenIO_GetDef(self, PROG) {
 	PROG.id = obj_programid.value
 	PROG.appname = obj_appname.value.toLowerCase()
 	PROG.name = obj_programname.value.toLowerCase()
-	PROG.title = obj_programtitle.value 
+	PROG.title = obj_programtitle.value
 	PROG.directory = obj_directory.value
 	PROG.description = obj_programdescription.value
 	PROG.icon = obj_icon.style.backgroundImage
@@ -327,13 +327,13 @@ function AppGenIO_GetEntities(self, PROG) {
 		tr.classList.remove('field-error')
 		try {
 			var entity_id = tr.getAttribute('data-entity-id')
-			let entity = AppGenIO_GetEntityData(self, entity_id)	
-			
+			let entity = AppGenIO_GetEntityData(self, entity_id)
+
 			if (!isValidName(entity.name)) {
 				throw new Error(`entity name '${entity.name}' tidak valid`)
 			}
 
-			if (PROG.entities[entity.name]!==undefined) {
+			if (PROG.entities[entity.name] !== undefined) {
 				// sudah ada, entiti duplikasi
 				throw new Error(`entity ${entity.name} terduplikasi`)
 			}
@@ -369,11 +369,11 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	var elInputDescr = editor.querySelector('div[name="designer-info"] input[name="table-descr"]')
 	var elChkSkipRegenerateTable = editor.querySelector('div[name="designer-info"] input[name="skip-regenerate-table"]')
 
-	
+
 	var elChkFormGridLayout = editor.querySelector('div[name="designer-info"] input[name="form-grid-layout"]')
 	var elChkFormNew = editor.querySelector('div[name="designer-info"] input[name="allow-form-new"]')
 	var elChkFormEdit = editor.querySelector('div[name="designer-info"] input[name="allow-form-edit"]')
-	
+
 	var elChkRowAdd = editor.querySelector('div[name="designer-info"] input[name="allow-row-add"]')
 	var elChkRowRemove = editor.querySelector('div[name="designer-info"] input[name="allow-row-remove"]')
 	var elChkRowEdit = editor.querySelector('div[name="designer-info"] input[name="allow-row-edit"]')
@@ -390,7 +390,7 @@ function AppGenIO_GetEntityData(self, entity_id) {
 
 
 	entity.name = elName.innerHTML.toLowerCase()
-	entity.isheader = entity.name=='header' ? true : false;
+	entity.isheader = entity.name == 'header' ? true : false;
 	entity.title = elTitle.innerHTML
 	entity.table = elTable.innerHTML.toLowerCase()
 	entity.pk = elPK.innerHTML.toLowerCase()
@@ -403,7 +403,7 @@ function AppGenIO_GetEntityData(self, entity_id) {
 	entity.allowRowAdd = elChkRowAdd.checked ? true : false
 	entity.allowRowRemove = elChkRowRemove.checked ? true : false
 	entity.allowRowEdit = elChkRowEdit.checked ? true : false
-	
+
 	entity.identifierMethod = elIdMethod.value
 	entity.identifierPrefix = elIdfPrefix.value
 	entity.identifierBlock = elIdBlock.value
@@ -422,7 +422,7 @@ function AppGenIO_GetEntityData(self, entity_id) {
 
 	for (let elfield of elAllFields) {
 		let field = AppGenIO_GetFieldData(self, elfield)
-		if (entity.Items[field.name]!==undefined) {
+		if (entity.Items[field.name] !== undefined) {
 			elfield.classList.add('field-error')
 			throw new Error(`fieldname '${field.name}' terduplikasi!`)
 		}
@@ -448,7 +448,7 @@ function AppGenIO_GetEntityUnique(self, editor) {
 		const name = tdName.innerHTML
 		const fields = tdFields.innerHTML
 
-		uniques[name] = {name, fields}
+		uniques[name] = { name, fields }
 	}
 
 	return uniques
@@ -468,7 +468,7 @@ function AppGenIO_GetEntitySearch(self, editor) {
 		const label = tdLabel.innerHTML
 		const fields = tdFields.innerHTML
 
-		search[name] = {name, label, fields}
+		search[name] = { name, label, fields }
 	}
 
 	return search
@@ -478,7 +478,7 @@ function AppGenIO_GetEntitySearch(self, editor) {
 
 function AppGenIO_GetFieldData(self, el) {
 	const field = {}
-	
+
 	field.component = el.getAttribute(ATTR_COMPNAME)
 	field.data_fieldname = getValueFrom(el, 'input[name="fieldname"]', 'value')
 	field.name = field.data_fieldname.toLowerCase()
@@ -497,11 +497,11 @@ function AppGenIO_GetFieldData(self, el) {
 	field.input_multiline = getCheckedFrom(el, 'input[name="multiline"]')
 
 
-	
+
 
 
 	// get defaul value
-	if (field.component=='Checkbox') {
+	if (field.component == 'Checkbox') {
 		var defaultChecked = getCheckedFrom(el, 'input[name="defaultvalue"]')
 		field.data_defaultvalue = defaultChecked ? 1 : 0
 	} else {
@@ -522,22 +522,22 @@ function AppGenIO_GetFieldData(self, el) {
 	field.input_information = getValueFrom(el, 'input[name="information"]', 'value') ?? ''
 	field.input_containercss = getValueFrom(el, 'input[name="input-containercss"]', 'value') ?? ''
 	field.input_inlinestyle = getValueFrom(el, 'input[name="input-inlinestyle"]', 'value') ?? ''
-	
-	
+
+
 	var sel_charcase = el.querySelector('select[name="charcasing"]')
-	if (sel_charcase!=null) {
+	if (sel_charcase != null) {
 		field.input_charcase = sel_charcase.value
 	} else {
 		field.input_charcase = 'normal'
 	}
 
 	var chk_inputdisabled = el.querySelector('input[name="disabledinform"]')
-	field.input_disabled = chk_inputdisabled.checked ? true : false 
+	field.input_disabled = chk_inputdisabled.checked ? true : false
 
-	var chk_showingrid =  el.querySelector('input[name="showingrid"]')
+	var chk_showingrid = el.querySelector('input[name="showingrid"]')
 	field.showInGrid = chk_showingrid.checked ? true : false
 
-	var chk_showinform =  el.querySelector('input[name="showinform"]')
+	var chk_showinform = el.querySelector('input[name="showinform"]')
 	field.showInForm = chk_showinform.checked ? true : false
 
 	// desktop position
@@ -571,7 +571,7 @@ function AppGenIO_GetFieldData(self, el) {
 	field.Validation.hasCustomValidator = getCheckedFrom(el, 'input[name="hascustomvalidator"]')
 	field.Validation.customValidator = getValueFrom(el, 'input[name="validator"]', 'value')
 
-	
+
 
 	field.Reference = {}
 	field.Reference.table = getValueFrom(el, 'input[name="ref_table"]', 'value')
@@ -582,7 +582,7 @@ function AppGenIO_GetFieldData(self, el) {
 	field.Reference.loaderApiModule = getValueFrom(el, 'input[name="loaderapimodule"]', 'value')
 	field.Reference.loaderApiPath = getValueFrom(el, 'input[name="loaderapipath"]', 'value')
 
-	
+
 	field.Handle = {}
 	field.Handle.changed = getCheckedFrom(el, 'input[name="ishandlechanged"]')
 	field.Handle.input = getCheckedFrom(el, 'input[name="ishandleinput"]')
@@ -598,7 +598,7 @@ function AppGenIO_GetFieldData(self, el) {
 	if (!isValidName(field.data_fieldname)) {
 		el.classList.add('field-error')
 		throw new Error('Nama Field is not valid, gunakan huruf kecil, karakter special _ atau angka')
-	} 
+	}
 
 	return field
 }
@@ -637,7 +637,7 @@ async function AppGenIO_Load(self, data) {
 	const obj_programdescription = document.getElementById('obj_programdescription')
 	const obj_icon = document.getElementById('upload-icon')
 
-	obj_programid.value = data.id 
+	obj_programid.value = data.id
 	obj_appname.value = data.appname
 	obj_programname.value = data.name
 	obj_programtitle.value = data.title
@@ -661,11 +661,14 @@ async function AppGenIO_Load(self, data) {
 	const elEntityDesign = document.getElementById('entities-design')
 	elEntityDesign.innerHTML = ''
 
-	const tbl_entity =document.getElementById('tbl_entity')
+	const tbl_entity = document.getElementById('tbl_entity')
 	const tbody = tbl_entity.querySelector('tbody')
 	var de = document.getElementById('entities-design')
-	for (var entityname in data.entities) {
-		var entity = data.entities[entityname]
+
+	let firstEntity = null
+	for (let entityname in data.entities) {
+		let entity = data.entities[entityname]
+
 
 
 		await self.AddEntity({
@@ -681,38 +684,45 @@ async function AppGenIO_Load(self, data) {
 
 		const btn = tbody.querySelector(`[name="col_btndesign"][${ATTR_ENTITYID}="${entity.id}"]`)
 		btn.click()
-		
+
+
+		if (firstEntity == null) {
+			firstEntity = entity
+			firstEntity.btnDesign = btn
+		}
+
+
 
 		// isikan data entity
 		const editor = de.querySelector(`div[name="entity-editor"][${ATTR_ENTITYID}="${entity.id}"]`)
 		setValueTo(entity.descr, editor, 'div[name="designer-info"] input[name="table-descr"]', 'value')
-		setCheckedTo(entity.skipRegenerateTable??false, editor, 'div[name="designer-info"] input[name="skip-regenerate-table"]')
+		setCheckedTo(entity.skipRegenerateTable ?? false, editor, 'div[name="designer-info"] input[name="skip-regenerate-table"]')
 
-		setCheckedTo(entity.formGridLayout??false, editor, 'div[name="designer-info"] input[name="form-grid-layout"]')
-		setCheckedTo(entity.allowFormNew??true, editor, 'div[name="designer-info"] input[name="allow-form-new"]')
-		setCheckedTo(entity.allowFormEdit??true, editor, 'div[name="designer-info"] input[name="allow-form-edit"]')
-		setCheckedTo(entity.allowRowAdd??true, editor, 'div[name="designer-info"] input[name="allow-row-add"]')
-		setCheckedTo(entity.allowRowRemove??true, editor, 'div[name="designer-info"] input[name="allow-row-remove"]')
-		setCheckedTo(entity.allowRowEdit??true, editor, 'div[name="designer-info"] input[name="allow-row-edit"]')
-		
+		setCheckedTo(entity.formGridLayout ?? false, editor, 'div[name="designer-info"] input[name="form-grid-layout"]')
+		setCheckedTo(entity.allowFormNew ?? true, editor, 'div[name="designer-info"] input[name="allow-form-new"]')
+		setCheckedTo(entity.allowFormEdit ?? true, editor, 'div[name="designer-info"] input[name="allow-form-edit"]')
+		setCheckedTo(entity.allowRowAdd ?? true, editor, 'div[name="designer-info"] input[name="allow-row-add"]')
+		setCheckedTo(entity.allowRowRemove ?? true, editor, 'div[name="designer-info"] input[name="allow-row-remove"]')
+		setCheckedTo(entity.allowRowEdit ?? true, editor, 'div[name="designer-info"] input[name="allow-row-edit"]')
+
 		setValueTo(entity.identifierMethod, editor, 'div[name="designer-info"] select[name="identifier-method"]', 'value')
 		setValueTo(entity.identifierPrefix, editor, 'div[name="designer-info"] input[name="identifier-prefix"]', 'value')
-		setValueTo(entity.identifierBlock , editor, 'div[name="designer-info"] input[name="identifier-block"]', 'value')
+		setValueTo(entity.identifierBlock, editor, 'div[name="designer-info"] input[name="identifier-block"]', 'value')
 		setValueTo(entity.identifierLength, editor, 'div[name="designer-info"] input[name="identifier-length"]', 'value')
-		
-		setValueTo(entity.bindHeadTitle??'', editor, 'div[name="designer-info"] input[name="bind_head_title"]', 'value')
-		setValueTo(entity.bindHeadDescr??'', editor, 'div[name="designer-info"] input[name="bind_head_descr"]', 'value')
+
+		setValueTo(entity.bindHeadTitle ?? '', editor, 'div[name="designer-info"] input[name="bind_head_title"]', 'value')
+		setValueTo(entity.bindHeadDescr ?? '', editor, 'div[name="designer-info"] input[name="bind_head_descr"]', 'value')
 
 
 		// ambil drop target dari entity
 		let droptarget = elEntityDesign.querySelector(`div[name="entity-editor"][${ATTR_ENTITYID}="${entity.id}"] div[name="drop-target"]`)
-	
+
 		// console.log(entity)
 		for (var item_id in entity.Items) {
 			let item = entity.Items[item_id]
 
 			var componentname = item.component
-			
+
 			let comp = Components[componentname]
 			let datafield = self.addComponentToDesigner(droptarget, comp)
 
@@ -725,7 +735,7 @@ async function AppGenIO_Load(self, data) {
 			let uniq = entity.Uniques[uniq_name]
 			let name = uniq.name
 			let fields = uniq.fields
-			Context.addUnique({uniq_name:name, uniq_fields:fields}, entity.id)
+			Context.addUnique({ uniq_name: name, uniq_fields: fields }, entity.id)
 		}
 
 		// search
@@ -736,12 +746,20 @@ async function AppGenIO_Load(self, data) {
 			let fields = search.fields
 			Context.addSearch({
 				criteria_name: name,
-				criteria_label: label, 
-				criteria_fields:fields
+				criteria_label: label,
+				criteria_fields: fields
 			}, entity.id)
 		}
-		
+
 	}
+
+
+	// console.log(firstEntity)
+	setTimeout(() => {
+		console.log(firstEntity)
+		firstEntity.btnDesign.click()
+	}, 500)
+
 
 }
 
@@ -759,7 +777,7 @@ function AppGenIO_FillDataField(self, datafield, field) {
 
 	setCheckedTo(field.input_multiline, datafield, 'input[name="multiline"]')
 
-	if (field.component=='Checkbox') {
+	if (field.component == 'Checkbox') {
 		setCheckedTo(field.data_defaultvalue, datafield, 'input[name="defaultvalue"]')
 	} else {
 		setValueTo(field.data_defaultvalue, datafield, 'input[name="defaultvalue"]', 'value')
@@ -767,7 +785,7 @@ function AppGenIO_FillDataField(self, datafield, field) {
 	setValueTo(field.description, datafield, 'input[name="description"]', 'value')
 
 
-	if (field.input_index===undefined) {
+	if (field.input_index === undefined) {
 		field.input_index = '0'
 	}
 
@@ -789,11 +807,11 @@ function AppGenIO_FillDataField(self, datafield, field) {
 
 
 	// desktop position
-	setValueTo(field.input_dposrow??'auto', datafield, 'input[name="input-dposrow"]', 'value')
-	setValueTo(field.input_dposrowspan??'', datafield, 'input[name="input-dposrowspan"]', 'value')
-	setValueTo(field.input_dposcol??'1', datafield, 'input[name="input-dposcol"]', 'value')
-	setValueTo(field.input_dposcolspan??'2', datafield, 'input[name="input-dposcolspan"]', 'value')
-	setValueTo(field.input_dposstyle??'', datafield, 'input[name="input-dposstyle"]', 'value')
+	setValueTo(field.input_dposrow ?? 'auto', datafield, 'input[name="input-dposrow"]', 'value')
+	setValueTo(field.input_dposrowspan ?? '', datafield, 'input[name="input-dposrowspan"]', 'value')
+	setValueTo(field.input_dposcol ?? '1', datafield, 'input[name="input-dposcol"]', 'value')
+	setValueTo(field.input_dposcolspan ?? '2', datafield, 'input[name="input-dposcolspan"]', 'value')
+	setValueTo(field.input_dposstyle ?? '', datafield, 'input[name="input-dposstyle"]', 'value')
 
 	// grid related
 	setValueTo(field.grid_formatter, datafield, 'input[name="gridformatter"]', 'value')
@@ -819,10 +837,10 @@ function AppGenIO_FillDataField(self, datafield, field) {
 
 	setValueTo(field.Reference.table, datafield, 'input[name="ref_table"]', 'value')
 	setValueTo(field.Reference.pk, datafield, 'input[name="ref_id"]', 'value')
-	
+
 	// TODO: ini nanti kalau perlu diperbaiki disini
 	// setValueTo(field.Reference.bindingValue, datafield, 'input[name="ref_id"]', 'value')
-	
+
 	setValueTo(field.Reference.bindingDisplay, datafield, 'input[name="ref_display"]', 'value')
 	setValueTo(field.Reference.bindingText, datafield, 'input[name="ref_text"]', 'value')
 

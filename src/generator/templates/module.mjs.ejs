@@ -181,10 +181,17 @@ function openDetilSection(self, sectionTargetName, sectionCurrentName) {
 	const sectionId = Context.Sections[sectionTargetName]
 	const section = Crsl.Items[sectionId]
 
+	const moduleHeaderEdit = self.Modules[sectionCurrentName]
+	const frm = moduleHeaderEdit.getForm()
+
+	if (frm.isChanged()) {
+		$fgta5.MessageBox.warning(`simpan data dulu sebelum ke <b>${section.Title}</b>`)
+		return
+	}
+
 	section.setSectionReturn(sectionCurrent)
 	section.show({}, ()=>{
 		const moduleTarget = self.Modules[sectionTargetName]
-		const moduleHeaderEdit = self.Modules[sectionCurrentName]
 		moduleTarget.openList(self, {
 			moduleHeaderEdit
 		})
