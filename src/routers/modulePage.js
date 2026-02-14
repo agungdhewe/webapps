@@ -27,12 +27,15 @@ export async function modulePage(req, res) {
 	const cssLayoutPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.layout.css`);
 
 
+	const variance = req.query.variance;
+	const id = req.query.id;
+
 
 	// const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
 	let mjsFileName
 	if (appDebugMode) {
 		// Default Debug
-		if (req.query.mode=='release') {
+		if (req.query.mode == 'release') {
 			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
 			mjsFileName = `${moduleName}-${version}.min.mjs`
 		} else {
@@ -40,7 +43,7 @@ export async function modulePage(req, res) {
 		}
 	} else {
 		// Default Production
-		if (req.query.mode=='debug') {
+		if (req.query.mode == 'debug') {
 			mjsFileName = `${moduleName}.mjs`
 		} else {
 			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
@@ -66,18 +69,18 @@ export async function modulePage(req, res) {
 	const mjsPrerenderExists = await helper.isFileExists(mjsPrerenderPath)
 
 
-	const ejsModuleExist = await helper.isFileExists(ejsPath) 
+	const ejsModuleExist = await helper.isFileExists(ejsPath)
 
 	const additionalHeaderPath = path.join(__rootDir, 'public', 'modules', moduleName, `_htmlheader.ejs`);
-	const additionalHeaderExists = await helper.isFileExists(additionalHeaderPath) 
+	const additionalHeaderExists = await helper.isFileExists(additionalHeaderPath)
 
 	try {
 
 		// coba cek request halaman
 		const fnParseModuleRequest = context.getFnParseModuleRequest()
-		if (typeof fnParseModuleRequest==='function') {
+		if (typeof fnParseModuleRequest === 'function') {
 			await fnParseModuleRequest(req, res)
-		}		
+		}
 
 
 		// load halaman html-nya
@@ -86,10 +89,12 @@ export async function modulePage(req, res) {
 			err.status = 404
 			throw err
 		}
-		
-		const variables	= {
+
+		const variables = {
 			...helper.createDefaultEjsVariable(req),
 			...{
+				id,
+				variance,
 				moduleDir,
 				ejsPath,
 				mjsPrerenderExists,

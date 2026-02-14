@@ -4,6 +4,8 @@
 		<title><%= moduleName %></title>
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="variance" content="<%= variance %>">
+		<meta name="id" content="<%= id %>">
 
 		<% if (fgta5jsDebugMode) { %>
 			<!-- DEBUG MODE -->
@@ -88,10 +90,17 @@
 
 	<script>
 		// // prevent back button
-		history.pushState(null, null, window.location.pathname);
+		// history.pushState(null, null, window.location.pathname);
+		// window.addEventListener('popstate', function(ev) {
+		// 	history.pushState(null, null, window.location.pathname);
+		// }, false);	
+		// Menggabungkan pathname (jalur) dengan search (query string)
+		const urlLengkap = window.location.pathname + window.location.search;
+		history.pushState(null, null, urlLengkap);
 		window.addEventListener('popstate', function(ev) {
-			history.pushState(null, null, window.location.pathname);
-		}, false);	
+			history.pushState(null, null, urlLengkap);
+		}, false);
+
 	</script>
 
 	<script type="module">
