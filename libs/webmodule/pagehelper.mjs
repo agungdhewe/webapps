@@ -5,7 +5,7 @@ export async function openSection(self, sectionName, params, fnOpened) {
 	const section = Crsl.Items[sectionName]
 	section.setSectionReturn(params.sectionReturn)
 	section.show({}, fnOpened)
-} 
+}
 
 
 export function renderLog(tbody, data) {
@@ -46,8 +46,8 @@ export function renderLog(tbody, data) {
 
 
 export async function sleep(ms) {
-	return new Promise((resolve)=>{
-		setTimeout(()=>{
+	return new Promise((resolve) => {
+		setTimeout(() => {
 			resolve()
 		}, ms)
 	})
@@ -59,14 +59,14 @@ export function setCssRule(selector, properties) {
 
 	for (const sheet of document.styleSheets) {
 		for (let i = 0; i < sheet.cssRules.length; i++) {
-		const rule = sheet.cssRules[i];
+			const rule = sheet.cssRules[i];
 
-		if (rule.selectorText === selector) {
-			for (const [prop, val] of Object.entries(properties)) {
-			rule.style[prop] = val;
+			if (rule.selectorText === selector) {
+				for (const [prop, val] of Object.entries(properties)) {
+					rule.style[prop] = val;
+				}
+				found = true;
 			}
-			found = true;
-		}
 		}
 	}
 
@@ -74,8 +74,8 @@ export function setCssRule(selector, properties) {
 	if (!found) {
 		const firstSheet = document.styleSheets[0];
 		const props = Object.entries(properties)
-		.map(([p, v]) => `${p}: ${v}`)
-		.join('; ');
+			.map(([p, v]) => `${p}: ${v}`)
+			.join('; ');
 		firstSheet.insertRule(`${selector} { ${props} }`, firstSheet.cssRules.length);
 	}
 }
@@ -88,13 +88,33 @@ export function formatDecimal(num, prec) {
 	}).format(num);
 }
 
+export function formatISODate(isoString, format) {
+	const date = new Date(isoString);
+
+	// Mengambil komponen waktu dalam UTC
+	const day = String(date.getUTCDate()).padStart(2, '0');
+	const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+	const year = String(date.getUTCFullYear());
+
+	// Mapping pola format ke nilai asli
+	const map = {
+		'dd': day,
+		'mm': month,
+		'yyyy': year,
+		'yy': year.slice(-2) // Mengambil 2 angka terakhir tahun
+	};
+
+	// Mengganti pola dalam string format berdasarkan map di atas
+	return format.replace(/dd|mm|yyyy|yy/gi, matched => map[matched.toLowerCase()]);
+}
+
 export function setVisibility(el_name, visible) {
 	const el = document.getElementById(el_name)
-	if (el==null) {
+	if (el == null) {
 		return
 	}
 
-	if (visible==true) {
+	if (visible == true) {
 		el.classList.remove('hidden')
 	} else {
 		el.classList.add('hidden')

@@ -107,7 +107,8 @@ export async function modulePage(req, res) {
 				iconFileName,
 				iconFileExists,
 				additionalHeaderPath,
-				additionalHeaderExists
+				additionalHeaderExists,
+				setting: req.app.locals.appConfig
 			}
 		}
 

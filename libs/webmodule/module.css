@@ -1,6 +1,7 @@
 @import url('./module-list.css');
 @import url('./module-edit.css');
 @import url('./module-footer.css');
+@import url('./module-print.css');
 
 :root {
 	--max-mobile-width: 500px;
@@ -19,7 +20,7 @@ body {
 }
 
 
-#fRecord-section  [name="panel"] {
+#fRecord-section [name="panel"] {
 	display: flex;
 	margin-bottom: 15px;
 }
@@ -56,7 +57,3 @@ body {
 	font-size: 0.8rem;
 
 }
-
-
-
-

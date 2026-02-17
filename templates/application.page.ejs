@@ -63,7 +63,7 @@
 		</style>
 
 
-		<!-- additional header -->
+		<!-- add additional header if exists-->
 		<% if (additionalHeaderExists) { %>
 			<%- include(additionalHeaderPath) %>
 		<% } %>
@@ -85,6 +85,9 @@
 			<% if (htmlExtenderExists) { %>
 			<%- include(htmlExtenderPath) %>
 			<% } %>
+		</div>
+		<div id="print-media-container" class="hidden">
+			<div id="print-area"></div>
 		</div>
 	</body>
 
