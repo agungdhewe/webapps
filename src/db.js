@@ -3,27 +3,7 @@ import pgp from 'pg-promise';
 
 dotenv.config();
 
-const initOptions = {
-	// Misalnya, event untuk memantau query atau error
-	// query: (e) => {
-	//     console.log('QUERY:', e.query);
-	// },
-	// error: (err, e) => {
-	//     console.log('ERROR:', err, e.query);
-	// }
-
-
-	// connect: (client, dc, isFresh) => {
-	//     // Objek klien yang sebenarnya adalah client.client
-	//     if (client.client) { 
-	//         client.client.on('notice', msg => {
-	//             console.warn('PostgreSQL Notice:', msg.message);
-	//         });
-	//     }
-	// }
-
-};
-
+const initOptions = {};
 const pgpInstance = pgp(initOptions); // <-- Panggil pgp() hanya satu kali di sini
 
 
@@ -36,7 +16,7 @@ const configDb = {
 }
 
 
-
+pgpInstance.pg.types.setTypeParser(1082, (stringValue) => stringValue);
 
 const db = pgpInstance(configDb);
 export default db

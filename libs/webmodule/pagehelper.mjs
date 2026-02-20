@@ -108,6 +108,13 @@ export function formatISODate(isoString, format) {
 	return format.replace(/dd|mm|yyyy|yy/gi, matched => map[matched.toLowerCase()]);
 }
 
+export function formatNumber(num, decimalPrecision = 0) {
+	return new Intl.NumberFormat("en-EN", {
+		minimumFractionDigits: decimalPrecision,
+		maximumFractionDigits: decimalPrecision
+	}).format(num);
+}
+
 export function setVisibility(el_name, visible) {
 	const el = document.getElementById(el_name)
 	if (el == null) {

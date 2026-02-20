@@ -11,17 +11,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createTable(context, options) {
-	const skipGenerate = options.skipGenerate===true
+	const skipGenerate = options.skipGenerate === true
 	const moduleName = context.moduleName
 	const title = context.title
-	
-	
+
+
 
 	try {
 		if (skipGenerate) {
-			context.postMessage({message: `skip generate table(s)`})
+			context.postMessage({ message: `skip generate table(s)` })
 			return
 		}
+
+		console.log(context.entities)
+
 
 
 		// start geneate program code		
@@ -30,22 +33,22 @@ export async function createTable(context, options) {
 
 			// prepare target file
 			const targetFile = path.join(context.moduleDir, `${moduleName}-${entityName}.sql`)
-			
-			
+
+
 			// reporting progress to parent process
-			context.postMessage({message: `generating file: '${targetFile}`})
+			context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 			// start generate table for tis entity
 			const entity = context.entities[entityName]
-			const {table, descr, pk, identifierMethod, skipRegenerateTable} = entity
+			const { table, descr, pk, identifierMethod, skipRegenerateTable } = entity
 			const pkData = entity.Items[pk]
-			const {schema, tablename} = ddl.parseTableName(table)
-			const {data_fieldname, data_type, data_length, description} = pkData
-			
+			const { schema, tablename } = ddl.parseTableName(table)
+			const { data_fieldname, data_type, data_length, description } = pkData
 
-			if (skipRegenerateTable===true) {
-				return
+
+			if (skipRegenerateTable === true) {
+				continue
 			}
 
 
@@ -56,7 +59,7 @@ export async function createTable(context, options) {
 
 			// Buat Table dengan field hanya untuk primary key
 			{
-				const sql =	await ddl.createTable(schema, tablename, descr, {
+				const sql = await ddl.createTable(schema, tablename, descr, {
 					fieldname: data_fieldname,
 					datatype: data_type,
 					length: data_length,
@@ -66,31 +69,31 @@ export async function createTable(context, options) {
 			}
 
 			const recordColumns = createRecordColumns()
-			const entityItems = structuredClone({...entity.Items, ...recordColumns})
+			const entityItems = structuredClone({ ...entity.Items, ...recordColumns })
 
 			// Buat Fields
 			{
-				
+
 				for (var fieldname in entityItems) {
-					if (fieldname==pk) {
+					if (fieldname == pk) {
 						continue
 					}
 
 					const field = entityItems[fieldname]
-					const {data_fieldname, data_type, data_length, data_precision, data_allownull, data_defaultvalue, description} = field
+					const { data_fieldname, data_type, data_length, data_precision, data_allownull, data_defaultvalue, description } = field
 
-					const sql =	await ddl.createField(schema, tablename, {
-						fieldname: data_fieldname, 
-						datatype: data_type, 
-						length: data_length, 
-						precision: data_precision, 
-						allownull: data_allownull, 
-						defaultvalue: data_defaultvalue, 
+					const sql = await ddl.createField(schema, tablename, {
+						fieldname: data_fieldname,
+						datatype: data_type,
+						length: data_length,
+						precision: data_precision,
+						allownull: data_allownull,
+						defaultvalue: data_defaultvalue,
 						description: description
 					})
 					scriptContent.push(sql)
 				}
-			
+
 			}
 
 			// buat foreign key
@@ -103,8 +106,8 @@ export async function createTable(context, options) {
 						return acc;
 					}, {})
 
-				
-				const sql =	await ddl.createFereignKey(schema, tablename, foreignKeys)	
+
+				const sql = await ddl.createFereignKey(schema, tablename, foreignKeys)
 				scriptContent.push(sql)
 
 			}
@@ -116,9 +119,9 @@ export async function createTable(context, options) {
 			{
 				const sql = await ddl.createUniqueIndex(schema, tablename, entity.Uniques)
 				scriptContent.push(sql)
-			}	
+			}
 
-			
+
 			let content = scriptContent.join("\n")
 			await fs.writeFile(targetFile, content, 'utf8');
 
@@ -135,22 +138,22 @@ function createRecordColumns() {
 	const records = {
 		_createby: {
 			data_fieldname: '_createby', data_type: 'integer', data_allownull: false, description: 'user yang pertama kali membuat record ini',
-			Reference: {table: '',pk: ''}
+			Reference: { table: '', pk: '' }
 		},
-		
+
 		_createdate: {
 			data_fieldname: '_createdate', data_type: 'timestamp', data_allownull: false, data_defaultvalue: 'now()', description: 'waktu record dibuat pertama kali',
-			Reference: {table: '',pk: ''}
+			Reference: { table: '', pk: '' }
 		},
-		
+
 		_modifyby: {
 			data_fieldname: '_modifyby', data_type: 'integer', data_allownull: true, description: 'user yang terakhir modifikasi record ini',
-			Reference: {table: '',pk: ''}
+			Reference: { table: '', pk: '' }
 		},
 
 		_modifydate: {
 			data_fieldname: '_modifydate', data_type: 'timestamp', data_allownull: true, description: 'waktu terakhir record dimodifikasi',
-			Reference: {table: '',pk: ''}
+			Reference: { table: '', pk: '' }
 		}
 	}
 
