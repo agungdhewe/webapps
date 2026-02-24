@@ -22,15 +22,15 @@ export default class Api {
 	static cekLogin(req) {
 		// jika req.session.user tidak ada datanya, berarti belum login 
 		try {
-			if (req.session.user==null) {
+			if (req.session.user == null) {
 				throw new Error('belum login')
 			}
 
-			if (req.session.user.isLogin==null) {
+			if (req.session.user.isLogin == null) {
 				throw new Error('belum login')
 			}
 
-			if (req.session.user.isLogin==false) {
+			if (req.session.user.isLogin == false) {
 				throw new Error('belum login')
 			}
 		} catch (err) {
@@ -42,13 +42,13 @@ export default class Api {
 	static parseUploadData(data, files) {
 		const jsonFieldName = 'form-body-jsondata'
 		try {
-			if (files!=undefined) {
+			if (files != undefined) {
 				// ambil json data
-				const jsondata = files.filter(file => file.fieldname==jsonFieldName)
+				const jsondata = files.filter(file => file.fieldname == jsonFieldName)
 				const jsonstring = jsondata[0].buffer.toString('utf-8')
 				Object.assign(data, JSON.parse(jsonstring).data)
 
-				const filelist = files.filter(file => file.fieldname!=jsonFieldName)
+				const filelist = files.filter(file => file.fieldname != jsonFieldName)
 				return filelist
 			}
 
@@ -63,10 +63,10 @@ export default class Api {
 		try {
 			if (typeof this[methodName] === 'function') {
 				const result = await this[methodName](body)
-				return result 
+				return result
 			} else {
 				const errNotFound = new Error(`Method "${methodName}" tidak ditemukan.`)
-				errNotFound.code = 404 
+				errNotFound.code = 404
 				throw errNotFound
 			}
 		} catch (err) {
@@ -74,7 +74,10 @@ export default class Api {
 		}
 	}
 
-
 }
+
+
+
+
 
 

@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleDetilEditMjs(context, options) {
-	const overwrite = options.overwrite===true
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	// const title = context.title // ini title header
 	const sectionPart = 'edit'
@@ -24,7 +24,7 @@ export async function createModuleDetilEditMjs(context, options) {
 			const entityData = context.entities[entityName]
 
 			// process selain header
-			if (entityName=='header') {
+			if (entityName == 'header') {
 				continue
 			}
 
@@ -37,12 +37,12 @@ export async function createModuleDetilEditMjs(context, options) {
 			// cek dulu apakah file ada
 			var fileExists = await isFileExist(targetFile)
 			if (fileExists && !overwrite) {
-				context.postMessage({message: `skip file: '${targetFile}`})
+				context.postMessage({ message: `skip file: '${targetFile}` })
 				return
 			}
 
 			// reporting progress to parent process
-			context.postMessage({message: `generating file: '${targetFile}`})
+			context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 			const tablename = entityData.table
@@ -67,60 +67,60 @@ export async function createModuleDetilEditMjs(context, options) {
 				const elementId = `${modulePart}-${item.input_name}`
 
 
-				if (component=='Filebox') {
+				if (component == 'Filebox') {
 					detilHasUpload = true
 					uploadFields.push({
 						elementId,
 						fieldname,
 						inputname
 					})
-				} else if (component=='Combobox') {
+				} else if (component == 'Combobox') {
 					comboboxList.push({
 						inputname
 					})
-				}				
+				}
 
 				// setup handles
 				const handles = []
 				for (let eventname in item.Handle) {
 					let createhandle = item.Handle[eventname]
 					if (createhandle) {
-						if (eventname=='selecting' && component=='Combobox') {
+						if (eventname == 'selecting' && component == 'Combobox') {
 							handles.push({
 								eventname,
 								appId: item.Reference.loaderApiModule,
 								path: item.Reference.loaderApiPath,
 								field_value: item.Reference.bindingValue,
-								field_text: item.Reference.bindingText, 
+								field_text: item.Reference.bindingText,
 							})
 						} else {
-							handles.push({eventname})
+							handles.push({ eventname })
 						}
 					}
 				}
 
-				if (handles.length>0) {
-					fieldHandles.push({component, inputname, handles})
+				if (handles.length > 0) {
+					fieldHandles.push({ component, inputname, handles })
 				}
 
 
 				// setup default values
 				let setdefault
 				if (item.data_defaultvalue != '') {
-					if (item.component=='Datepicker' || item.component=='Timepicker') {
-						setdefault = `${item.name }: new Date()`
-					} else if (item.component=='Numberbox') {
-						setdefault = `${item.name }: ${item.data_defaultvalue}`
-					} else if (item.component=='Checkbox') {
-						if (item.data_defaultvalue==='true' || item.data_defaultvalue==='checked' || item.data_defaultvalue==='1') {
-							setdefault = `${item.name }: true`
+					if (item.component == 'Datepicker' || item.component == 'Timepicker') {
+						setdefault = `${item.name}: new Date()`
+					} else if (item.component == 'Numberbox') {
+						setdefault = `${item.name}: ${item.data_defaultvalue}`
+					} else if (item.component == 'Checkbox') {
+						if (item.data_defaultvalue === 'true' || item.data_defaultvalue === 'checked' || item.data_defaultvalue === '1') {
+							setdefault = `${item.name}: true`
 						}
 					} else {
-						setdefault = `${item.name }: '${item.data_defaultvalue}'`
+						setdefault = `${item.name}: '${item.data_defaultvalue}'`
 					}
 				}
 
-				if (setdefault!=null) {
+				if (setdefault != null) {
 					defaultInits.push(setdefault)
 				}
 
@@ -129,15 +129,15 @@ export async function createModuleDetilEditMjs(context, options) {
 
 
 				// add to field config data	
-				fields.push({  
+				fields.push({
 					component,
 					fieldname,
 					inputname,
 					elementId
 				})
-			}	
-			
-			
+			}
+
+
 			const detilPrimaryKey = entityData.pk
 
 
@@ -149,10 +149,11 @@ export async function createModuleDetilEditMjs(context, options) {
 				moduleName,
 				sectionName,
 				extenderDetil,
+				headerModulePartEdit,
 				entityName,
 				headerPrimaryKey,
 				detilPrimaryKey,
-				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
+				moduleSection: kebabToCamel(`${moduleName}-${sectionName}`),
 				moduleList: kebabToCamel(`${moduleName}-${sectionName}-list`),
 				fields,
 				fieldHandles,
@@ -165,7 +166,7 @@ export async function createModuleDetilEditMjs(context, options) {
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilEdit.mjs.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
 			const content = ejs.render(template, variables)
-					
+
 			await fs.writeFile(targetFile, content, 'utf8');
 		}
 	} catch (err) {

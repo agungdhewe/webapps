@@ -5,12 +5,11 @@ import * as pageHelper from '/public/libs/webmodule/pagehelper.mjs'
 const Extender = Ext.extenderHeader ?? Ext
 
 
-const CurrentState = {}
 const Crsl =  Context.Crsl
 const CurrentSectionId = Context.Sections.<%= modulePart %>
 const CurrentSection = Crsl.Items[CurrentSectionId]
 const Source = Context.Source
-
+const CurrentState = {}
 
 const TitleWhenNew = 'New <%= title  %>'
 const TitleWhenView = 'View <%= title  %>'
@@ -42,6 +41,7 @@ const rec_id = document.getElementById('fRecord-section-id')
 
 
 export const Section = CurrentSection
+
 
 export async function init(self, args) {
 	console.log('initializing <%= modulePart %> ...')
@@ -218,6 +218,10 @@ export function getHeaderForm(self) {
 
 export function getForm(self) {
 	return frm
+}
+
+export function getCurrentState(self) {
+	return CurrentState
 }
 
 export function clearForm(self, text) {
@@ -649,7 +653,7 @@ async function btn_save_click(self, evt) {
 		const fn_datasaved = Extender[fn_datasaved_name]
 		if (typeof fn_datasaved === 'function') {
 			// export async function <%= modulePart %>_dataSaved(self, data, frm) {}
-			await fn_datasaved(self, data, frm)
+			await fn_datasaved(self, result, frm)
 		}
 
 
