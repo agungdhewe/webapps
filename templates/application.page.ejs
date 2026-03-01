@@ -24,6 +24,12 @@
 		<link rel="icon" type="image/svg+xml" href="public/modules/<%= `${moduleName}/${iconFileName}` %>" />	
 		<% } %>	
 
+
+		<% if (cssApplicationExists) { %>
+		<link rel="stylesheet" href="public/application.css" />
+		<% } %>
+
+
 		<% if (cssExists) { %>
 		<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${moduleName}.css` %>" />
 		<% } %>

@@ -1,9 +1,16 @@
 import dotenv from 'dotenv';
 import pgp from 'pg-promise';
 
+
 dotenv.config();
 
-const initOptions = {};
+// const initOptions = {};
+const initOptions = {
+	async connect(db, dc, useCount) {
+		await db.client.query("SET TIMEZONE = 'Asia/Jakarta'");
+	}
+};
+
 const pgpInstance = pgp(initOptions); // <-- Panggil pgp() hanya satu kali di sini
 
 
@@ -19,7 +26,7 @@ const configDb = {
 pgpInstance.pg.types.setTypeParser(1082, (stringValue) => stringValue);
 
 const db = pgpInstance(configDb);
-export default db
+
 
 db.connect()
 	.then(obj => {
@@ -32,6 +39,7 @@ db.connect()
 	});
 
 
+export default db
 export let dblog = db
 
 

@@ -53,8 +53,44 @@ export async function getApplicationSetting(db, tablename = 'core.setting') {
 			const setting_value = row.setting_value
 			setting[setting_id] = setting_value
 		}
+
+		setting.SETTING_TABLE_NAME = tablename
 		return setting
 	} catch (err) {
 		throw err
 	}
+}
+
+
+export async function requireSetting(db, setting, setting_id, descr) {
+	if (setting[setting_id] !== undefined) {
+		// setting sudah ada
+		return true
+	} else {
+		const tablename = setting.SETTING_TABLE_NAME
+		const unset = '*** unset ***'
+
+		// cek di database
+		const sqlCek = `select setting_value from ${tablename} where setting_id=\${setting_id}`
+		const rowCek = await db.oneOrNone(sqlCek, { setting_id })
+		if (rowCek == null) {
+			throw new Error(`setting '${setting_id}' tidak ditemukan di data setting ${tablename}`)
+		}
+
+		const value = rowCek.setting_value
+		if (value == unset) {
+			throw new Error(`setting '${setting_id}' belum di set`)
+		}
+
+		// buat dulu di database
+		const sql = `
+			insert into ${tablename}
+			(setting_id, setting_value, setting_descr, _createby)
+			values
+			(\${setting_id}, \${defaultValue}, \${descr}, '240100000')`
+		await db.none(sql, { setting_id, defaultValue: unset, descr })
+
+		throw new Error(`setting ${setting_id} belum diisi di ${tablename}\n`)
+	}
+
 }

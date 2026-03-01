@@ -25,6 +25,7 @@ export async function modulePage(req, res) {
 	const ejsPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.ejs`)
 	const cssPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.css`);
 	const cssLayoutPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.layout.css`);
+	const cssApplicationPath = path.join(__rootDir, 'public', 'application.css');
 
 
 	const variance = req.query.variance;
@@ -64,6 +65,8 @@ export async function modulePage(req, res) {
 	const mjsExists = await helper.isFileExists(mjsPath);
 	const htmlExtenderExists = await helper.isFileExists(htmlExtenderPath);
 	const iconFileExists = await helper.isFileExists(iconFilePath);
+
+	const cssApplicationExists = await helper.isFileExists(cssApplicationPath);
 
 	const mjsPrerenderPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}-prerender.mjs`);
 	const mjsPrerenderExists = await helper.isFileExists(mjsPrerenderPath)
@@ -108,6 +111,8 @@ export async function modulePage(req, res) {
 				iconFileExists,
 				additionalHeaderPath,
 				additionalHeaderExists,
+				cssApplicationPath,
+				cssApplicationExists,
 				setting: req.app.locals.appConfig
 			}
 		}

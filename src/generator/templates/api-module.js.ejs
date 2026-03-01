@@ -208,7 +208,7 @@ async function <%= moduleName %>_headerList(self, body) {
 			tablename: args.tablename, 
 			columns, 
 			whereClause, 
-			sort, 
+			sort: args.sqlSort ?? sort,
 			limit:max_rows+1, 
 			offset, 
 			queryParams
@@ -544,8 +544,8 @@ async function <%= moduleName %>_headerDelete(self, body) {
 
 			// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender headerDeleted
 			if (typeof Extender.headerDeleted === 'function') {
-				// export async function headerDeleted(self, tx, ret, logMetadata) {}
-				await Extender.headerDeleted(self, tx, ret, logMetadata)
+				// export async function headerDeleted(self, tx, deletedRow, logMetadata) {}
+				await Extender.headerDeleted(self, tx, deletedRow, logMetadata)
 			}
 
 			// record log
@@ -601,7 +601,7 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 			tablename: args.tablename, 
 			columns, 
 			whereClause, 
-			sort, 
+			sort: args.sqlSort ?? sort, 
 			limit:max_rows+1, 
 			offset, 
 			queryParams
@@ -932,12 +932,22 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 				<%= moduleName %>_log(self, body, startTime, headerTableName, row<%= entity.name %>.<%= headerPrimaryKey %>, 'DELETE ROW <%= entity.name.toUpperCase() %>', {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>, tablename: <%= entity.name %>TableName}, `removed: ${row<%= entity.name %>.<%= entity.pk %>}`)
 			}
 		})
+		
 
 		const res = {
 			deleted: true,
 			<%= headerPrimaryKey %>: <%= headerPrimaryKey %>,
 			message: ''
 		}
+
+		// apabila ada keperluan update info / pemrosesan data setelah hapus multirow, lakukan di extender
+		const fn_name = '<%= entity.name %>RowsDeleted'
+		const fn = Extender[fn_name]
+		if (typeof fn === 'function') {
+			// export async function <%= entity.name %>RowsDeleted(self, db, res) {}
+			await fn(self, db, res)
+		}
+
 		return res
 	} catch (err) {
 		throw err
