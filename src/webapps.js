@@ -201,12 +201,12 @@ async function main(self, options) {
 
 	// framework ini menggunakan library fgta5 untuk ui di client
 	if (appConfig.fgta5jsDebugMode) {
-		app.use('/public/libs/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'libs', 'fgta5js')));
+		app.use('/public/lib/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'lib', 'fgta5js')));
 	} else {
-		app.use('/public/libs/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'libs', 'fgta5js-dist')));
+		app.use('/public/lib/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'lib', 'fgta5js-dist')));
 	}
 
-	app.use('/public/libs/webmodule', ExpressServer.static(path.join(__dirname, '..', 'libs', 'webmodule')));
+	app.use('/public/lib/webmodule', ExpressServer.static(path.join(__dirname, '..', 'lib', 'webmodule')));
 
 	// Routing /public  untuk serve halaman-halaman static
 	app.use('/public', rejectEjsFiles);
