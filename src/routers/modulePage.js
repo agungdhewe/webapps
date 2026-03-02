@@ -25,7 +25,7 @@ export async function modulePage(req, res) {
 	const ejsPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.ejs`)
 	const cssPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.css`);
 	const cssLayoutPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}.layout.css`);
-	const cssApplicationPath = path.join(__rootDir, 'public', 'application.css');
+	const cssApplicationPath = path.join(__rootDir, 'public', 'local', 'application.css');
 
 
 	const variance = req.query.variance;
