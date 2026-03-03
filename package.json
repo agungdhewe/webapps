@@ -16,7 +16,7 @@
     "postgresql"
   ],
   "author": "Agung Nugroho",
-  "license": "GPL-3.0-or-later",
+  "license": "BSD-3-Clause",
   "publishConfig": {
     "access": "public"
   },
