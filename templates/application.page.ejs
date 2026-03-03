@@ -30,15 +30,17 @@
 		<% } %>
 
 
-		<% if (cssExists) { %>
-		<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${moduleName}.css` %>" />
-		<% } %>
+		<% if (useCssBundle) { %>
+			<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${cssBundleFileName}` %>" />
+		<% } else { %> 
+			<% if (cssExists) { %>
+			<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${moduleName}.css` %>" />
+			<% } %>
 
-		<% if (cssLayoutExists) { %>
-		<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${moduleName}.layout.css` %>" />
-		<% } %>
-
-		
+			<% if (cssLayoutExists) { %>
+			<link rel="stylesheet" href="public/modules/<%= `${moduleName}/${moduleName}.layout.css` %>" />
+			<% } %>
+		<% } %>	
 
 		<style>
 			#loadingindicator {

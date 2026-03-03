@@ -23,9 +23,6 @@ export async function createTable(context, options) {
 			return
 		}
 
-		console.log(context.entities)
-
-
 
 		// start geneate program code		
 		let sections = []

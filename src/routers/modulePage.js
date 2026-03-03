@@ -33,22 +33,30 @@ export async function modulePage(req, res) {
 
 
 	// const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
+	let useCssBundle
+	let cssBundleFileName
 	let mjsFileName
 	if (appDebugMode) {
 		// Default Debug
 		if (req.query.mode == 'release') {
 			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
 			mjsFileName = `${moduleName}-${version}.min.mjs`
+			cssBundleFileName = `${moduleName}-${version}.min.css`
+			useCssBundle = true
 		} else {
 			mjsFileName = `${moduleName}.mjs`
+			useCssBundle = false
 		}
 	} else {
 		// Default Production
 		if (req.query.mode == 'debug') {
 			mjsFileName = `${moduleName}.mjs`
+			useCssBundle = false
 		} else {
 			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
 			mjsFileName = `${moduleName}-${version}.min.mjs`
+			cssBundleFileName = `${moduleName}-${version}.min.css`
+			useCssBundle = true
 		}
 	}
 	const mjsPath = path.join(__rootDir, 'public', 'modules', moduleName, mjsFileName);
@@ -113,7 +121,9 @@ export async function modulePage(req, res) {
 				additionalHeaderExists,
 				cssApplicationPath,
 				cssApplicationExists,
-				setting: req.app.locals.appConfig
+				setting: req.app.locals.appConfig,
+				useCssBundle,
+				cssBundleFileName,
 			}
 		}
 
