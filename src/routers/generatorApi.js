@@ -1,16 +1,22 @@
+import context from './../context.js'
 import * as helper from './../helper.js'
 import { handleError } from './handleError.js'
+import * as path from 'path'
+
 
 export async function generatorApi(req, res, next) {
 	// res.status(200).send(`{"code":"1", "message":"api not implemented"}`)
 	const moduleName = 'generator'
 	const methodName = req.params.method
-	
+	const options = {
+		apiDir: path.join(context.getWebappsDirectory(), 'src', 'apis')
+	}
+
 	try {
 
 		const ModuleClass = await helper.importApiModule(moduleName)
 		const method = helper.kebabToCamel(methodName);
-		if (ModuleClass===undefined) {
+		if (ModuleClass === undefined) {
 			throw new Error(`invalid module: '${moduleName}'`)
 		}
 
