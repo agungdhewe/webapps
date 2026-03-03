@@ -4,12 +4,22 @@ let __rootDirectory
 
 
 let fnParseModuleRequest
+let apiCache = true
+
 
 export default {
-	setWebappsDirectory: (dirname)=>{ __dir=dirname },
+
+	alwaysLoadApi: (cached = true) => {
+		apiCache = cached
+	},
+	isApiCached: () => {
+		return apiCache
+	},
+
+	setWebappsDirectory: (dirname) => { __dir = dirname },
 	getWebappsDirectory: () => { return __dir },
 
-	setRootDirectory: (rootdir) => { __rootDirectory=rootdir },
+	setRootDirectory: (rootdir) => { __rootDirectory = rootdir },
 	getRootDirectory: () => { return __rootDirectory },
 
 

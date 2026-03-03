@@ -75,6 +75,7 @@ export default class WebApplication {
 
 		context.setRootDirectory(this.__rootDirectory)
 		context.setFnParseModuleRequest(options.fnParseModuleRequest)
+		context.alwaysLoadApi(!options.disableApiCache)
 
 		if (this.#startedOnce) {
 			throw new Error('start already called!')

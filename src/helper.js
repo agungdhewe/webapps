@@ -6,21 +6,20 @@ import context from './context.js'
 
 
 export function kebabToCamel(str) {
-  return str
-    .split('-')
-    .map((part, index) =>
-      index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)
-    )
-    .join('');
+	return str
+		.split('-')
+		.map((part, index) =>
+			index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)
+		)
+		.join('');
 }
 
 
-export async function importApiModule(modulename, options={}) {
+export async function importApiModule(modulename, options = {}) {
 	// jika mode debug, 
 	// load api akan selalu dilakukan saat request (tanpa caching)
 
-
-	const cached = options.cached===true ? true : false
+	const cached = context.isApiCached()
 	const apiDir = options.apiDir || path.join('.', 'apis')
 	const apiPath = path.join(apiDir, `${modulename}.api.js`)
 
@@ -32,11 +31,11 @@ export async function importApiModule(modulename, options={}) {
 		const freshUrl = `${fullPath}?v=${mtime}`;
 		const module = await import(freshUrl);
 
-		if (module.default===undefined) {
+		if (module.default === undefined) {
 			throw new Error(`modul api '${modulename}' tidak mempunyai default class untuk import`)
 		}
 
-		return module.default;	
+		return module.default;
 	}
 }
 
@@ -52,8 +51,8 @@ export async function isFileExists(filepath) {
 	}
 }
 
-export async function parseTemplate(tplFilePath, variables={}) {
-	const template =  await fs.readFile(tplFilePath, 'utf-8');
+export async function parseTemplate(tplFilePath, variables = {}) {
+	const template = await fs.readFile(tplFilePath, 'utf-8');
 	const content = ejs.render(template, variables)
 	return content
 }

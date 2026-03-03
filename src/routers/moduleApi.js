@@ -15,7 +15,7 @@ export async function moduleApi(req, res, next) {
 
 		const ModuleClass = await helper.importApiModule(moduleName, options)
 		const method = helper.kebabToCamel(methodName);
-		if (ModuleClass===undefined) {
+		if (ModuleClass === undefined) {
 			throw new Error(`invalid module: '${moduleName}'`)
 		}
 
