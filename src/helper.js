@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import * as path from 'node:path';
 import ejs from 'ejs'
 import context from './context.js'
+import { pathToFileURL } from 'url';
 
 
 
@@ -24,12 +25,14 @@ export async function importApiModule(modulename, options = {}) {
 	const apiPath = path.join(apiDir, `${modulename}.api.js`)
 
 	if (cached) {
-		return (await import(apiPath)).default;
+		const modulePath = pathToFileURL(apiPath).href;
+		return (await import(modulePath)).default;
 	} else {
 		const fullPath = new URL(apiPath, import.meta.url).pathname;
 		const mtime = (await fs.stat(fullPath)).mtimeMs;
-		const freshUrl = `${fullPath}?v=${mtime}`;
-		const module = await import(freshUrl);
+		const fileUrl = pathToFileURL(fullPath);
+		fileUrl.search = `?v=${mtime}`;
+		const module = await import(fileUrl.href);
 
 		if (module.default === undefined) {
 			throw new Error(`modul api '${modulename}' tidak mempunyai default class untuk import`)
