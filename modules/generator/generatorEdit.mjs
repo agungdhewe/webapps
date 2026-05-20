@@ -110,7 +110,7 @@ async function obj_appname_change(self, evt) {
 	}
 
 	// console.log(Context.appsUrls[value].directory)
-	obj_directory.value = Context.appsUrls[value].directory
+	// obj_directory.value = Context.appsUrls[value].directory
 }
 
 

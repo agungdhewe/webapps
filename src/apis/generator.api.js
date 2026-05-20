@@ -213,6 +213,8 @@ async function generator_open(self, body) {
 		const genData = await readFile(genFile, 'utf8');
 		const genJson = JSON.parse(genData);
 
+		genJson.directory = dir
+
 		const data = {
 			generator_id: id,
 			generator_appname: genJson.appname,
@@ -234,55 +236,21 @@ async function generator_save(self, body) {
 	const { data } = body
 	const dir = context.getRootDirectory();
 
-	// const tablename = ModuleDbContract.generator.table
-	// const req = self.req
-	// const user_id = req.session.user.userId
-
-
 	try {
-		// sqlUtil.connect(db)
-
-
-
-		const id = path.basename(`${data.id}`);
+		const name = data.name;
 		delete data.id
 
 		// untuk ditulis ke disk
 		const jsonString = JSON.stringify(data, null, 2);
-		const genFile = path.join(dir, 'public', 'modules', id, `${id}.gen.json`);
+		const genFile = path.join(dir, 'public', 'modules', name, `${name}.gen.json`);
 
 		//  tulis jsonString ke genFile
 		await mkdir(path.dirname(genFile), { recursive: true });
 		await writeFile(genFile, jsonString, 'utf8');
 
-
-		console.log(jsonString);
-		/*
-		data.generator_id = id;
-		const obj = {
-			generator_appname: data.appname,
-			generator_modulename: data.name,
-			generator_data: JSON.stringify(data),
-		}
-
-		let cmd
-		if (id == '') {
-			obj._createby = user_id
-			obj._createdate = (new Date()).toISOString()
-			cmd = sqlUtil.createInsertCommand(tablename, obj, ['generator_id'])
-		} else {
-			obj.generator_id = id
-			obj._modifyby = user_id
-			obj._modifydate = (new Date()).toISOString()
-			cmd = sqlUtil.createUpdateCommand(tablename, obj, ['generator_id'])
-		}
-		const result = await cmd.execute(obj)
-		*/
-
 		const result = {
-			generator_id: id
+			generator_id: name
 		}
-
 
 		return result
 	} catch (err) {
@@ -298,6 +266,7 @@ async function generator_generate(self, body) {
 	const user_id = req.session.user.userId
 	const user_name = req.session.user.userFullname
 	const ipaddress = req.ip
+	const dir = context.getRootDirectory();
 
 	try {
 		if (id == '') {
@@ -313,6 +282,7 @@ async function generator_generate(self, body) {
 		const notifierServer = req.app.locals.appConfig.notifierServer
 		runDetachedWorker(generatorWorker, notifierServer, clientId, {
 			generator_id: generator_id,
+			dirTarget: dir,
 			user_id: user_id,
 			user_name: user_name,
 			ipaddress: ipaddress,

@@ -2,8 +2,9 @@ import path from 'path';
 import pgp from 'pg-promise'
 import db from '../db.js'
 import { workerData, parentPort } from 'worker_threads';
-import { access, mkdir } from 'fs/promises';
 import { constants } from 'fs';
+import { readdir, access, readFile, writeFile, mkdir } from 'fs/promises';
+
 
 import { isFileExist } from './helper.js'
 
@@ -34,26 +35,27 @@ import { createLayoutCss } from './createLayoutCss.js';
 import { createDefData } from './createDefData.js'
 
 
-const { generator_id, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
+const { generator_id, dirTarget, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
 
 
 main(generator_id)
 
 
 async function main(id) {
-	const tablename = ModuleDbContract.generator.table
+	// const tablename = ModuleDbContract.generator.table
 
 	try {
-		const queryParams = { generator_id: id }
-		const sql = `select generator_data from ${tablename} where generator_id = \${generator_id}`
-		const data = await db.one(sql, queryParams);
+		const genFile = path.join(dirTarget, 'public', 'modules', id, `${id}.gen.json`);
+		const exists = await access(genFile).then(() => true).catch(() => false);
+		if (!exists) {
+			throw new Error(`data ${id}tidak ditemukan`)
+		}
 
 
-		// cek dahulu apakah directory tujuan benar
-		// console.log(data)
+		const genData = await readFile(genFile, 'utf8');
+		const genJson = JSON.parse(genData);
 
-
-		await generate(id, data.generator_data)
+		await generate(id, genJson)
 
 
 	} catch (err) {
