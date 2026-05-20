@@ -7,6 +7,7 @@ import { constants } from 'fs';
 
 import { isFileExist } from './helper.js'
 
+
 import { createModuleRollup } from './createModuleRollup.js'
 import { createModuleContext } from './createModuleContext.js'
 import { createModuleExtenderMjs } from './createModuleExtenderMjs.js'
@@ -30,7 +31,7 @@ import { createInfoRecordExtender } from './createInfoRecordExtender.js';
 import { createIcon } from './createIcon.js'
 import { createProgramData } from './createProgramData.js'
 import { createLayoutCss } from './createLayoutCss.js';
-
+import { createDefData } from './createDefData.js'
 
 
 const { generator_id, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
@@ -140,6 +141,11 @@ async function generate(id, data) {
 		await sleep(jedaWaktu)
 
 
+		// Tulis data layout (sebelumnya ke database)
+		// untuk berikutnya simpan langsung di direktori yang bersangkutan
+		await createDefData(context, data, { overwrite: true })
+
+
 
 		const iconFileName = await createIcon(context, { overwrite: true })
 
@@ -224,12 +230,16 @@ async function generate(id, data) {
 
 
 		// Api
-
 		await createApiExtenderModule(context, { overwrite: false })
 		await createApiModule(context, { overwrite: true })
 
+
+
+
+		// Restart Service
 		context.postMessage({ message: `restarting service` })
 		await sleep(1)
+
 
 		// Selesai
 		context.postMessage({ message: `finish`, done: true })

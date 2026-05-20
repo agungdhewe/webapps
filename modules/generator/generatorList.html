@@ -1,7 +1,9 @@
 <div class="search-container">
 	<div id="generatorList-pnl_search" class="search-parameters">
-		<input id="generatorList-txt_appname" fgta5-component="Textbox" placeholder="application" autocomplete="off" spellcheck="false" binding="appname">
-		<input id="generatorList-txt_searchtext" fgta5-component="Textbox" placeholder="search" autocomplete="off" spellcheck="false" binding="searchtext">
+		<input id="generatorList-txt_appname" fgta5-component="Textbox" placeholder="application" autocomplete="off"
+			spellcheck="false" binding="appname">
+		<input id="generatorList-txt_searchtext" fgta5-component="Textbox" placeholder="search" autocomplete="off"
+			spellcheck="false" binding="searchtext">
 	</div>
 	<button id="generatorList-btn_gridload">Load</button>
 </div>
@@ -9,9 +11,9 @@
 <table id="generatorList-tbl" fgta5-component="Gridview">
 	<thead>
 		<tr data-header key="generator_id">
-			<th data-name="generator_id" binding="generator_id">ID</th>
-			<th data-name="generator_modulename" binding="generator_modulename"  sorting="true">Module</th>
-			<th data-name="generator_appname" binding="generator_appname" sorting="true">Application</th>
+			<th data-name="generator_modulename" binding="generator_modulename">Module</th>
+			<th data-name="generator_title" binding="generator_title">Title</th>
+			<th data-name="generator_description" binding="generator_description">Description</th>
 		</tr>
 	</thead>
 </table>
@@ -26,7 +28,8 @@
 <div class="footer-buttons-container">
 	<div></div>
 	<div>
-		<button id="generatorList-btn_new" data-action="generator-new" data-sectionsource="generatorList-section">New</button>
+		<button id="generatorList-btn_new" data-action="generator-new"
+			data-sectionsource="generatorList-section">New</button>
 	</div>
 	<div></div>
 </div>
