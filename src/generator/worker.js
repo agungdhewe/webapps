@@ -35,22 +35,19 @@ import { createLayoutCss } from './createLayoutCss.js';
 import { createDefData } from './createDefData.js'
 
 
-const { generator_id, dirTarget, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
+const { generator_id, genFile, dirTarget, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
 
 
 main(generator_id)
 
 
 async function main(id) {
-	// const tablename = ModuleDbContract.generator.table
 
 	try {
-		const genFile = path.join(dirTarget, 'public', 'modules', id, `${id}.gen.json`);
 		const exists = await access(genFile).then(() => true).catch(() => false);
 		if (!exists) {
 			throw new Error(`data ${id}tidak ditemukan`)
 		}
-
 
 		const genData = await readFile(genFile, 'utf8');
 		const genJson = JSON.parse(genData);

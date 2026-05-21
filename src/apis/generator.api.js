@@ -122,7 +122,8 @@ async function generator_list(self, body) {
 		let dirlist = await readDirektori(path.join(dir, 'public', 'modules'));
 		for (let entry of dirlist) {
 			// cek apakah di dalam {entry} ada file {entry}.gen.json
-			const genFile = path.join(dir, 'public', 'modules', entry, `${entry}.gen.json`);
+			const genFile = getGeneratorFile(entry);
+
 			const exists = await access(genFile).then(() => true).catch(() => false);
 			if (exists) {
 				// baca file gen.json
@@ -201,8 +202,7 @@ async function generator_open(self, body) {
 
 	try {
 		const { id } = body
-		const safeId = path.basename(`${id}`);
-		const genFile = path.join(dir, 'public', 'modules', safeId, `${safeId}.gen.json`);
+		const genFile = getGeneratorFile(id);
 		const exists = await access(genFile).then(() => true).catch(() => false);
 		if (!exists) {
 			throw new Error("data tidak ditemukan")
@@ -234,7 +234,6 @@ async function generator_open(self, body) {
 
 async function generator_save(self, body) {
 	const { data } = body
-	const dir = context.getRootDirectory();
 
 	try {
 		const name = data.name;
@@ -242,11 +241,12 @@ async function generator_save(self, body) {
 
 		// untuk ditulis ke disk
 		const jsonString = JSON.stringify(data, null, 2);
-		const genFile = path.join(dir, 'public', 'modules', name, `${name}.gen.json`);
+		const genFile = getGeneratorFile(name);
 
 		//  tulis jsonString ke genFile
 		await mkdir(path.dirname(genFile), { recursive: true });
 		await writeFile(genFile, jsonString, 'utf8');
+
 
 		const result = {
 			generator_id: name
@@ -282,6 +282,7 @@ async function generator_generate(self, body) {
 		const notifierServer = req.app.locals.appConfig.notifierServer
 		runDetachedWorker(generatorWorker, notifierServer, clientId, {
 			generator_id: generator_id,
+			genFile: getGeneratorFile(generator_id),
 			dirTarget: dir,
 			user_id: user_id,
 			user_name: user_name,
@@ -298,4 +299,12 @@ async function generator_generate(self, body) {
 	} catch (err) {
 		throw err
 	}
+}
+
+
+
+function getGeneratorFile(name) {
+	const dir = context.getRootDirectory();
+	const genFile = path.join(dir, 'generator', `${name}.gen.json`);
+	return genFile;
 }
