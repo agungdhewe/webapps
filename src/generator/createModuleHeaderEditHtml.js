@@ -8,7 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleHeaderEditHtml(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const actions = context.actions
 	const title = context.title
@@ -19,7 +21,7 @@ export async function createModuleHeaderEditHtml(context, options) {
 		// ambil data entity selain header
 		let detilCount = 0
 		for (let entityName in context.entities) {
-			if (entityName=='header') {
+			if (entityName == 'header') {
 				continue
 			}
 			detilCount++
@@ -28,11 +30,11 @@ export async function createModuleHeaderEditHtml(context, options) {
 
 		for (let entityName in context.entities) {
 			// hanya proses yang Header
-			if (entityName!='header') {
+			if (entityName != 'header') {
 				continue
 			}
 
-			
+
 			const sectionName = entityName
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
 			const targetFile = path.join(context.moduleDir, `${modulePart}.html`)
@@ -40,12 +42,12 @@ export async function createModuleHeaderEditHtml(context, options) {
 			// cek dulu apakah file ada
 			var fileExists = await isFileExist(targetFile)
 			if (fileExists && !overwrite) {
-				context.postMessage({message: `skip file: '${targetFile}`})
+				context.postMessage({ message: `skip file: '${targetFile}` })
 				return
 			}
 
 			// reporting progress to parent process
-			context.postMessage({message: `generating file: '${targetFile}`})
+			context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 
@@ -54,11 +56,11 @@ export async function createModuleHeaderEditHtml(context, options) {
 			// start geneate program code
 			const entityData = context.entities[entityName]
 			const sectionData = getSectionData(moduleName, entityName, entityData, 'edit')
-			const primaryKeyFieldData = entityData.Items[sectionData.primaryKey] 
+			const primaryKeyFieldData = entityData.Items[sectionData.primaryKey]
 			const primaryKeyName = primaryKeyFieldData.input_name
 			const primaryKeyElementId = `${modulePart}-${primaryKeyName}`
 
-			const autoid = entityData.identifierMethod=='manual' ? 'false' : 'true'
+			const autoid = entityData.identifierMethod == 'manual' ? 'false' : 'true'
 
 
 			// ambil data field header
@@ -86,9 +88,9 @@ export async function createModuleHeaderEditHtml(context, options) {
 				const tabindex = item.input_index
 				const binding = item.data_fieldname
 				const additionalAttributes = createAdditionalAttributes(item)
-				const cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}` 
+				const cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}`
 
-				fields.push({  
+				fields.push({
 					component,
 					cssContainer,
 					fieldname,
@@ -106,7 +108,7 @@ export async function createModuleHeaderEditHtml(context, options) {
 			// ambil data semua entity
 			const sectionDetils = []
 			for (var detilEntityName in context.entities) {
-				if (detilEntityName=='header') {
+				if (detilEntityName == 'header') {
 					continue
 				}
 
@@ -131,11 +133,13 @@ export async function createModuleHeaderEditHtml(context, options) {
 			}
 
 			const variables = {
+				version: version,
+				versionText: versionText,
 				timeGenerated: context.timeGenerated,
 				title: title,
 				moduleName: moduleName,
 				modulePart: modulePart,
-				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
+				moduleSection: kebabToCamel(`${moduleName}-${sectionName}`),
 				section: sectionData,
 				autoid,
 				primaryKeyElementId: primaryKeyElementId,
@@ -144,12 +148,12 @@ export async function createModuleHeaderEditHtml(context, options) {
 				actionList,
 				detilCount
 			}
-			
-			
+
+
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleHeaderEdit.html.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
 			const content = ejs.render(template, variables)
-					
+
 			await fs.writeFile(targetFile, content, 'utf8');
 
 		}

@@ -29,7 +29,7 @@ export async function createTable(context, options) {
 		for (var entityName in context.entities) {
 
 			// prepare target file
-			const targetFile = path.join(context.moduleDir, `${moduleName}-${entityName}.sql`)
+			const targetFile = path.join(context.moduleDir, `_ddl.${moduleName}-${entityName}.sql`)
 
 
 			// reporting progress to parent process

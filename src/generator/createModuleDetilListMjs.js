@@ -9,7 +9,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleDetilListMjs(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 
 	const sectionPart = 'list'
@@ -24,7 +26,7 @@ export async function createModuleDetilListMjs(context, options) {
 
 		for (let entityName in context.entities) {
 			// process selain header
-			if (entityName=='header') {
+			if (entityName == 'header') {
 				continue
 			}
 
@@ -32,17 +34,17 @@ export async function createModuleDetilListMjs(context, options) {
 			const extenderDetil = kebabToCamel(`extender-${sectionName}`)
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
 			const targetFile = path.join(context.moduleDir, `${modulePart}.mjs`)
-				
+
 
 			// cek dulu apakah file ada
 			var fileExists = await isFileExist(targetFile)
 			if (fileExists && !overwrite) {
-				context.postMessage({message: `skip file: '${targetFile}`})
+				context.postMessage({ message: `skip file: '${targetFile}` })
 				return
 			}
 
 			// reporting progress to parent process
-			context.postMessage({message: `generating file: '${targetFile}`})
+			context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 			// start geneate program code	
@@ -52,9 +54,11 @@ export async function createModuleDetilListMjs(context, options) {
 			const allowRowAdd = entityData.allowRowAdd
 			const allowRowRemove = entityData.allowRowRemove
 			const allowRowEdit = entityData.allowRowEdit
-			
+
 
 			const variables = {
+				version: version,
+				versionText: versionText,
 				timeGenerated: context.timeGenerated,
 				title,
 				modulePart,
@@ -75,7 +79,7 @@ export async function createModuleDetilListMjs(context, options) {
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilList.mjs.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
 			const content = ejs.render(template, variables)
-					
+
 			await fs.writeFile(targetFile, content, 'utf8');
 		}
 	} catch (err) {

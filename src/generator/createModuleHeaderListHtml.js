@@ -8,7 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleHeaderListHtml(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const title = context.title
 	const sectionPart = 'list'
@@ -17,10 +19,10 @@ export async function createModuleHeaderListHtml(context, options) {
 
 		for (let entityName in context.entities) {
 			// hanya proses yang Header
-			if (entityName!='header') {
+			if (entityName != 'header') {
 				continue
 			}
-		
+
 			const sectionName = entityName
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
 			const targetFile = path.join(context.moduleDir, `${modulePart}.html`)
@@ -29,19 +31,19 @@ export async function createModuleHeaderListHtml(context, options) {
 			// cek dulu apakah file ada
 			var fileExists = await isFileExist(targetFile)
 			if (fileExists && !overwrite) {
-				context.postMessage({message: `skip file: '${targetFile}`})
+				context.postMessage({ message: `skip file: '${targetFile}` })
 				return
 			}
 
 			// reporting progress to parent process
-			context.postMessage({message: `generating file: '${targetFile}`})
+			context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 
 			// start geneate program code
 			const entityData = context.entities[entityName]
 			const sectionData = getSectionData(moduleName, entityName, entityData, 'list')
-			
+
 			const itemsList = []
 			for (var fieldName in entityData.Items) {
 				const item = entityData.Items[fieldName]
@@ -60,7 +62,7 @@ export async function createModuleHeaderListHtml(context, options) {
 			for (let item of itemsList) {
 				sortedItems[item._fieldName] = item
 			}
-		
+
 
 			const fields = []
 			for (var fieldName in sortedItems) {
@@ -70,19 +72,19 @@ export async function createModuleHeaderListHtml(context, options) {
 				const dataName = item.name
 				const binding = item.data_fieldname
 				const label = item.input_label
-				const {bindingValue, bindingText, bindingDisplay, table} = item.Reference
-				
+				const { bindingValue, bindingText, bindingDisplay, table } = item.Reference
+
 				// additional attributes
 				const attrs = []
-				if (item.grid_formatter.trim()!='') {
+				if (item.grid_formatter.trim() != '') {
 					attrs.push(`formatter="${item.grid_formatter}"`)
 				}
-				
-				if (item.grid_css.trim()!='') {
+
+				if (item.grid_css.trim() != '') {
 					attrs.push(`class="${item.grid_css}"`)
 				}
 
-				if (item.grid_inlinestyle.trim()!='') {
+				if (item.grid_inlinestyle.trim() != '') {
 					attrs.push(`style="${item.grid_inlinestyle}"`)
 				}
 
@@ -97,8 +99,8 @@ export async function createModuleHeaderListHtml(context, options) {
 				let columnDataName = dataName
 				let columnDataBinding = binding
 
-				if (component=='Combobox') {
-					if (bindingDisplay!='' && bindingDisplay!=null) {
+				if (component == 'Combobox') {
+					if (bindingDisplay != '' && bindingDisplay != null) {
 						columnDataName = bindingDisplay
 						columnDataBinding = bindingDisplay
 					} else {
@@ -110,7 +112,7 @@ export async function createModuleHeaderListHtml(context, options) {
 
 
 				// masukkan ke fields
-				fields.push({  
+				fields.push({
 					component,
 					dataName: columnDataName, //bindingDisplay!=null ? bindingDisplay : dataName, 
 					binding: columnDataBinding, //bindingDisplay!=null ? bindingDisplay : binding,
@@ -120,20 +122,22 @@ export async function createModuleHeaderListHtml(context, options) {
 			}
 
 			const variables = {
+				version: version,
+				versionText: versionText,
 				timeGenerated: context.timeGenerated,
 				title: title,
 				moduleName: moduleName,
 				modulePart: modulePart,
-				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
+				moduleSection: kebabToCamel(`${moduleName}-${sectionName}`),
 				section: sectionData,
 				fields: fields
 			}
-			
-			
+
+
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleHeaderList.html.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
 			const content = ejs.render(template, variables)
-					
+
 			await fs.writeFile(targetFile, content, 'utf8');
 
 		}

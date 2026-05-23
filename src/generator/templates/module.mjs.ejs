@@ -1,3 +1,5 @@
+<%=versionText%>
+
 import Context from './<%= moduleName %>-context.mjs'  <% sections.forEach(section => { %>
 import * as <%= section.sectionName %> from './<%= section.sectionName %>.mjs' <% }) %>
 import * as Extender from './<%= moduleName %>-ext.mjs'

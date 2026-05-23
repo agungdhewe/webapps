@@ -8,22 +8,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleMjs(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const title = context.title
 	const targetFile = path.join(context.moduleDir, `${moduleName}.mjs`)
-	const iconUrl = context.icon=='' ? '' : `public/modules/${moduleName}/${options.iconFileName}`
+	const iconUrl = context.icon == '' ? '' : `public/modules/${moduleName}/${options.iconFileName}`
 
 	try {
 		// cek dulu apakah file ada
 		var fileExists = await isFileExist(targetFile)
 		if (fileExists && !overwrite) {
-			context.postMessage({message: `skip file: '${targetFile}`})
+			context.postMessage({ message: `skip file: '${targetFile}` })
 			return
 		}
 
 		// reporting progress to parent process
-		context.postMessage({message: `generating file: '${targetFile}`})
+		context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 		// start geneate program code
@@ -34,10 +36,10 @@ export async function createModuleMjs(context, options) {
 			sections.push(getSectionData(moduleName, entityName, context.entities[entityName], 'edit'))
 		}
 
-		
+
 		const entityNameArray = []
 		for (let s of sections) {
-				if (s.partName=='edit') {
+			if (s.partName == 'edit') {
 				const sectionName = s.sectionName
 				entityNameArray.push(sectionName)
 			}
@@ -46,6 +48,8 @@ export async function createModuleMjs(context, options) {
 		const entityNameList = `'${entityNameArray.join("\', \'")}'`
 
 		const variables = {
+			version: version,
+			versionText: versionText,
 			timeGenerated: context.timeGenerated,
 			title: title,
 			moduleName: moduleName,
@@ -53,12 +57,12 @@ export async function createModuleMjs(context, options) {
 			entityNameList,
 			sections: sections
 		}
-		
-		
+
+
 		const tplFilePath = path.join(__dirname, 'templates', 'module.mjs.ejs')
 		const template = await fs.readFile(tplFilePath, 'utf-8');
 		const content = ejs.render(template, variables)
-				
+
 		await fs.writeFile(targetFile, content, 'utf8');
 	} catch (err) {
 		throw err

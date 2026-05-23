@@ -8,12 +8,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createLayoutCss(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 
 	try {
 
-		const targetLayoutFile =  path.join(context.moduleDir, `${moduleName}.layout.css`)
+		const targetLayoutFile = path.join(context.moduleDir, `${moduleName}.layout.css`)
 		const layoutFiles = []
 
 		for (let entityName in context.entities) {
@@ -23,12 +25,12 @@ export async function createLayoutCss(context, options) {
 			const targetFile = path.join(context.moduleDir, `${modulePart}.layout.css`)
 
 			// cek dulu apakah file ada 
-			const fileExists = await isFileExist(targetFile)        
+			const fileExists = await isFileExist(targetFile)
 			if (fileExists && !overwrite) {
-				context.postMessage({message: `skip file: '${targetFile}`})
+				context.postMessage({ message: `skip file: '${targetFile}` })
 				return
 			}
-			context.postMessage({message: `generating file: '${targetFile}`})  // reporting progress to parent process
+			context.postMessage({ message: `generating file: '${targetFile}` })  // reporting progress to parent process
 
 
 			const entityData = context.entities[entityName]
@@ -53,28 +55,30 @@ export async function createLayoutCss(context, options) {
 				const component = item.component
 				const fieldname = item.data_fieldname
 				const elementId = `${modulePart}-${item.input_name}`
-				const dposrow = item.input_dposrow??'auto'
-				const dposrowspan = item.input_dposrowspan??''
-				const dposcol = item.input_dposcol??'1'
-				const dposcolspan = item.input_dposcolspan??''
-				const dposstyle = item.input_dposstyle??''
-								
+				const dposrow = item.input_dposrow ?? 'auto'
+				const dposrowspan = item.input_dposrowspan ?? ''
+				const dposcol = item.input_dposcol ?? '1'
+				const dposcolspan = item.input_dposcolspan ?? ''
+				const dposstyle = item.input_dposstyle ?? ''
 
 
-				fields.push({  
+
+				fields.push({
 					elementId,
 					dposrow,
 					dposcol,
-					dposrowspan: dposrowspan.trim()!='' ? ` / span ${dposrowspan}` : '',
-					dposcolspan: dposcolspan.trim()!='' ? ` / span ${dposcolspan}` : '',
+					dposrowspan: dposrowspan.trim() != '' ? ` / span ${dposrowspan}` : '',
+					dposcolspan: dposcolspan.trim() != '' ? ` / span ${dposcolspan}` : '',
 					dposstyle
 				})
 
-			
+
 			}
 
 
 			const variables = {
+				version: version,
+				versionText: versionText,
 				moduleName: moduleName,
 				modulePart: modulePart,
 				fields: fields,
@@ -85,19 +89,19 @@ export async function createLayoutCss(context, options) {
 			const tplFilePath = path.join(__dirname, 'templates', 'layout.css.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
 			const content = ejs.render(template, variables)
-					
+
 			await fs.writeFile(targetFile, content, 'utf8');
 		}
 
 		// buat parent css
-		let content = `/* auto generated Layout CSS */\n`
-		if (layoutFiles.length>0) {
+		let content = versionText + `\r\n\r\n`
+		if (layoutFiles.length > 0) {
 			for (var layoutfile of layoutFiles) {
 				content += `@import url('${layoutfile}');\n`
 			}
 		}
 		await fs.writeFile(targetLayoutFile, content, 'utf8');
-		
+
 
 
 	} catch (err) {

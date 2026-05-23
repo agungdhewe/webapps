@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleExtenderMjs(context, options) {
-	const overwrite = options.overwrite===true
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const targetFile = path.join(context.moduleDir, `${moduleName}-ext.mjs`)
 
@@ -17,12 +17,12 @@ export async function createModuleExtenderMjs(context, options) {
 		// cek dulu apakah file ada
 		var fileExists = await isFileExist(targetFile)
 		if (fileExists && !overwrite) {
-			context.postMessage({message: `skip file: '${targetFile}`})
+			context.postMessage({ message: `skip file: '${targetFile}` })
 			return
 		}
 
 		// reporting progress to parent process
-		context.postMessage({message: `generating file: '${targetFile}`})
+		context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 		// start geneate program code		
@@ -34,7 +34,7 @@ export async function createModuleExtenderMjs(context, options) {
 		const tplFilePath = path.join(__dirname, 'templates', 'module-ext.mjs.ejs')
 		const template = await fs.readFile(tplFilePath, 'utf-8');
 		const content = ejs.render(template, variables)
-				
+
 		await fs.writeFile(targetFile, content, 'utf8');
 	} catch (err) {
 		throw err

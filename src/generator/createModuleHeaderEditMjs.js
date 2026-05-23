@@ -8,9 +8,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleHeaderEditMjs(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
-	
+
 	const actions = context.actions
 	const sectionPart = 'edit'
 	const timeGenerated = context.timeGenerated
@@ -27,7 +29,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 			const entity = context.entities[entityName]
 
 			// hanya proses yang detil
-			if (entityName=='header') {
+			if (entityName == 'header') {
 				continue
 			}
 
@@ -35,7 +37,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 				name: entityName,
 				table: entity.table,
 				pk: entity.pk,
-				moduleSection:  kebabToCamel(`${moduleName}-${entityName}`),
+				moduleSection: kebabToCamel(`${moduleName}-${entityName}`),
 			}
 			entitiesDetil.push(e)
 		}
@@ -47,9 +49,9 @@ export async function createModuleHeaderEditMjs(context, options) {
 			const entityData = context.entities[entityName]
 
 			// hanya proses yang Header
-			if (entityName!='header') {
+			if (entityName != 'header') {
 				continue
-			} 
+			}
 
 			const sectionName = entityName
 			const modulePart = kebabToCamel(`${moduleName}-${sectionName}-${sectionPart}`)
@@ -58,16 +60,16 @@ export async function createModuleHeaderEditMjs(context, options) {
 			// cek dulu apakah file ada
 			var fileExists = await isFileExist(targetFile)
 			if (fileExists && !overwrite) {
-				context.postMessage({message: `skip file: '${targetFile}`})
+				context.postMessage({ message: `skip file: '${targetFile}` })
 				return
 			}
 
 			// reporting progress to parent process
-			context.postMessage({message: `generating file: '${targetFile}`})
+			context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 			// start geneate program code
-			
+
 			const tablename = entityData.table
 			const headerPrimaryKey = entityData.pk
 
@@ -92,7 +94,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 
 
-				if (component=='Filebox') {
+				if (component == 'Filebox') {
 					headerHasUpload = true
 					uploadFields.push({
 						elementId,
@@ -100,7 +102,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 						inputname
 					})
 
-				} else if (component=='Combobox') {
+				} else if (component == 'Combobox') {
 					comboboxList.push({
 						inputname
 					})
@@ -111,42 +113,42 @@ export async function createModuleHeaderEditMjs(context, options) {
 				for (let eventname in item.Handle) {
 					let createhandle = item.Handle[eventname]
 					if (createhandle) {
-						if (eventname=='selecting' && component=='Combobox') {
+						if (eventname == 'selecting' && component == 'Combobox') {
 							handles.push({
 								eventname,
 								appId: item.Reference.loaderApiModule,
 								path: item.Reference.loaderApiPath,
 								field_value: item.Reference.bindingValue,
-								field_text: item.Reference.bindingText, 
+								field_text: item.Reference.bindingText,
 							})
 						} else {
-							handles.push({eventname})
+							handles.push({ eventname })
 						}
 					}
 				}
 
-				if (handles.length>0) {
-					fieldHandles.push({component, inputname, handles})
+				if (handles.length > 0) {
+					fieldHandles.push({ component, inputname, handles })
 				}
 
 
 				// setup default values
 				let setdefault
 				if (item.data_defaultvalue != '') {
-					if (item.component=='Datepicker' || item.component=='Timepicker') {
-						setdefault = `${item.name }: new Date()`
-					} else if (item.component=='Numberbox') {
-						setdefault = `${item.name }: ${item.data_defaultvalue}`
-					} else if (item.component=='Checkbox') {
-						if (item.data_defaultvalue==='true' || item.data_defaultvalue==='checked' || item.data_defaultvalue==='1') {
-							setdefault = `${item.name }: true`
+					if (item.component == 'Datepicker' || item.component == 'Timepicker') {
+						setdefault = `${item.name}: new Date()`
+					} else if (item.component == 'Numberbox') {
+						setdefault = `${item.name}: ${item.data_defaultvalue}`
+					} else if (item.component == 'Checkbox') {
+						if (item.data_defaultvalue === 'true' || item.data_defaultvalue === 'checked' || item.data_defaultvalue === '1') {
+							setdefault = `${item.name}: true`
 						}
 					} else {
-						setdefault = `${item.name }: '${item.data_defaultvalue}'`
+						setdefault = `${item.name}: '${item.data_defaultvalue}'`
 					}
 				}
 
-				if (setdefault!=null) {
+				if (setdefault != null) {
 					defaultInits.push(setdefault)
 				}
 
@@ -155,7 +157,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 
 				// add to field config data	
-				fields.push({  
+				fields.push({
 					component,
 					fieldname,
 					inputname,
@@ -163,7 +165,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 				})
 			}
 
-		
+
 			// ambil data actions
 			const actionList = []
 			for (let action of context.actions) {
@@ -180,6 +182,8 @@ export async function createModuleHeaderEditMjs(context, options) {
 
 
 			const variables = {
+				version: version,
+				versionText: versionText,
 				timeGenerated,
 				moduleDescription: context.descr,
 				title,
@@ -188,7 +192,7 @@ export async function createModuleHeaderEditMjs(context, options) {
 				allowFormEdit,
 				modulePart,
 				moduleName,
-				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
+				moduleSection: kebabToCamel(`${moduleName}-${sectionName}`),
 				moduleList: kebabToCamel(`${moduleName}-${sectionName}-list`),
 				fields,
 				fieldHandles,
@@ -201,12 +205,12 @@ export async function createModuleHeaderEditMjs(context, options) {
 				actionList
 			}
 
-			
-			
+
+
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleHeaderEdit.mjs.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
 			const content = ejs.render(template, variables)
-					
+
 			await fs.writeFile(targetFile, content, 'utf8');
 
 		}

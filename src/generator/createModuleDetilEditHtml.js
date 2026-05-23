@@ -8,7 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleDetilEditHtml(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const title = context.title
 	const sectionPart = 'edit'
@@ -16,10 +18,10 @@ export async function createModuleDetilEditHtml(context, options) {
 	try {
 
 		const entityHeader = context.entities['header']
-		
+
 		for (let entityName in context.entities) {
 			// process selain header
-			if (entityName=='header') {
+			if (entityName == 'header') {
 				continue
 			}
 
@@ -28,23 +30,23 @@ export async function createModuleDetilEditHtml(context, options) {
 			const targetFile = path.join(context.moduleDir, `${modulePart}.html`)
 
 			// cek dulu apakah file ada 
-			var fileExists = await isFileExist(targetFile)        
+			var fileExists = await isFileExist(targetFile)
 			if (fileExists && !overwrite) {
-				context.postMessage({message: `skip file: '${targetFile}`})
+				context.postMessage({ message: `skip file: '${targetFile}` })
 				return
 			}
-			context.postMessage({message: `generating file: '${targetFile}`})  // reporting progress to parent process
+			context.postMessage({ message: `generating file: '${targetFile}` })  // reporting progress to parent process
 
 			// start geneate program code
 			const entityData = context.entities[entityName]
 			const sectionData = getSectionData(moduleName, entityName, entityData, 'edit')
-			const primaryKeyFieldData = entityData.Items[sectionData.primaryKey] 
+			const primaryKeyFieldData = entityData.Items[sectionData.primaryKey]
 			const primaryKeyName = primaryKeyFieldData.input_name
 			const primaryKeyElementId = `${modulePart}-${primaryKeyName}`
 
 			const autoid = true // untuk detil, pasti autoid
 
-			
+
 			// ambil data field header
 			const fields = []
 			let index = 0
@@ -70,17 +72,17 @@ export async function createModuleDetilEditHtml(context, options) {
 				const tabindex = item.input_index
 				const binding = item.data_fieldname
 				const additionalAttributes = createAdditionalAttributes(item)
-				
-				let cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}` 
+
+				let cssContainer = item.input_containercss.trim() == '' ? 'input-field' : `input-field ${item.input_containercss.trim()}`
 
 
 
-				if (fieldName==entityHeader.pk) {
+				if (fieldName == entityHeader.pk) {
 					cssContainer += ' hidden'
 				}
 
 
-				fields.push({  
+				fields.push({
 					component,
 					cssContainer,
 					fieldname,
@@ -96,11 +98,13 @@ export async function createModuleDetilEditHtml(context, options) {
 
 
 			const variables = {
+				version: version,
+				versionText: versionText,
 				timeGenerated: context.timeGenerated,
 				title: title,
 				moduleName: moduleName,
 				modulePart: modulePart,
-				moduleSection:  kebabToCamel(`${moduleName}-${sectionName}`),
+				moduleSection: kebabToCamel(`${moduleName}-${sectionName}`),
 				section: sectionData,
 				autoid,
 				primaryKeyElementId: primaryKeyElementId,
@@ -110,9 +114,9 @@ export async function createModuleDetilEditHtml(context, options) {
 			const tplFilePath = path.join(__dirname, 'templates', 'moduleDetilEdit.html.ejs')
 			const template = await fs.readFile(tplFilePath, 'utf-8');
 			const content = ejs.render(template, variables)
-					
+
 			await fs.writeFile(targetFile, content, 'utf8');
-		}	
+		}
 
 	} catch (err) {
 		throw err

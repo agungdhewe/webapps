@@ -8,7 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createApiExtenderModule(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const title = context.title
 	const targetFile = path.join(context.apiExtenderDir, `${moduleName}.apiext.js`)
@@ -17,12 +19,12 @@ export async function createApiExtenderModule(context, options) {
 		// cek dulu apakah file ada
 		var fileExists = await isFileExist(targetFile)
 		if (fileExists && !overwrite) {
-			context.postMessage({message: `skip file: '${targetFile}`})
+			context.postMessage({ message: `skip file: '${targetFile}` })
 			return
 		}
 
 		// reporting progress to parent process
-		context.postMessage({message: `generating file: '${targetFile}`})
+		context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 		// start geneate program code
@@ -34,18 +36,20 @@ export async function createApiExtenderModule(context, options) {
 		}
 
 		const variables = {
+			version: version,
+			versionText: versionText,
 			timeGenerated: context.timeGenerated,
 			title: title,
 			moduleName: moduleName,
 			sections: sections
 		}
-		
-		
+
+
 		const tplFilePath = path.join(__dirname, 'templates', 'api-extender-module.js.ejs')
 		const template = await fs.readFile(tplFilePath, 'utf-8');
 		const content = ejs.render(template, variables)
-				
-		
+
+
 		await fs.writeFile(targetFile, content, 'utf8');
 	} catch (err) {
 		throw err

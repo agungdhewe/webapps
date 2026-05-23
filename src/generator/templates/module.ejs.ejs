@@ -1,3 +1,7 @@
+<!-- 
+<%=versionText%> 
+-->
+
 <% sections.forEach(section => { %><section id="<%= section.sectionElementId %>" class="fgta5-carousell" data-title="<%= section.sectionTitle %>">
 <%- '<' %>%- include(`${moduleDir}/<%= section.sectionName %>.html`) %<%- '>' %>
 </section>

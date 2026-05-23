@@ -8,7 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createApiModule(context, options) {
-	const overwrite = options.overwrite===true
+	const version = context.version
+	const versionText = context.versionText
+	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const title = context.title
 	const targetFile = path.join(context.apiDir, `${moduleName}.api.js`)
@@ -17,12 +19,12 @@ export async function createApiModule(context, options) {
 		// cek dulu apakah file ada
 		let fileExists = await isFileExist(targetFile)
 		if (fileExists && !overwrite) {
-			context.postMessage({message: `skip file: '${targetFile}`})
+			context.postMessage({ message: `skip file: '${targetFile}` })
 			return
 		}
 
 		// reporting progress to parent process
-		context.postMessage({message: `generating file: '${targetFile}`})
+		context.postMessage({ message: `generating file: '${targetFile}` })
 
 
 		// get header information
@@ -31,20 +33,20 @@ export async function createApiModule(context, options) {
 		const headerPrimaryKey = entityHeader.pk
 		const headerSearchMap = createSearchMap(entityHeader.Search, entityHeader.Items, headerTableName)
 		const usesequencer = ['auto-yearly', 'auto-monthly'].includes(entityHeader.identifierMethod) ? true : false
-		
+
 		const yearly = entityHeader.identifierMethod == 'auto-yearly' ? true : false
 		const identifierPrefix = entityHeader.identifierPrefix
 		const identifierBlock = entityHeader.identifierBlock
 		const identifierLength = entityHeader.identifierLength
 		const headerFieldsLookup = createLookup(entityHeader.Items)
-	
+
 		// cek apakah di header ada file upload
 		let importbucket = false
 		let headerHasUpload = false
 		for (var fieldName in entityHeader.Items) {
 			const item = entityHeader.Items[fieldName]
 			const component = item.component
-			if (component=='Filebox') {
+			if (component == 'Filebox') {
 				headerHasUpload = true
 				importbucket = true
 			}
@@ -55,7 +57,7 @@ export async function createApiModule(context, options) {
 		// get detil information
 		const entitiesDetil = []
 		for (let entityName in context.entities) {
-			if (entityName=='header') {
+			if (entityName == 'header') {
 				continue
 			}
 
@@ -65,7 +67,7 @@ export async function createApiModule(context, options) {
 			for (var fieldName in entity.Items) {
 				const item = entity.Items[fieldName]
 				const component = item.component
-				if (component=='Filebox') {
+				if (component == 'Filebox') {
 					detilHasUpload = true
 					importbucket = true
 				}
@@ -83,13 +85,15 @@ export async function createApiModule(context, options) {
 		}
 
 		// const headerusesequencerline = entityHeader.identifierMethod=='auto-yearly-short'  ? true : false
-		const usesequencerline = entityHeader.identifierMethod=='auto-yearly-short' || entitiesDetil.length>0 ? true : false
+		const usesequencerline = entityHeader.identifierMethod == 'auto-yearly-short' || entitiesDetil.length > 0 ? true : false
 		const autoid = ['auto-by-default', 'auto-always', 'auto-yearly', 'auto-monthly', 'auto-yearly-short'].includes(entityHeader.identifierMethod)
-		const shortsequencer = entityHeader.identifierMethod=='auto-yearly-short' 
+		const shortsequencer = entityHeader.identifierMethod == 'auto-yearly-short'
 
 
 
 		const variables = {
+			version: version,
+			versionText: versionText,
 			timeGenerated: context.timeGenerated,
 			title: title,
 			moduleName: moduleName,
@@ -109,12 +113,12 @@ export async function createApiModule(context, options) {
 			importbucket,
 			entitiesDetil
 		}
-		
-		
+
+
 		const tplFilePath = path.join(__dirname, 'templates', 'api-module.js.ejs')
 		const template = await fs.readFile(tplFilePath, 'utf-8');
 		const content = ejs.render(template, variables)
-				
+
 		await fs.writeFile(targetFile, content, 'utf8');
 	} catch (err) {
 		throw err
@@ -127,7 +131,7 @@ function createSearchMap(searchdata, items, tablename) {
 	// searchtext: `user_fullname ILIKE '%' || \${searchtext} || '%' OR user_id=try_cast_bigint(\${searchtext}, 0)`,
 	// searchgroup: `group_id = \${searchgroup}`,
 	// user_isdisabled: `user_isdisabled = \${user_isdisabled}`
-	
+
 	let searchtextExists = false
 	const searchMap = []
 	for (let searchname in searchdata) {
@@ -135,16 +139,16 @@ function createSearchMap(searchdata, items, tablename) {
 		const searchfield = parseSearchField(search.fields)
 
 		// harus ada 1 criteria searchtext
-		if (searchname=='searchtext') {
+		if (searchname == 'searchtext') {
 			searchtextExists = true
 		}
-		
+
 		// cek tipe data dari masing-masing search field
 		const params = []
 		for (let fieldname in searchfield) {
 			const field = items[fieldname]
 			const search = searchfield[fieldname]
-			if (field===undefined) {
+			if (field === undefined) {
 				throw new Error(`parameter search '${searchname}' tidak mengacu pada design tabel '${tablename}' `)
 			}
 
@@ -152,9 +156,9 @@ function createSearchMap(searchdata, items, tablename) {
 			const hasPercent = search.hasPercent
 
 			let searchToken
-			if (datatype=='int') {
+			if (datatype == 'int') {
 				searchToken = `${fieldname}=try_cast_int(\\\${${searchname}}, 0)`
-			} else if (datatype=='bigint') {
+			} else if (datatype == 'bigint') {
 				searchToken = `${fieldname}=try_cast_bigint(\\\${${searchname}}, 0)`
 			} else {
 				if (hasPercent) {
@@ -166,7 +170,7 @@ function createSearchMap(searchdata, items, tablename) {
 			params.push(searchToken)
 		}
 		const searchcriteria = params.join(' OR ')
-		
+
 		searchMap.push({
 			name: searchname,
 			data: searchcriteria
@@ -195,7 +199,7 @@ function parseSearchField(rawFields) {
 
 			return acc;
 		}, {}
-	);
+		);
 
 	return parsedFields
 }
@@ -204,16 +208,16 @@ function createLookup(items) {
 	const lookup = []
 	for (let fieldname in items) {
 		const item = items[fieldname]
-		if (item.component=='Combobox') {
-			const {bindingValue, bindingText, bindingDisplay, table} = item.Reference
-			
+		if (item.component == 'Combobox') {
+			const { bindingValue, bindingText, bindingDisplay, table } = item.Reference
+
 			let displayField = bindingText
-			if (bindingDisplay!='' && bindingDisplay!=null) {
+			if (bindingDisplay != '' && bindingDisplay != null) {
 				displayField = bindingDisplay
-			}	
-			
+			}
+
 			lookup.push({
-				fieldname, bindingValue, bindingText, bindingDisplay:displayField, table
+				fieldname, bindingValue, bindingText, bindingDisplay: displayField, table
 			})
 		}
 	}

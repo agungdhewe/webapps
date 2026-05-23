@@ -8,6 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createModuleDetilEditMjs(context, options) {
+	const version = context.version
+	const versionText = context.versionText
 	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	// const title = context.title // ini title header
@@ -142,6 +144,8 @@ export async function createModuleDetilEditMjs(context, options) {
 
 
 			const variables = {
+				version: version,
+				versionText: versionText,
 				timeGenerated: context.timeGenerated,
 				title,
 				tablename,

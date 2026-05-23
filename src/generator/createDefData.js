@@ -8,6 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createDefData(context, data, options) {
+	const version = context.version
+	const versionText = context.versionText
+
 	const overwrite = options.overwrite === true
 	const moduleName = context.moduleName
 	const targetFile = path.join(context.moduleDir, `${moduleName}.gen.json`)
