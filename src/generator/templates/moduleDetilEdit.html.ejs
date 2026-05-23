@@ -3,20 +3,26 @@
 	<div id="<%= modulePart %>-head-descr" class="section-detil-descr"></div>
 </div>
 
-<form id="<%= modulePart %>-frm" class="module-form" locked="true" autoid="<%= autoid %>" primarykey="<%= primaryKeyElementId %>"><% fields.forEach(field => { %>
+<form id="<%= modulePart %>-frm" class="module-form" locked="true" autoid="<%= autoid %>"
+	primarykey="<%= primaryKeyElementId %>">
+	<% fields.forEach(field=> { %>
 
-	<!-- <%= field.component %>: <%= field.fieldname %>-->	
-	<div id="<%= field.elementId %>-container" class="<%= field.cssContainer %>" field="<%= field.elementId %>">
-		<label for="<%= field.elementId %>"><%= field.label %></label>
-		<input id="<%= field.elementId %>"  fgta5-component="<%= field.component %>" placeholder="<%= field.placeholder %>" autocomplete="off" spellcheck="false" 
-			binding="<%= field.binding %>"<% field.additionalAttributes.forEach(config => { %>
-			<%- config %> <% }) %>
-		>
-	</div>
-<% }) %>	
+		<!-- <%= field.component %>: <%= field.fieldname %>-->
+		<div id="<%= field.elementId %>-container" class="<%= field.cssContainer %>" field="<%= field.elementId %>">
+			<label for="<%= field.elementId %>">
+				<%= field.label %>
+			</label>
+			<input id="<%= field.elementId %>" fgta5-component="<%= field.component %>"
+				placeholder="<%= field.placeholder %>" autocomplete="off" spellcheck="false"
+				binding="<%= field.binding %>" <% field.additionalAttributes.forEach(config=> { %>
+			<%- config %>
+				<% }) %>
+					>
+		</div>
+		<% }) %>
 
 
-	<div id="<%= modulePart %>-footer"></div>
+			<div id="<%= modulePart %>-footer"></div>
 
 </form>
 
@@ -30,16 +36,52 @@
 
 <div class="footer-buttons-container hidden">
 	<div>
-		<button id="<%= modulePart %>-btn_prev"><span>&laquo;&laquo;</span></button>
+		<button id="<%= modulePart %>-btn_prev" class="action-button button-prev">
+			<span class="action-button-icon">◀</span>
+			<span class="action-button-text">PREV</span>
+		</button>
+	</div>
+
+	<div style="display: flex; column-gap: 5px; align-items: center;">
+		<button id="<%= modulePart %>-btn_save" class="action-button button-save">
+			<span class="action-button-icon">
+				<img src="public/icons/button-save.svg">
+			</span>
+			<span class="action-button-text">SAVE</span>
+		</button>
+
+		<button id="<%= modulePart %>-btn_edit" class="action-button button-edit">
+			<span class="action-button-icon">
+				<img src="public/icons/button-locked.svg">
+			</span>
+			<span class="action-button-text">Edit</span>
+		</button>
+
+		<button id="<%= modulePart %>-btn_new" data-action="<%= moduleSection %>-addrow" class="action-button button-new" >
+			<span class="action-button-icon">
+				<img src="public/icons/button-new.svg">
+			</span>
+			<span class="action-button-text">New</span>
+		</button>
+
+		<button id="<%= modulePart %>-btn_reset" class="action-button button-reset">
+			<span class="action-button-icon">
+				<img src="public/icons/button-reset.svg">
+			</span>
+			<span class="action-button-text">Reset</span>
+		</button>
+
+		<button id="<%= modulePart %>-btn_delete" class="action-button button-delete">
+			<span class="action-button-icon">
+				<img src="public/icons/button-delete.svg">
+			</span>
+			<span class="action-button-text">Delete</span>
+		</button>
 	</div>
 	<div>
-		<button id="<%= modulePart %>-btn_save">Save</button>
-		<button id="<%= modulePart %>-btn_edit">Edit</button>
-		<button id="<%= modulePart %>-btn_new" data-action="<%= moduleSection %>-addrow">New</button>
-		<button id="<%= modulePart %>-btn_reset">Reset</button>
-		<button id="<%= modulePart %>-btn_delete">Delete</button>
-	</div>
-	<div>
-		<button id="<%= modulePart %>-btn_next"><span>&raquo;&raquo;</span></button>
+		<button id="<%= modulePart %>-btn_next" class="action-button button-next">
+			<span class="action-button-icon">▶</span>
+			<span class="action-button-text">NEXT</span>
+		</button>
 	</div>
 </div>

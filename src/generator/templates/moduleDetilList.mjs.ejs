@@ -372,7 +372,7 @@ async function btn_delrow_click(self, evt) {
 	}
 
 	// konfirmasi apakah yakin mau dihapus
-	var ret = await $fgta5.MessageBox.confirm(`Apakah anda yakin akan menghappus ${selected.length} data yang dipilih?`)
+	var ret = await $fgta5.MessageBox.confirmAndWarn(`Apakah anda yakin akan menghappus ${selected.length} data yang dipilih?`)
 	if (ret!='ok') {
 		return
 	}
