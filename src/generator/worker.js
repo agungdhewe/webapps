@@ -48,7 +48,7 @@ async function main(id) {
 	try {
 		const exists = await access(genFile).then(() => true).catch(() => false);
 		if (!exists) {
-			throw new Error(`data ${id}tidak ditemukan`)
+			throw new Error(`data ${genFile} tidak ditemukan`)
 		}
 
 		const genData = await readFile(genFile, 'utf8');

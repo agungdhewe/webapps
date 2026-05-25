@@ -70,7 +70,7 @@ export default [
 			banner: `/*! ${banner}*/`,
 		},
 		external: (id) => {
-			return id.includes('module.mjs') || id === '$fgta5' || id.includes('public/libs/webmodule');
+			return id.includes('module.mjs') || id === '$fgta5' || id.includes('public/lib/webmodule');
 		},
 
 		preserveEntrySignatures: 'strict',

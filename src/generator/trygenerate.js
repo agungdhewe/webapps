@@ -11,18 +11,19 @@ console.log('Testing Generator')
 
 const args = process.argv.slice(2)
 const generator_id = args[0]
+const genFile = args[1]
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-if (generator_id==null) {
+if (generator_id == null) {
 	console.log("\n\n\x1b[1m\x1b[31mERROR\x1b[0m")
 	console.log("format: npm run generate \x1b[33m<generator_id>\x1b[0m\n\n")
 	process.exit(1)
 }
 
 
-const workerTimeoutMs = 1*60*1000
+const workerTimeoutMs = 1 * 60 * 1000
 
 const ModuleDbContract = {
 	apps: {
@@ -42,35 +43,37 @@ async function main(generator_id) {
 
 
 	try {
+
 		const workerPath = path.join(__dirname, 'worker.js')
 		const worker = new Worker(workerPath, {
 			workerData: {
 				generator_id,
+				genFile,
 				user_id: 1,
 				user_name: 'coredeveloper',
 				ipaddress: 'local-cli',
 				ModuleDbContract: ModuleDbContract,
 			}
-		}, workerTimeoutMs) 
+		}, workerTimeoutMs)
 
-		const timeoutId = setTimeout(()=>{
+		const timeoutId = setTimeout(() => {
 			console.log("\n\n\x1b[1m\x1b[31mERROR\x1b[0m")
 			console.log('Worker timeout')
 			worker.terminate()
-		}, workerTimeoutMs) 
+		}, workerTimeoutMs)
 
 
-		worker.on('message', (info)=>{
+		worker.on('message', (info) => {
 			clearTimeout(timeoutId)
 			console.log(info.message)
-			if (info.done===true) {
+			if (info.done === true) {
 				worker.done = true
 				worker.terminate()
 			}
 		})
 
 
-		worker.on('error', (err)=>{
+		worker.on('error', (err) => {
 			clearTimeout(timeoutId)
 			console.log("\n\n\x1b[1m\x1b[31mERROR\x1b[0m")
 			console.error(err)
@@ -79,9 +82,9 @@ async function main(generator_id) {
 		})
 
 
-		worker.on('exit', (code)=>{
+		worker.on('exit', (code) => {
 			clearTimeout(timeoutId)
-			if (worker.done===true) {
+			if (worker.done === true) {
 				console.log('Worker finished')
 			} else {
 				console.log(`Worker exited with code ${code}`)
