@@ -4,6 +4,8 @@ import { AppGenLayout_setUniqueME, AppGenLayout_setupUniqueDesigner, AppGenLayou
 import { AppGenLayout_setSearchME, AppGenLayout_setupSearchDesigner, AppGenLayout_addSearch } from './appgen-ui-search.mjs'
 
 
+const moduleDefinition = 'Module Definition'
+
 const IO = new AppGenIO()
 
 
@@ -48,6 +50,7 @@ const ICON_DEFAULT = `<svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w
 <path d="m20.019 2c-2.9332 0-5.2348 2.3057-5.2348 5.2389v3.1417h-8.3806c-2.3047 0-4.1903 1.8856-4.1903 4.1903v7.9628h3.1417c3.1427 0 5.6567 2.514 5.6567 5.6567 0 3.1427-2.514 5.6567-5.6567 5.6567h-3.3547v7.9628c0 2.3047 1.8856 4.1903 4.1903 4.1903h7.9628v-3.1458c0-3.1427 2.514-5.6567 5.6567-5.6567 3.1427 0 5.6567 2.514 5.6567 5.6567v3.1458h7.9628c2.3047 0 4.1903-1.8856 4.1903-4.1903v-8.3806h3.1417c2.9332 0 5.2389-2.3057 5.2389-5.2389 0-2.9332-2.3057-5.2389-5.2389-5.2389h-3.1417v-8.3806c0-2.3047-1.8856-4.1903-4.1903-4.1903h-8.3806v-3.1417c0.20951-2.9332-2.0968-5.2389-5.03-5.2389z"/>
 </g>
 </svg>`
+
 
 const ICON_CLOSE = `<svg version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
   <g stroke="currentColor" stroke-linecap="round" stroke-width="5">
@@ -125,9 +128,14 @@ export default class AppGenUI {
 	setCurrentId(id) {
 		const obj_programid = document.getElementById('obj_programid')
 		obj_programid.value = id
+
+		const el_etitle = document.getElementById('module-def-state')
+		el_etitle.innerHTML = `${moduleDefinition}`
 	}
 
 	load(data) {
+		const el_etitle = document.getElementById('module-def-state')
+		el_etitle.innerHTML = `${moduleDefinition}`
 		IO.load(data)
 	}
 
@@ -141,6 +149,16 @@ export default class AppGenUI {
 
 	async reset() {
 		await IO.reset()
+	}
+
+
+	isNewData() {
+		const el_etitle = document.getElementById('module-def-state')
+		if (el_etitle.innerHTML == `${moduleDefinition} [New]`) {
+			return true
+		} else {
+			return false
+		}
 	}
 }
 
@@ -686,24 +704,12 @@ function AppGenLayout_addDesigner(self, ID, isheader) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 async function AppGenLayout_NewData(self) {
+	// console.log('new data')
+	const el_etitle = document.getElementById('module-def-state')
+	el_etitle.innerHTML = `${moduleDefinition} [New]`
+
+
 	// jika belum ada header
 	const tbl_entity = ME.tbl_entity
 	const tbody = tbl_entity.querySelector('tbody')
@@ -712,7 +718,8 @@ async function AppGenLayout_NewData(self) {
 		col_name: 'header',
 		col_title: 'programtitle',
 		col_table: `schema.tablename`,
-		col_pk: 'pk'
+		col_pk: 'pk',
+		isnew: true
 	})
 
 	const btn = tbody.querySelector(`[name="col_btndesign"][${ATTR_ENTITYID}="${entity_id}"]`)

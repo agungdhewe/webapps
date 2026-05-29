@@ -755,10 +755,11 @@ async function AppGenIO_Load(self, data) {
 
 
 	// console.log(firstEntity)
-	setTimeout(() => {
-		console.log(firstEntity)
-		firstEntity.btnDesign.click()
-	}, 500)
+	// setTimeout(() => {
+	// 	if (firstEntity != null) {
+	// 		firstEntity.btnDesign.click()
+	// 	}
+	// }, 500)
 
 
 }

@@ -32,60 +32,62 @@ export async function modulePage(req, res) {
 	const id = req.query.id;
 
 
-	// const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
-	let useCssBundle
-	let cssBundleFileName
-	let mjsFileName
-	if (appDebugMode) {
-		// Default Debug
-		if (req.query.mode == 'release') {
-			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
-			mjsFileName = `${moduleName}-${version}.min.mjs`
-			cssBundleFileName = `${moduleName}-${version}.min.css`
-			useCssBundle = true
-		} else {
-			mjsFileName = `${moduleName}.mjs`
-			useCssBundle = false
-		}
-	} else {
-		// Default Production
-		if (req.query.mode == 'debug') {
-			mjsFileName = `${moduleName}.mjs`
-			useCssBundle = false
-		} else {
-			const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
-			mjsFileName = `${moduleName}-${version}.min.mjs`
-			cssBundleFileName = `${moduleName}-${version}.min.css`
-			useCssBundle = true
-		}
-	}
-	const mjsPath = path.join(__rootDir, 'public', 'modules', moduleName, mjsFileName);
-
-
-	const htmlExtenderFile = `${moduleName}-ext.html`
-	const htmlExtenderPath = path.join(__rootDir, 'public', 'modules', moduleName, htmlExtenderFile)
-
-	const iconFileName = `${moduleName}.svg`
-	const iconFilePath = path.join(__rootDir, 'public', 'modules', moduleName, iconFileName)
-
-	const cssLayoutExists = await helper.isFileExists(cssLayoutPath)
-	const cssExists = await helper.isFileExists(cssPath)
-	const mjsExists = await helper.isFileExists(mjsPath);
-	const htmlExtenderExists = await helper.isFileExists(htmlExtenderPath);
-	const iconFileExists = await helper.isFileExists(iconFilePath);
-
-	const cssApplicationExists = await helper.isFileExists(cssApplicationPath);
-
-	const mjsPrerenderPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}-prerender.mjs`);
-	const mjsPrerenderExists = await helper.isFileExists(mjsPrerenderPath)
-
-
-	const ejsModuleExist = await helper.isFileExists(ejsPath)
-
-	const additionalHeaderPath = path.join(__rootDir, 'public', 'modules', moduleName, `_htmlheader.ejs`);
-	const additionalHeaderExists = await helper.isFileExists(additionalHeaderPath)
-
 	try {
+
+		// const mjsFileName = appDebugMode ? `${moduleName}.mjs` : `${moduleName}.min.mjs`
+		let useCssBundle
+		let cssBundleFileName
+		let mjsFileName
+		if (appDebugMode) {
+			// Default Debug
+			if (req.query.mode == 'release') {
+				const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
+				mjsFileName = `${moduleName}-${version}.min.mjs`
+				cssBundleFileName = `${moduleName}-${version}.min.css`
+				useCssBundle = true
+			} else {
+				mjsFileName = `${moduleName}.mjs`
+				useCssBundle = false
+			}
+		} else {
+			// Default Production
+			if (req.query.mode == 'debug') {
+				mjsFileName = `${moduleName}.mjs`
+				useCssBundle = false
+			} else {
+				const version = await getCurrentVersion(path.join(__rootDir, 'public', 'modules', moduleName, 'version.txt'))
+				mjsFileName = `${moduleName}-${version}.min.mjs`
+				cssBundleFileName = `${moduleName}-${version}.min.css`
+				useCssBundle = true
+			}
+		}
+		const mjsPath = path.join(__rootDir, 'public', 'modules', moduleName, mjsFileName);
+
+
+		const htmlExtenderFile = `${moduleName}-ext.html`
+		const htmlExtenderPath = path.join(__rootDir, 'public', 'modules', moduleName, htmlExtenderFile)
+
+		const iconFileName = `${moduleName}.svg`
+		const iconFilePath = path.join(__rootDir, 'public', 'modules', moduleName, iconFileName)
+
+		const cssLayoutExists = await helper.isFileExists(cssLayoutPath)
+		const cssExists = await helper.isFileExists(cssPath)
+		const mjsExists = await helper.isFileExists(mjsPath);
+		const htmlExtenderExists = await helper.isFileExists(htmlExtenderPath);
+		const iconFileExists = await helper.isFileExists(iconFilePath);
+
+		const cssApplicationExists = await helper.isFileExists(cssApplicationPath);
+
+		const mjsPrerenderPath = path.join(__rootDir, 'public', 'modules', moduleName, `${moduleName}-prerender.mjs`);
+		const mjsPrerenderExists = await helper.isFileExists(mjsPrerenderPath)
+
+
+		const ejsModuleExist = await helper.isFileExists(ejsPath)
+
+		const additionalHeaderPath = path.join(__rootDir, 'public', 'modules', moduleName, `_htmlheader.ejs`);
+		const additionalHeaderExists = await helper.isFileExists(additionalHeaderPath)
+
+
 
 		// coba cek request halaman
 		const fnParseModuleRequest = context.getFnParseModuleRequest()

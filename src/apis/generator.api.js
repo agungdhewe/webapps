@@ -88,6 +88,23 @@ async function generator_init(self, body) {
 
 
 
+async function getFiles(pathTujuan) {
+	try {
+		// readdir dengan opsi withFileTypes: true akan mengembalikan objek fs.Dirent
+		const files = await readdir(pathTujuan, { withFileTypes: true });
+
+		// Filter hanya yang berupa file, lalu ambil namanya
+		const daftarFile = files
+			.filter(item => item.isFile())
+			.map(item => item.name);
+
+		return daftarFile;
+	} catch (error) {
+		console.error("Gagal membaca direktori:", error);
+		return [];
+	}
+}
+
 async function readDirektori(pathTujuan) {
 	try {
 		// readdir dengan opsi withFileTypes: true akan mengembalikan objek fs.Dirent
@@ -120,16 +137,17 @@ async function generator_list(self, body) {
 		// baca dari direktori dir, ambil semua direktori yang didalamnya ada file {dirname}.gen.json
 		let listResult = []
 		let dirlist = await readDirektori(path.join(dir, 'public', 'modules'));
-		for (let entry of dirlist) {
-			// cek apakah di dalam {entry} ada file {entry}.gen.json
-			const genFile = getGeneratorFile(entry);
+		let filelist = await getFiles(path.join(dir, 'generator'))
 
-			const exists = await access(genFile).then(() => true).catch(() => false);
-			if (exists) {
-				// baca file gen.json
+
+		// ambil semua file
+		for (let entry of filelist) {
+			// cek apakah file berakhiran .gen.json
+			if (entry.endsWith('.gen.json')) {
+				// Lakukan sesuatu dengan file ini
+				const genFile = path.join(dir, 'generator', entry)
 				const genData = await readFile(genFile, 'utf8');
 				const genJson = JSON.parse(genData);
-				// console.log(genJson);
 
 				const { appname, name, title, description } = genJson
 				listResult.push({
@@ -140,6 +158,28 @@ async function generator_list(self, body) {
 				})
 			}
 		}
+
+
+		// for (let entry of dirlist) {
+		// 	// cek apakah di dalam {entry} ada file {entry}.gen.json
+		// 	const genFile = getGeneratorFile(entry);
+
+		// 	const exists = await access(genFile).then(() => true).catch(() => false);
+		// 	if (exists) {
+		// 		// baca file gen.json
+		// 		const genData = await readFile(genFile, 'utf8');
+		// 		const genJson = JSON.parse(genData);
+		// 		// console.log(genJson);
+
+		// 		const { appname, name, title, description } = genJson
+		// 		listResult.push({
+		// 			generator_id: name,
+		// 			generator_modulename: name,
+		// 			generator_title: title,
+		// 			generator_description: description
+		// 		})
+		// 	}
+		// }
 
 
 
@@ -233,7 +273,7 @@ async function generator_open(self, body) {
 }
 
 async function generator_save(self, body) {
-	const { data } = body
+	const { data, dataisNew } = body
 
 	try {
 		const name = data.name;
@@ -242,6 +282,15 @@ async function generator_save(self, body) {
 		// untuk ditulis ke disk
 		const jsonString = JSON.stringify(data, null, 2);
 		const genFile = getGeneratorFile(name);
+
+
+		// jika dataisNew==true, cek dulu apakah file sudah exists, 
+		// jika exist throw error
+		const exists = await access(genFile).then(() => true).catch(() => false);
+		if (dataisNew && exists) {
+			throw new Error(`program ${name} sudah ada`)
+		}
+
 
 		//  tulis jsonString ke genFile
 		await mkdir(path.dirname(genFile), { recursive: true });

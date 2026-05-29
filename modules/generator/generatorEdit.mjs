@@ -193,7 +193,16 @@ async function btn_generate_click(self, evt) {
 async function Save(self, data) {
 	const url = `/${Context.moduleName}/save`
 	try {
-		const result = await Module.apiCall(url, { data })
+
+		// cek apakah data baru
+		let dataisNew = false
+		if (ui.isNewData()) {
+			dataisNew = true
+		}
+
+
+		console.log('saving data...')
+		const result = await Module.apiCall(url, { data, dataisNew })
 		return result
 	} catch (err) {
 		throw err
