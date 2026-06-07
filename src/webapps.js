@@ -207,7 +207,12 @@ async function main(self, options) {
 		app.use('/public/lib/fgta5js', ExpressServer.static(path.join(__dirname, '..', 'lib', 'fgta5js-dist')));
 	}
 
+
+	app.use('/public/lib/webmodule', ExpressServer.static(path.join(__rootDirectory, 'public', 'lib', 'webmodule')));
 	app.use('/public/lib/webmodule', ExpressServer.static(path.join(__dirname, '..', 'lib', 'webmodule')));
+
+
+
 
 	// Routing /public  untuk serve halaman-halaman static
 	app.use('/public', rejectEjsFiles);

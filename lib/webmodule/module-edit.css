@@ -11,54 +11,35 @@
 
 .input-field {
 	display: flex;
-	column-gap: 10px;
-	/* background-color: aliceblue; */
+	align-self: flex-start;
 }
 
-.input-field>label {
-	margin-top: 4px;
-	font-size: 0.8rem;
-	font-weight: bold;
 
-}
 
+/* Small Screen */
 @media screen and (max-width: 500px) {
 	.input-field {
 		flex-direction: column;
 		flex-basis: 100%;
-	}
-
-	.input-field>div[label],
-	.input-field>label {
-		text-align: left;
-		margin-bottom: 5px;
-		width: fit-content;
-		min-width: unset;
-	}
-
-	.fgta5-entry-container[fgta5-component=Combobox] {
-		width: 100%
+		width: 100%;
 	}
 }
 
-
-@media screen and (min-width: 501px) {
-	.input-field>label {
-		text-align: right;
-		width: 80px;
-		min-width: 80px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-}
 
 
 
 /* ACTION */
 .panel-action {
 	display: flex;
+	box-shadow: 0 4px 6px -1px rgba(128, 0, 0, 0.06),
+		0 2px 4px -1px rgba(128, 0, 0, 0.04);
+
+	background-color: rgba(236, 236, 236, 0.478);
+	border: 1px solid rgb(226, 232, 240);
+	border-radius: 8px;
+
 }
+
 
 @media screen and (max-width: 500px) {
 	.panel-action {
@@ -66,22 +47,14 @@
 		justify-content: center;
 		column-gap: 8px;
 	}
-
 }
-
-
 
 
 @media screen and (min-width: 501px) {
 	.panel-action {
-		/* padding-top: 20px; */
-		/* padding-left: 100px; */
 		column-gap: 10px;
 		margin: 20px 20px 20px 20px;
 		padding: 20px;
-		border: 1px solid #c8cbf4;
-		border-radius: 10px;
-		background: #d9d9d9;
 	}
 }
 
@@ -91,6 +64,39 @@
 			/* 827 dikurangi padding kiri kanan total 40px */
 	}
 }
+
+
+
+
+
+.panel-action button {
+	padding: 5px 15px 5px 15px;
+
+	transition: 0.15s ease-in-out;
+	box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+
+	border: 1px solid rgb(209, 213, 219);
+	border-radius: 4px;
+	color: rgb(55, 65, 81);
+}
+
+.panel-action button:disabled {
+	border: 1px solid #c6c6c6;
+	filter: grayscale(1) opacity(0.5);
+	box-shadow: none;
+	border-color: rgb(229, 231, 235);
+}
+
+
+.panel-action button:hover:not(:disabled) {
+	background-color: #9d9d9d;
+	cursor: pointer;
+}
+
+
+
+
+
 
 /* DETIL */
 
@@ -103,8 +109,6 @@
 }
 
 @media screen and (min-width: 501px) {
-
-	/* Box information detil */
 	.panel-detil {
 		margin: 50px 20px 20px 20px;
 	}
@@ -117,6 +121,12 @@
 }
 
 
+.panel-detil {
+	box-shadow: 0 4px 6px -1px rgba(128, 0, 0, 0.06),
+		0 2px 4px -1px rgba(128, 0, 0, 0.04);
+}
+
+
 
 .panel-detil [panel-title] {
 	font-weight: bold;
@@ -125,14 +135,31 @@
 	border-radius: 10px 10px 0 0;
 	padding: 10px 10px 10px 15px;
 	font-weight: 1.1rem;
+
+	height: 40px;
+	display: flex;
+	align-items: center;
+	border-radius: 8px 8px 0 0;
+
+	background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMTIiIHkyPSIxMiI+PC9saW5lPjxsaW5lIHgxPSIxMiIgeTE9IjgiIHgyPSIxMi4wMSIgeTI9IjgiPjwvbGluZT48L3N2Zz4=");
+	background-repeat: no-repeat;
+	background-position: 12px center;
+	background-size: 18px 18px;
+	padding-left: 40px;
 }
+
+
+
 
 .panel-detil [panel-content] {
 	background-color: #ececec;
 	padding: 5px 0 10px 0;
-	border-radius: 0 0 10px 10px;
-
+	border: 1px solid #ddd;
+	border-radius: 0 0 8px 8px;
+	min-height: 50px;
 }
+
+
 
 .panel-detil-row {
 	display: grid;
@@ -177,13 +204,14 @@
 /* Record Bar */
 .panel-recordbar {
 	display: flex;
+	column-gap: 10px;
 }
 
 
 .panel-recordbar[data-view="nodetil"] {
 	margin-top: 60px;
 	padding-top: 10px;
-	border-top: 1px solid #c4c7e8;
+	border-top: 1px solid rgba(0, 0, 0, 0.09);
 }
 
 @media screen and (max-width: 500px) {
@@ -215,4 +243,36 @@
 
 .panel-recordbar a:hover {
 	color: #000
+}
+
+
+.panel-recordbar button {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	background-color: rgb(255, 255, 255);
+	color: rgb(51, 65, 85);
+	border: 1px solid rgb(226, 232, 240);
+	border-radius: 4px;
+	padding: 6px 14px;
+	font-family: Karla, sans-serif;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+	outline: none;
+}
+
+
+.panel-recordbar button:hover {
+	background-color: #f8fafc;
+	border-color: #cbd5e1;
+	color: #0f172a;
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.panel-recordbar button:active {
+	transform: translateY(1px);
+	background-color: #f1f5f9;
 }
