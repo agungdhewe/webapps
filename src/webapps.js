@@ -208,10 +208,9 @@ async function main(self, options) {
 	}
 
 
-	app.use('/public/lib/webmodule', ExpressServer.static(path.join(__rootDirectory, 'public', 'lib', 'webmodule')));
-	app.use('/public/lib/webmodule', ExpressServer.static(path.join(__dirname, '..', 'lib', 'webmodule')));
-
-
+	// client library
+	app.use('/public/lib', ExpressServer.static(path.join(__rootDirectory, 'public', 'lib')));
+	app.use('/public/lib', ExpressServer.static(path.join(__dirname, '..', 'lib')));
 
 
 	// Routing /public  untuk serve halaman-halaman static

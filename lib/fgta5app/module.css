@@ -3,6 +3,8 @@
 @import url('./module-footer.css');
 @import url('./module-print.css');
 @import url('./module-button.css');
+@import url('./module-log.css');
+
 
 :root {
 	--max-mobile-width: 500px;

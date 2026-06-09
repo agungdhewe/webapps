@@ -11,13 +11,18 @@ const bucketUsername = process.env.BUCKET_USERNAME
 const bucketSecret = process.env.BUCKET_SECRET
 
 
-const minioClient = new Client({
-	endPoint: bucketHost,
-	port: bucketPort,
-	useSSL: bucketSecure,
-	accessKey: bucketUsername,
-	secretKey: bucketSecret,
-});
+let minioClient
+
+// jika BUCKET_HOST tidak diisi, abaikan koneksi
+if (bucketHost != null) {
+	minioClient = new Client({
+		endPoint: bucketHost,
+		port: bucketPort,
+		useSSL: bucketSecure,
+		accessKey: bucketUsername,
+		secretKey: bucketSecret,
+	});
+}
 
 
 export default minioClient
