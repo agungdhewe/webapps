@@ -18,7 +18,7 @@ export async function createProgramData(context, options) {
 	}
 
 
-	const generator_id = context.id
+	const generator_id = context.moduleName
 	const rawData = context.icon
 	const moduleName = context.moduleName
 	const user_id = context.user_id
@@ -46,8 +46,8 @@ export async function createProgramData(context, options) {
 
 	try {
 
-		const sql = `select * from ${tablename} where program_name=\${generator_id} and program_variance is null`
-		const row = await db.oneOrNone(sql, { generator_id })
+		const sql = `select * from ${tablename} where program_name=\${moduleName} and program_variance is null`
+		const row = await db.oneOrNone(sql, { moduleName })
 
 		const obj = {
 			program_title: title,
