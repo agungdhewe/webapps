@@ -73,7 +73,9 @@ export async function init(self, args) {
 	// set actions
 	CurrentState.Actions = {
 		newdata: btn_new,
-		edit: btn_edit,<% actionList.forEach(action => { %>
+		edit: btn_edit,
+		delete: btn_del,
+		save: btn_save,<% actionList.forEach(action => { %>
 		<%= action.name %>: <%= action.buttonName %>,<% }) %>	
 	}
 	<% if (!allowFormNew) { %>
@@ -88,7 +90,7 @@ export async function init(self, args) {
 	}
 
 
-	<%if (actionList.length>0) {%>// buat di Extender: export function setupActionButtonEvent(self, frm, CurrentState, buttons) { }
+	// buat di Extender: export function setupActionButtonEvent(self, frm, CurrentState, buttons) { }
 	const fn_setupactionbuttonevent_name = 'setupActionButtonEvent'
 	const fn_setupactionbuttonevent = Extender[fn_setupactionbuttonevent_name]
 	if (typeof fn_setupactionbuttonevent === 'function') {
@@ -98,8 +100,9 @@ export async function init(self, args) {
 	} else {
 		console.warn('Extender.setupActionButtonEvent is not implemented')
 		console.log('buat function di extender: export function setupActionButtonEvent(self, buttons)')
-	}<% } %>
+	}
 
+	
 	<% fieldHandles.forEach(field => { %>
 	// <%= field.component %>: <%= field.inputname %><% field.handles.forEach(hnd => { %>
 	<%= field.inputname %>.addEventListener('<%= hnd.eventname %>', <% if (hnd.eventname=='selecting') { %>async <% } %>(evt)=>{
