@@ -678,3 +678,11 @@ button:hover {
 	/* Memberikan jarak 100px dari atas saat di-scroll */
 	scroll-margin-top: 100px;
 }
+
+
+
+.fgta5-app-footer {
+	height: 4rem;
+	padding-top: 5px;
+	align-items: unset;
+}
