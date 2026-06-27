@@ -1,8 +1,9 @@
 
 export async function authorizeRequest(db, req) {
-	const moduleName = req.params.modulename;
-	const program_id = req.query.prog;
+	const moduleName = req.params.modulename
+	const variance = req.query.variance
 
+	let program_id = req.query.prog;
 	try {
 
 		// jika belum login
@@ -26,12 +27,42 @@ export async function authorizeRequest(db, req) {
 			return true  // user adalah developer
 		}
 
+
+
+
+
 		// jika tidak punya akses developer, cek apakah boleh buka program 
+		if (program_id == null) {
+			// module diakses berdasarkan nama, cari dulu program_id nya
+			if (variance == null) {
+				const sqlProg = `select program_id from core.program where program_name=\${program_name} and (program_variance is null or program_variance='')`
+				const row = await db.oneOrNone(sqlProg, {
+					program_name: moduleName
+				});
+				if (row != null) {
+					program_id = row.program_id
+				}
+
+			} else {
+				const sqlProg = `select program_id from core.program where program_name=\${program_name} and program_variance=\${program_variance}`
+				const row = await db.oneOrNone(sqlProg, {
+					program_name: moduleName,
+					program_variance: variance
+				});
+				if (row != null) {
+					program_id = row.program_id
+				}
+			}
+
+		}
+
+		// module diakses menggunakan kode program
 		const sql = 'select * from core.get_user_programs(${user_id}) where id=${program_id}'
 		const row = await db.oneOrNone(sql, { user_id, program_id });
 		if (row != null) {
 			return true  // user punya akses program
 		}
+
 
 		const err = new Error(`user '${user_fullname}' tidak diperbolehkan mengakses program '${moduleName}'`)
 		err.status = 401
