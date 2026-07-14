@@ -12,12 +12,12 @@ export default class extends Module {
 		super()
 	}
 
-	async main(args={}) {
-		
+	async main(args = {}) {
+
 		console.log('initializing module...')
 		app.setTitle('Generator')
 		app.showFooter(true)
-		
+
 		args.autoLoadGridData = true
 
 		const self = this
@@ -33,10 +33,10 @@ export default class extends Module {
 		}
 
 		try {
-			
+
 			// inisiasi sisi server
 			try {
-				const result = await Module.apiCall(`/${Context.moduleName}/init`, { })
+				const result = await Module.apiCall(`/${Context.moduleName}/init`, {})
 				Context.notifierId = result.notifierId
 				Context.notifierSocket = result.notifierSocket
 				Context.userId = result.userId
@@ -44,10 +44,12 @@ export default class extends Module {
 				Context.sid = result.sid
 				Context.targetDirectory = result.targetDirectory
 				Context.appsUrls = result.appsUrls
+				Context.appName = result.appName
+				Context.appTitle = result.appTitle
 
 			} catch (err) {
 				throw err
-			} 
+			}
 
 
 			await Promise.all([
@@ -60,14 +62,14 @@ export default class extends Module {
 			await render(self)
 
 			// listen keyboard action
-			listenUserKeys(self)	
+			listenUserKeys(self)
 
 			// kalau user melakukan reload, konfirm dulu
 			const isFormDirty = true
-			window.onbeforeunload = (evt)=>{ 
+			window.onbeforeunload = (evt) => {
 				if (isFormDirty) {
 					evt.preventDefault();
-					return  "Changes you made may not be saved."
+					return "Changes you made may not be saved."
 				}
 			};
 		} catch (err) {
@@ -83,9 +85,9 @@ export default class extends Module {
 
 		// datatype: int, smallint, bigint, decimal
 		// format: decimal, int
-		if (datatype=='smallint') {
+		if (datatype == 'smallint') {
 			gridFormatter.value = 'int(v)'
-		} else if (datatype=='decimal') {
+		} else if (datatype == 'decimal') {
 			gridFormatter.value = 'decimal(v, 2)'
 		} else {
 			gridFormatter.value = 'decimal(v, 0)'
@@ -97,21 +99,21 @@ export default class extends Module {
 
 async function render(self) {
 	try {
-		const footerButtonsContainer =  document.getElementsByClassName('footer-buttons-container')
+		const footerButtonsContainer = document.getElementsByClassName('footer-buttons-container')
 		Module.renderFooterButtons(footerButtonsContainer)
-	
+
 		Crsl.setIconUrl('/generator/generator.svg')
 
-		Crsl.addEventListener($fgta5.SectionCarousell.EVT_SECTIONSHOWING, (evt)=>{
+		Crsl.addEventListener($fgta5.SectionCarousell.EVT_SECTIONSHOWING, (evt) => {
 			var sectionId = evt.detail.commingSection.Id
 			for (let cont of footerButtonsContainer) {
 				var currContainerSectionId = cont.getAttribute('data-section')
-				if (currContainerSectionId==sectionId) {
-					setTimeout(()=>{
+				if (currContainerSectionId == sectionId) {
+					setTimeout(() => {
 						cont.classList.remove('hidden')
 						cont.style.animation = 'dropped 0.3s forwards'
-						setTimeout(()=>{
-							cont.style.animation = 'unset'	
+						setTimeout(() => {
+							cont.style.animation = 'unset'
 						}, 300)
 					}, 500)
 				} else {
@@ -144,11 +146,11 @@ function listenUserKeys(self) {
 		// jika ada dialog yang terbuka, semua event keyboard abaikan dulu, keculai tombol escape
 		const dialog = document.querySelector('dialog[open]');
 		if (dialog) {
-			if (evt.key.toLowerCase()=='escape') {
+			if (evt.key.toLowerCase() == 'escape') {
 				dialog.close();
 				evt.preventDefault();
 			} else if ((evt.ctrlKey || evt.metaKey) && evt.key.toLowerCase() === 's') {
-				evt.preventDefault(); 
+				evt.preventDefault();
 			}
 			return
 		}
@@ -161,20 +163,20 @@ function listenUserKeys(self) {
 		} else if ((evt.ctrlKey || evt.metaKey) && key === 'n') {
 			evt.preventDefault(); // Mencegah aksi default
 			keyboardAction(self, module, 'new', evt)
-		} else if ( key ==='escape') {
+		} else if (key === 'escape') {
 			evt.preventDefault();
 			keyboardAction(self, module, 'escape', evt)
-		} else if ( key === 'f2' ) {
+		} else if (key === 'f2') {
 			keyboardAction(self, module, 'togleEdit', evt)
-		} else if ( key === 'arrowup' ) {
+		} else if (key === 'arrowup') {
 			keyboardAction(self, module, 'up', evt)
-		} else if ( key === 'arrowdown' ) {	
+		} else if (key === 'arrowdown') {
 			keyboardAction(self, module, 'down', evt)
-		} else if ( key === 'arrowright' ) {
+		} else if (key === 'arrowright') {
 			keyboardAction(self, module, 'right', evt)
-		} else if ( key === 'arrowleft' ) {	
+		} else if (key === 'arrowleft') {
 			keyboardAction(self, module, 'left', evt)
-		} else if ( key === 'enter' ) {	
+		} else if (key === 'enter') {
 			keyboardAction(self, module, 'enter', evt)
 		}
 	});
@@ -183,11 +185,11 @@ function listenUserKeys(self) {
 
 function keyboardAction(self, module, actionName, evt) {
 
-	if (module!=null) {
-		module.keyboardAction(self,  actionName, evt)
+	if (module != null) {
+		module.keyboardAction(self, actionName, evt)
 	} else {
 		// untuk keperluan log dan about, saat escape: back
-		if (actionName=='escape') {
+		if (actionName == 'escape') {
 			Crsl.CurrentSection.back()
 		}
 	}

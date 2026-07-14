@@ -579,6 +579,7 @@ function AppGenIO_GetFieldData(self, el) {
 	field.Reference.bindingValue = getValueFrom(el, 'input[name="ref_id"]', 'value')
 	field.Reference.bindingText = getValueFrom(el, 'input[name="ref_text"]', 'value')
 	field.Reference.bindingDisplay = getValueFrom(el, 'input[name="ref_display"]', 'value')
+	field.Reference.bindingConstraint = getCheckedFrom(el, 'input[name="ref_constraint"]', 'value')
 	field.Reference.loaderApiModule = getValueFrom(el, 'input[name="loaderapimodule"]', 'value')
 	field.Reference.loaderApiPath = getValueFrom(el, 'input[name="loaderapipath"]', 'value')
 
@@ -608,7 +609,7 @@ function AppGenIO_GetFieldData(self, el) {
 async function AppGenIO_Reset(self) {
 	const datainit = {
 		id: '',
-		appname: '',
+		appname: Context.appName,
 		name: '',
 		directory: Context.targetDirectory,
 		title: '',
@@ -844,6 +845,8 @@ function AppGenIO_FillDataField(self, datafield, field) {
 
 	setValueTo(field.Reference.bindingDisplay, datafield, 'input[name="ref_display"]', 'value')
 	setValueTo(field.Reference.bindingText, datafield, 'input[name="ref_text"]', 'value')
+	setCheckedTo(field.Reference.bindingConstraint ?? true, datafield, 'input[name="ref_constraint"]', 'value')
+
 
 
 	setValueTo(field.Reference.loaderApiModule, datafield, 'input[name="loaderapimodule"]', 'value')

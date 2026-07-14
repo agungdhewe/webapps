@@ -94,6 +94,7 @@ export async function createTable(context, options) {
 			}
 
 			// buat foreign key
+			// const restrictConstraint = value.
 			scriptContent.push("\n")
 			{
 				const foreignKeys = Object.entries(entityItems)
@@ -104,9 +105,11 @@ export async function createTable(context, options) {
 					}, {})
 
 
-				const sql = await ddl.createFereignKey(schema, tablename, foreignKeys)
-				scriptContent.push(sql)
-
+				const restrictConstraint = value.Reference.bindingConstraint ?? true
+				if (restrictConstraint) {
+					const sql = await ddl.createFereignKey(schema, tablename, foreignKeys)
+					scriptContent.push(sql)
+				}
 			}
 
 
