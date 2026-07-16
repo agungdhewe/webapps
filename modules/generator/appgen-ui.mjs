@@ -148,6 +148,7 @@ export default class AppGenUI {
 	}
 
 	async reset() {
+		console.log('reset data')
 		await IO.reset()
 	}
 
