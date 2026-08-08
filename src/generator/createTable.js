@@ -94,20 +94,24 @@ export async function createTable(context, options) {
 			}
 
 			// buat foreign key
+			// const restrictConstraint = value.
 			scriptContent.push("\n")
-			{
 				const foreignKeys = Object.entries(entityItems)
-					.filter(([_, value]) => value.Reference.table !== null && value.Reference.table !== '')
+					.filter(([_, value]) => {
+						const hasTable = value.Reference.table !== null && value.Reference.table !== '';
+						const bindingConstraint = value.Reference.bindingConstraint ?? true;
+						return hasTable && bindingConstraint;
+					})
 					.reduce((acc, [key, value]) => {
 						acc[key] = value;
 						return acc;
 					}, {})
 
 
-				const sql = await ddl.createFereignKey(schema, tablename, foreignKeys)
-				scriptContent.push(sql)
-
-			}
+				if (Object.keys(foreignKeys).length > 0) {
+					const sql = await ddl.createFereignKey(schema, tablename, foreignKeys)
+					scriptContent.push(sql)
+				}
 
 
 

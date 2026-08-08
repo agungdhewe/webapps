@@ -76,7 +76,9 @@ async function generator_init(self, body) {
 			notifierId: Api.generateNotifierId(moduleName, req.sessionID),
 			notifierSocket: req.app.locals.appConfig.notifierSocket,
 			targetDirectory: context.getRootDirectory(),
-			appsUrls: appsUrls
+			appsUrls: appsUrls,
+			appName: req.app.locals.appConfig.appName,
+			appTitle: req.app.locals.appConfig.appTitle,
 		}
 
 	} catch (err) {

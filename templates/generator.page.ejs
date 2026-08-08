@@ -80,13 +80,11 @@
 
 	<script>
 		// // prevent back button
-		history.pushState(null, null, window.location.pathname);
+		const urlLengkap = window.location.pathname + window.location.search;
+		history.pushState(null, null, urlLengkap);
 		window.addEventListener('popstate', function(ev) {
-			history.pushState(null, null, window.location.pathname);
+			history.pushState(null, null, urlLengkap);
 		}, false);	
-
-
-		
 	</script>
 
 	<script type="module">
