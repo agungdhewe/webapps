@@ -266,7 +266,6 @@ async function tbl_loadData(self, params = {}) {
 		//tbl.setNext(result.nextoffset, result.limit)
 
 		for (let row of result.data) {
-			console.log(row)
 			const tr = tbl.addRow(row)
 			if (row.generator_modulename == requested_modulename) {
 				autoopen_tr = tr

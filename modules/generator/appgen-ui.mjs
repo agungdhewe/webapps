@@ -1010,17 +1010,22 @@ function AppGenLayout_addComponentToDesigner(self, droptarget, comp) {
 		})
 	}
 
+	// mark datafield_id di input
+	const currentInputDRow = datafield.querySelector('input[name="input-dposrow"]')
+	currentInputDRow.setAttribute('datafield_id', datafield_id)
+
+
 	// handle row increase
-	const increateRowButton = datafield.querySelector(`[name="inc-row"]`)
+	const increateRowButton = datafield.querySelector('[name="inc-row"]')
 	increateRowButton.addEventListener('click', (evt) => {
-		// ambil value 
+		AppGenLayout_moveRow(datafield, 1)
 	})
 
 
 	// handle row decrease
 	const decreaseRowButton = datafield.querySelector(`[name="dec-row"]`)
 	decreaseRowButton.addEventListener('click', (evt) => {
-		console.log('decrease')
+		AppGenLayout_moveRow(datafield, -1)
 	})
 
 
@@ -1042,6 +1047,48 @@ function AppGenLayout_addComponentToDesigner(self, droptarget, comp) {
 
 
 	return datafield
+}
+
+
+function AppGenLayout_moveRow(datafield, step) {
+	const currentInputDRow = datafield.querySelector('input[name="input-dposrow"]')
+	const currentRowValue = parseInt(currentInputDRow.value, 10)
+	const current_datafield_id = currentInputDRow.getAttribute('datafield_id')
+
+	// jika bukan integer, skip
+	if (isNaN(currentRowValue)) {
+		return
+	}
+
+	if (step == 0) {
+		return
+	} else if (step < 0) {
+		// decrease
+		if (currentRowValue <= step) {
+			return
+		}
+	}
+
+
+	let change = false
+	const editor = currentInputDRow.closest('[name="entity-editor"]')
+	const allInputsDRow = editor.querySelectorAll('input[name="input-dposrow"]')
+	for (let inputDRow of allInputsDRow) {
+		const datafield_id = inputDRow.getAttribute('datafield_id')
+		if (datafield_id == current_datafield_id) {
+			change = true
+		}
+
+		if (!change) {
+			continue
+		}
+
+		const inputVal = parseInt(inputDRow.value, 10)
+		if (isNaN(inputVal)) {
+			continue
+		}
+		inputDRow.value = inputVal + step
+	}
 }
 
 
