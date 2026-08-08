@@ -1010,6 +1010,19 @@ function AppGenLayout_addComponentToDesigner(self, droptarget, comp) {
 		})
 	}
 
+	// handle row increase
+	const increateRowButton = datafield.querySelector(`[name="inc-row"]`)
+	increateRowButton.addEventListener('click', (evt) => {
+		// ambil value 
+	})
+
+
+	// handle row decrease
+	const decreaseRowButton = datafield.querySelector(`[name="dec-row"]`)
+	decreaseRowButton.addEventListener('click', (evt) => {
+		console.log('decrease')
+	})
+
 
 	const bars = datafield.querySelectorAll("div[field-handle-bar]")
 	for (let bar of bars) {

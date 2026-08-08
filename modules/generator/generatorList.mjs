@@ -2,14 +2,14 @@ import Context from './generator-context.mjs'
 import * as Extender from './generator-ext.mjs'
 
 
-const Crsl =  Context.Crsl
+const Crsl = Context.Crsl
 const CurrentSectionId = Context.Sections.generatorList
 const CurrentSection = Crsl.Items[CurrentSectionId]
 const CurrentState = {}
 
-const tbl =  new $fgta5.Gridview('generatorList-tbl')
+const tbl = new $fgta5.Gridview('generatorList-tbl')
 const pnl_search = document.getElementById('generatorList-pnl_search')
-const btn_gridload = new $fgta5.ActionButton('generatorList-btn_gridload') 
+const btn_gridload = new $fgta5.ActionButton('generatorList-btn_gridload')
 
 
 
@@ -21,29 +21,29 @@ export async function init(self, args) {
 	console.log('initializing generatorList ...')
 
 	// add event listener
-	tbl.addEventListener('nextdata', async evt=>{ tbl_nextdata(self, evt) })
-	tbl.addEventListener('sorting', async evt=>{ tbl_sorting(self, evt) })
-	tbl.addEventListener('cellclick', async evt=>{ tbl_cellclick(self, evt) })
-	tbl.addEventListener('celldblclick', async evt=>{ tbl_celldblclick(self, evt) })
+	tbl.addEventListener('nextdata', async evt => { tbl_nextdata(self, evt) })
+	tbl.addEventListener('sorting', async evt => { tbl_sorting(self, evt) })
+	tbl.addEventListener('cellclick', async evt => { tbl_cellclick(self, evt) })
+	tbl.addEventListener('celldblclick', async evt => { tbl_celldblclick(self, evt) })
 
-	btn_gridload.addEventListener('click', async evt=>{ btn_gridload_click(self, evt) })
-	
+	btn_gridload.addEventListener('click', async evt => { btn_gridload_click(self, evt) })
+
 
 	try {
 		// extract custom search panel from template
 		const tplSearchPanel = document.querySelector('template[name="custom-search-panel"]')
-		if (tplSearchPanel!=null) {
+		if (tplSearchPanel != null) {
 			const clone = tplSearchPanel.content.cloneNode(true); // salin isi template
 			pnl_search.prepend(clone)
 		}
-		
+
 		// setup search panel
 		const cmps = pnl_search.querySelectorAll('[fgta5-component][binding')
 		for (var cmp of cmps) {
 			var id = cmp.getAttribute('id')
 			var componentname = cmp.getAttribute('fgta5-component')
 			var binding = cmp.getAttribute('binding')
-			SearchParams[binding] =  new $fgta5[componentname](id)
+			SearchParams[binding] = new $fgta5[componentname](id)
 		}
 
 		// generator-ext.mjs, export function initSearchParams(self, SearchParams) {} 
@@ -60,29 +60,29 @@ export async function init(self, args) {
 		const el_txt_searchtext = document.getElementById('generatorList-txt_searchtext')
 		const el_btn_search = document.getElementById('generatorList-btn_gridload')
 
-		el_txt_appname.addEventListener('keydown', evt=>{
-			if (evt.key=='Enter') {
+		el_txt_appname.addEventListener('keydown', evt => {
+			if (evt.key == 'Enter') {
 				el_txt_searchtext.focus()
 				evt.stopPropagation()
 				evt.preventDefault()
 			}
 		})
 
-		el_txt_searchtext.addEventListener('keydown', evt=>{
-			if (evt.key=='Enter') {
-				el_btn_search.click()	
+		el_txt_searchtext.addEventListener('keydown', evt => {
+			if (evt.key == 'Enter') {
+				el_btn_search.click()
 				el_txt_searchtext.blur()
 				evt.stopPropagation()
 				evt.preventDefault()
 			}
 		})
 
-		
+
 	} catch (err) {
 		throw err
 	} finally {
 		// load data
-		if (args.autoLoadGridData===true) {
+		if (args.autoLoadGridData === true) {
 			loadData(self)
 		}
 	}
@@ -95,15 +95,15 @@ export async function render(self) {
 }
 
 export function keyboardAction(self, actionName) {
-	if (actionName=='up') {
+	if (actionName == 'up') {
 		tbl.previousRecord()
-	} else if (actionName=='down') {
+	} else if (actionName == 'down') {
 		tbl.nextRecord()
-	} else if (actionName=='enter') {
+	} else if (actionName == 'enter') {
 		const generatorEdit = self.Modules.generatorEdit
-		generatorEdit.Section.show({}, (evt)=>{
+		generatorEdit.Section.show({}, (evt) => {
 			openRow(self, tbl.CurrentRow)
-		})		
+		})
 	}
 }
 
@@ -165,7 +165,7 @@ async function openRow(self, tr) {
 		setCurrentRow(self, tr)
 		CurrentState.SelectedRow.keyValue = keyvalue
 		CurrentState.SelectedRow.key = key
-		await generatorEdit.openSelectedData(self, {key:key, keyvalue:keyvalue})
+		await generatorEdit.openSelectedData(self, { key: key, keyvalue: keyvalue })
 	} catch (err) {
 		console.error(err)
 		await $fgta5.MessageBox.error(err.message)
@@ -182,7 +182,7 @@ async function tbl_nextdata(self, evt) {
 	const offset = evt.detail.nextoffset
 	const sort = evt.detail.sort
 
-	await tbl_loadData(self, {criteria, limit, offset, sort})
+	await tbl_loadData(self, { criteria, limit, offset, sort })
 	tbl.scrollToFooter()
 }
 
@@ -190,7 +190,7 @@ async function tbl_sorting(self, evt) {
 	tbl.clear()
 	const sort = evt.detail.sort
 	const criteria = evt.detail.Criteria
-	tbl_loadData(self, {criteria, sort})
+	tbl_loadData(self, { criteria, sort })
 }
 
 async function tbl_cellclick(self, evt) {
@@ -214,11 +214,11 @@ async function btn_gridload_click(self, evt) {
 }
 
 
-async function tbl_loadData(self, params={}) {
+async function tbl_loadData(self, params = {}) {
 	console.log('loading generator data')
 	console.log(params)
 
-	const { criteria={}, limit=0, offset=0, sort={} } = params
+	const { criteria = {}, limit = 0, offset = 0, sort = {} } = params
 
 	// isi criteria
 	for (var key in SearchParams) {
@@ -232,7 +232,7 @@ async function tbl_loadData(self, params={}) {
 	}
 
 	// cek sorting
-	if (sort===undefined) {
+	if (sort === undefined) {
 		sort = tbl.getSort()
 	}
 
@@ -241,8 +241,15 @@ async function tbl_loadData(self, params={}) {
 		criteria: criteria,
 		offset: offset,
 		limit: limit,
-		sort: sort		
+		sort: sort
 	}
+
+	// cek apakah ada program yang di inisasi untuk ditampilkan
+	const urlParams = new URLSearchParams(window.location.search)
+	const requested_modulename = urlParams.get('id')
+	let autoopen_tr
+
+
 
 	let mask = $fgta5.Modal.createMask()
 
@@ -252,11 +259,19 @@ async function tbl_loadData(self, params={}) {
 
 		// jika offset tidak didefinisikan, berarti start dari awal, table dikosongkan dahulua
 		// jika offset didefinisikan berarti request untuk halaman berikutnya
-		if (offset===undefined) {
+		if (offset === undefined) {
 			tbl.clear()
 		}
-		tbl.addRows(result.data)
-		tbl.setNext(result.nextoffset, result.limit)
+		//tbl.addRows(result.data)
+		//tbl.setNext(result.nextoffset, result.limit)
+
+		for (let row of result.data) {
+			console.log(row)
+			const tr = tbl.addRow(row)
+			if (row.generator_modulename == requested_modulename) {
+				autoopen_tr = tr
+			}
+		}
 
 	} catch (err) {
 		console.error(err)
@@ -265,6 +280,12 @@ async function tbl_loadData(self, params={}) {
 		apiList.dispose()
 		mask.close()
 		mask = null
+
+
+		if (autoopen_tr != null) {
+			await tbl_celldblclick(self, { detail: { tr: autoopen_tr } })
+		}
+
 	}
-	
+
 }

@@ -22,6 +22,11 @@ export default class extends Module {
 
 		const self = this
 
+		const urlParams = new URLSearchParams(window.location.search)
+		const program = urlParams.get('program')
+		console.log(program)
+
+
 
 		// module-module yang di load perlu di pack dulu ke dalam variable
 		// jangan import lagi module-module ini di dalam mjs tersebut
