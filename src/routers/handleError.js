@@ -8,8 +8,8 @@ export async function handleError(err, req, res) {
 	const appName = req.app.locals.appConfig.appName || ''
 	const moduleName = req.params.modulename || req.url
 	const status = err.status || 500
-	const statusText =  http.STATUS_CODES[status]
-	const code = err.code ?? 1
+	const statusText = http.STATUS_CODES[status]
+	const code = err.code ?? status
 
 	console.log(err)
 	console.log(moduleName)
@@ -22,11 +22,11 @@ export async function handleError(err, req, res) {
 		moduleName
 	}
 
-	if (req.method=='POST') {
+	if (req.method == 'POST') {
 		// kalau post (api), kirimkan berupa json
 		response.message = "API: " + err.message
-		res.status(status).json(response)
-		
+		res.status(status).json(response.message)
+
 	} else {
 		// kalau selain post, kirimkan halaman error
 		const variables = {
