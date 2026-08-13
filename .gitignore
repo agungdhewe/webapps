@@ -144,3 +144,4 @@ vite.config.ts.timestamp-*
 .vscode
 
 DS_Store
+lib/fgta5js
