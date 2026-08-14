@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import fs_sync from 'fs';
 import * as path from 'node:path';
 import ejs from 'ejs'
 import context from './context.js'
@@ -56,7 +57,7 @@ export async function isFileExists(filepath) {
 
 export async function parseTemplate(tplFilePath, variables = {}) {
 	const template = await fs.readFile(tplFilePath, 'utf-8');
-	const content = ejs.render(template, variables)
+	const content = ejs.render(template, { fs: fs_sync, ...variables })
 	return content
 }
 
