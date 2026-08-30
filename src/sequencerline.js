@@ -10,16 +10,18 @@ export function createSequencerLine(db, options) {
 
 
 class Sequencer {
-	
-	
+
+
 	#defaultOptions = {}
 
 
 	db
-	options 
+	options
 
 
 	constructor(db, opt) {
+
+
 		this.db = db
 		this.options = {
 			...this.#defaultOptions,
@@ -32,34 +34,34 @@ class Sequencer {
 
 
 
-	async increment(doc_id) {
+	async increment(doc_id, incrementStep = 1) {
 		const self = this
 		const db = self.db
 		try {
 			const { year, month } = await getDbCurrentDate(db)
-			return await generateId(self, year, month, doc_id)
+			return await generateId(self, year, month, doc_id, Number(incrementStep))
 		} catch (err) {
 			throw err
 		}
 	}
 
 	// 9 digit, untuk tipe integer
-	async yearlyshort(doc_id) {
+	async yearlyshort(doc_id, incrementStep = 1) {
 		const self = this
 		const db = self.db
 		try {
 			const month = 0
 			const { year } = await getDbCurrentDate(db)
-			return await generateId(self, year, month, doc_id, true)
+			return await generateId(self, year, month, doc_id, Number(incrementStep), true)
 		} catch (err) {
 			throw err
 		}
 	}
 
 }
- 
 
-async function generateId(self, year, month, doc_id, short=false) {
+
+async function generateId(self, year, month, doc_id, incrementStep, short = false) {
 	const options = self.options
 	const db = self.db
 	const searchMap = {
@@ -77,15 +79,15 @@ async function generateId(self, year, month, doc_id, short=false) {
 		const docparam = { doc_id }
 		const sqldoc = `select doc_prefix, doc_seqclust, doc_seqnum from core.doc where doc_id=\${doc_id}`
 		const row = await db.oneOrNone(sqldoc, docparam)
-		const prefix = row!=null ? row.doc_prefix : ''
-		const seqclust = row!=null ? row.doc_seqclust : 0
-		const seqnum = row!=null ? row.doc_seqnum : 0
+		const prefix = row != null ? row.doc_prefix : ''
+		const seqclust = row != null ? row.doc_seqclust : 0
+		const seqnum = row != null ? row.doc_seqnum : 0
 
-		if (seqclust<0 || seqclust>999) {
+		if (seqclust < 0 || seqclust > 999) {
 			throw new Error(`doc_id: '${doc_id}' has doc seqclust '${seqclust}' that is invalid. doc seqnum have to in range 0-999 `)
 		}
 
-		if (seqnum<0 || seqnum>99) {
+		if (seqnum < 0 || seqnum > 99) {
 			throw new Error(`doc_id: '${doc_id}' has doc seqnum '${seqnum}' that is invalid. doc seqnum have to in range 1-99 `)
 		}
 
@@ -93,7 +95,7 @@ async function generateId(self, year, month, doc_id, short=false) {
 
 		// hitung total panjang bigint yang akan dihailkan
 		let nlength = 0
-		if  (month==0) {
+		if (month == 0) {
 			// yearly
 			nlength += 2
 		} else {
@@ -101,8 +103,8 @@ async function generateId(self, year, month, doc_id, short=false) {
 			nlength += 4
 		}
 
-		if (seqnum>0) {
-			nlength += 2 
+		if (seqnum > 0) {
+			nlength += 2
 		}
 
 
@@ -110,7 +112,7 @@ async function generateId(self, year, month, doc_id, short=false) {
 		// 25 09 01 000402 0000009
 
 		const ln = nlength + self.options.numberLength
-		
+
 		if (short) {
 			if (ln > 9) {
 				throw new Error(`Total length of sequencer (${ln}) is mre than max length allowed(9)`)
@@ -126,8 +128,8 @@ async function generateId(self, year, month, doc_id, short=false) {
 		// ambil data sequencer
 		{
 			const criteria = { year, month, seqnum, seqclust }
-			const {whereClause, queryParams} = sqlUtil.createWhereClause(criteria, searchMap) 
-	
+			const { whereClause, queryParams } = sqlUtil.createWhereClause(criteria, searchMap)
+
 			const columns = [
 				'sequencer_id',
 				'sequencer_year',
@@ -139,27 +141,27 @@ async function generateId(self, year, month, doc_id, short=false) {
 				'EXTRACT(MONTH FROM sequencer_lastdate) AS lastmonth'
 			]
 
-			const sql = sqlUtil.createSqlSelect({tablename, columns, whereClause, sort:{}, limit:0, offset:0, queryParams}) + ' for update'
+			const sql = sqlUtil.createSqlSelect({ tablename, columns, whereClause, sort: {}, limit: 0, offset: 0, queryParams }) + ' for update'
 			const row = await db.oneOrNone(sql, queryParams)
 
 			const obj = {}
 
-			if (row!=null) {
+			if (row != null) {
 				// console.log(row)
 				obj.sequencer_id = row.sequencer_id
 				obj._modifyby = 0
 				obj._modifydate = (new Date()).toISOString()
-				obj.sequencer_number = row.sequencer_number+1
-				const cmd =  sqlUtil.createUpdateCommand(tablename, obj, ['sequencer_id'])
+				obj.sequencer_number = row.sequencer_number + incrementStep
+				const cmd = sqlUtil.createUpdateCommand(tablename, obj, ['sequencer_id'])
 				await cmd.execute(obj)
 			} else {
 				obj._createby = 0
 				obj._createdate = (new Date()).toISOString()
 				obj.sequencer_year = year,
-				obj.sequencer_month = month
+					obj.sequencer_month = month
 				obj.sequencer_seqnum = seqnum
 				obj.sequencer_cluster = seqclust
-				obj.sequencer_number = 1
+				obj.sequencer_number = incrementStep
 				obj.sequencer_lastdate = (new Date()).toISOString()
 				obj.sequencer_remark = doc_id
 				const cmd = sqlUtil.createInsertCommand(tablename, obj, ['sequencer_id'])
@@ -167,7 +169,7 @@ async function generateId(self, year, month, doc_id, short=false) {
 			}
 
 			// compose generated id
-			const YY = String(year-2000).padStart(2, '0')
+			const YY = String(year - 2000).padStart(2, '0')
 			const MM = String(month).padStart(2, '0')
 
 
@@ -181,13 +183,13 @@ async function generateId(self, year, month, doc_id, short=false) {
 				tokennum.push(MM)
 			}
 
-			
 
-			if (seqnum>0) {
+
+			if (seqnum > 0) {
 				tokennum.push(String(seqnum).padStart(2, '0'))
 			}
 
-			
+
 			//  250901999999
 			// 2509019999999
 			const maxlen = short ? 9 : MAX_LENGTH
