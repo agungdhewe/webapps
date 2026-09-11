@@ -23,8 +23,7 @@ body {
 }
 
 
-#fRecord-section [name="panel"] {
-	display: flex;
+#fRecord-section [name="panel-id"] {
 	margin-bottom: 15px;
 }
 

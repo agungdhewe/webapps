@@ -96,22 +96,22 @@ export async function createTable(context, options) {
 			// buat foreign key
 			// const restrictConstraint = value.
 			scriptContent.push("\n")
-				const foreignKeys = Object.entries(entityItems)
-					.filter(([_, value]) => {
-						const hasTable = value.Reference.table !== null && value.Reference.table !== '';
-						const bindingConstraint = value.Reference.bindingConstraint ?? true;
-						return hasTable && bindingConstraint;
-					})
-					.reduce((acc, [key, value]) => {
-						acc[key] = value;
-						return acc;
-					}, {})
+			const foreignKeys = Object.entries(entityItems)
+				.filter(([_, value]) => {
+					const hasTable = value.Reference.table !== null && value.Reference.table !== '';
+					const bindingConstraint = value.Reference.bindingConstraint ?? true;
+					return hasTable && bindingConstraint;
+				})
+				.reduce((acc, [key, value]) => {
+					acc[key] = value;
+					return acc;
+				}, {})
 
 
-				if (Object.keys(foreignKeys).length > 0) {
-					const sql = await ddl.createFereignKey(schema, tablename, foreignKeys)
-					scriptContent.push(sql)
-				}
+			if (Object.keys(foreignKeys).length > 0) {
+				const sql = await ddl.createFereignKey(schema, tablename, foreignKeys)
+				scriptContent.push(sql)
+			}
 
 
 
@@ -154,6 +154,11 @@ function createRecordColumns() {
 
 		_modifydate: {
 			data_fieldname: '_modifydate', data_type: 'timestamp', data_allownull: true, description: 'waktu terakhir record dimodifikasi',
+			Reference: { table: '', pk: '' }
+		},
+
+		_timestamp: {
+			data_fieldname: '_timestamp', data_type: 'timestamp', data_allownull: false, data_defaultvalue: 'now()', description: 'data timestamp',
 			Reference: { table: '', pk: '' }
 		}
 	}

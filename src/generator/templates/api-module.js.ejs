@@ -15,7 +15,8 @@ import * as Extender from './extenders/<%= moduleName %>.apiext.js'
 
 const moduleName = '<%= moduleName %>'
 const headerSectionName = 'header'
-const headerTableName = '<%= headerTableName %>' <% entitiesDetil.forEach(entity => { %>
+const headerTableName = '<%= headerTableName %>' 
+const headerPrimaryKey = '<%= headerPrimaryKey %>' <% entitiesDetil.forEach(entity => { %>
 const <%= entity.name %>TableName = '<%= entity.table %>'  <% }) %>	
 
 // api: account
@@ -327,6 +328,7 @@ async function <%= moduleName %>_headerCreate(self, body) {
 
 		data._createby = user_id
 		data._createdate = (new Date()).toISOString()
+		data._timestamp = (new Date()).toISOString()
 
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
@@ -438,6 +440,8 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 
 		data._modifyby = user_id
 		data._modifydate = (new Date()).toISOString()
+		data._timestamp = (new Date()).toISOString()
+
 
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
@@ -768,6 +772,14 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 				})
 			}
 			<% } %>
+
+			// update timestamp pada header
+			tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
+				_timestamp: (new Date()).toISOString(),
+				pk: data.<%= headerPrimaryKey %>
+			})
+
+
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
@@ -807,6 +819,10 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
 
+			const dataToUpdate = {<%= entity.pk %>: data.<%= entity.pk %>}
+			const sql = `select * from ${<%= entity.name %>TableName} where <%= entity.pk %>=\${<%= entity.pk %>}`
+			const row<%= entity.name %> = await tx.oneOrNone(sql, dataToUpdate)
+
 
 			// apabila ada keperluan pengolahan data SEBELUM disimpan
 			if (typeof Extender.<%= entity.name %>Updating === 'function') {
@@ -824,6 +840,13 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 				})
 			}
 			<% } %>
+
+			// update timestamp pada header
+			tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
+				_timestamp: (new Date()).toISOString(),
+				pk: row<%= entity.name %>.<%= headerPrimaryKey %>
+			})
+
 			const logMetadata = {}
 
 			// apabila ada keperluan pengelohan data setelah disimpan, lakukan di extender headerCreated
@@ -871,6 +894,13 @@ async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
 			const param = {<%= entity.pk %>: row<%= entity.name %>.<%= entity.pk %>}
 			const cmd = sqlUtil.createDeleteCommand(<%= entity.name %>TableName, ['<%= entity.pk %>'])
 			const deletedRow = await cmd.execute(param)
+
+
+			// update timestamp pada header
+			tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
+				_timestamp: (new Date()).toISOString(),
+				pk: row<%= entity.name %>.<%= headerPrimaryKey %>
+			})
 
 			// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
 			if (typeof Extender.<%= entity.name %>Deleted === 'function') {
@@ -924,6 +954,12 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 				const cmd = sqlUtil.createDeleteCommand(<%= entity.name %>TableName, ['<%= entity.pk %>'])
 				const deletedRow = await cmd.execute(param)
 
+				// update timestamp pada header
+				tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
+					_timestamp: (new Date()).toISOString(),
+					pk: row<%= entity.name %>.<%= headerPrimaryKey %>
+				})
+				
 				// apabila ada keperluan pengelohan data setelah dihapus, lakukan di extender
 				if (typeof Extender.<%= entity.name %>Deleted === 'function') {
 					// export async function <%= entity.name %>Deleted(self, tx, deletedRow, logMetadata) {}

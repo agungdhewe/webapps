@@ -35,6 +35,7 @@ const btn_about = document.getElementById('<%= moduleSection %>-btn_about')
 
 const frm = new $fgta5.Form('<%= modulePart %>-frm');<% fields.forEach(field => { %>
 const <%= field.inputname %> = frm.Inputs['<%= field.elementId %>']<% }) %>	
+const rec_timestamp = document.getElementById('fRecord-section-timestamp')
 const rec_createby = document.getElementById('fRecord-section-createby')
 const rec_createdate = document.getElementById('fRecord-section-createdate')
 const rec_modifyby = document.getElementById('fRecord-section-modifyby')
@@ -814,6 +815,7 @@ async function btn_recordstatus_click(self, evt) {
 			const data = await openData(self, id)
 
 			rec_id.innerHTML = id
+			rec_timestamp.innerHTML = data._timestamp
 			rec_createby.innerHTML = data._createby
 			rec_createdate.innerHTML = data._createdate
 			rec_modifyby.innerHTML = data._modifyby
