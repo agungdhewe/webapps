@@ -325,10 +325,11 @@ async function <%= moduleName %>_headerCreate(self, body) {
 		// parse uploaded data
 		const files = Api.parseUploadData(data, req.files)
 
+		const data_timestamp = (new Date()).toISOString()
 
 		data._createby = user_id
-		data._createdate = (new Date()).toISOString()
-		data._timestamp = (new Date()).toISOString()
+		data._createdate = data_timestamp
+		data._timestamp = data_timestamp
 
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
@@ -437,10 +438,11 @@ async function <%= moduleName %>_headerUpdate(self, body) {
 		// parse uploaded data
 		const files = Api.parseUploadData(data, req.files)
 
+		const data_timestamp = (new Date()).toISOString()
 
 		data._modifyby = user_id
-		data._modifydate = (new Date()).toISOString()
-		data._timestamp = (new Date()).toISOString()
+		data._modifydate = data_timestamp
+		data._timestamp = data_timestamp
 
 
 		const result = await db.tx(async tx=>{
@@ -729,9 +731,11 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 		// parse uploaded data
 		const files = Api.parseUploadData(data, req.files)
 
+		const data_timestamp = (new Date()).toISOString()
 
 		data._createby = user_id
-		data._createdate = (new Date()).toISOString()
+		data._createdate = data_timestamp
+		data._timestamp = data_timestamp
 
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
@@ -775,7 +779,7 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 
 			// update timestamp pada header
 			tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
-				_timestamp: (new Date()).toISOString(),
+				_timestamp: data_timestamp,
 				pk: data.<%= headerPrimaryKey %>
 			})
 
@@ -812,9 +816,11 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 		// parse uploaded data
 		const files = Api.parseUploadData(data, req.files)
 
+		const data_timestamp = (new Date()).toISOString()
 
 		data._modifyby = user_id
-		data._modifydate = (new Date()).toISOString()
+		data._modifydate = data_timestamp
+		data._timestamp = data_timestamp
 
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
@@ -843,7 +849,7 @@ async function <%= moduleName %>_<%= entity.name %>Update(self, body) {
 
 			// update timestamp pada header
 			tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
-				_timestamp: (new Date()).toISOString(),
+				_timestamp: data_timestamp,
 				pk: row<%= entity.name %>.<%= headerPrimaryKey %>
 			})
 
@@ -876,6 +882,8 @@ async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
 
 	try {
 
+		const data_timestamp = (new Date()).toISOString()
+
 		const deletedRow = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
 
@@ -898,7 +906,7 @@ async function <%= moduleName %>_<%= entity.name %>Delete(self, body) {
 
 			// update timestamp pada header
 			tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
-				_timestamp: (new Date()).toISOString(),
+				_timestamp: data_timestamp,
 				pk: row<%= entity.name %>.<%= headerPrimaryKey %>
 			})
 
@@ -931,6 +939,9 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 
 	try {
 
+
+		const data_timestamp = (new Date()).toISOString()
+
 		let <%= headerPrimaryKey %>
 		const result = await db.tx(async tx=>{
 			sqlUtil.connect(tx)
@@ -956,7 +967,7 @@ async function <%= moduleName %>_<%= entity.name %>DeleteRows(self, body) {
 
 				// update timestamp pada header
 				tx.none(`update ${headerTableName} set _timestamp=$[_timestamp] where ${headerPrimaryKey}=$[pk]`, {
-					_timestamp: (new Date()).toISOString(),
+					_timestamp: data_timestamp,
 					pk: row<%= entity.name %>.<%= headerPrimaryKey %>
 				})
 				

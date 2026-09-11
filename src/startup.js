@@ -77,7 +77,7 @@ export async function authorizeRequest(db, req) {
 export async function getApplicationSetting(db, tablename = 'core.setting') {
 	const setting = {}
 	try {
-		const sql = `select setting_id, setting_value from ${tablename}`
+		const sql = `select setting_id, setting_value from ${tablename} where isdisabled=false`
 		const rows = await db.any(sql);
 		for (var row of rows) {
 			const setting_id = row.setting_id
