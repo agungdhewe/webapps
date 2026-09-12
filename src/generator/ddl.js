@@ -148,7 +148,7 @@ export async function createTable(schema, tablename, tabledescr, pk) {
 
 
 export async function createField(schema, tablename, field) {
-	const { fieldname, datatype, length, precision, allownull, defaultvalue, description } = field
+	const { fieldname, datatype, length, precision, allownull, isindex, defaultvalue, description } = field
 
 	const script = []
 
@@ -165,12 +165,20 @@ export async function createField(schema, tablename, field) {
 		script.push(sqlModify)
 		script.push('')
 
-
 		if (await fieldExists(schema, tablename, fieldname)) {
 			await db.none(sqlModify)
 		} else {
 			await db.none(sqlAdd)
 		}
+
+		if (isindex) {
+			const sqlIndex = await createIndex(schema, tablename, fieldname)
+			script.push(sqlIndex)
+
+			await db.none(sqlIndex)
+		}
+
+
 
 		return script.join("\n")
 	} catch (err) {
@@ -290,6 +298,32 @@ async function sqlModifyField(schema, tablename, f) {
 	} catch (err) {
 		throw err
 	}
+}
+
+
+export async function createIndex(schema, tablename, fieldname) {
+	const script = []
+
+	script.push('-- =============================================')
+	script.push(`-- INDEX`)
+	script.push('-- =============================================')
+
+	try {
+		// hapus existing index
+		const indexName = `idx$${schema}$${tablename}$${fieldname}`
+
+		const dropIndex = `DROP INDEX IF EXISTS ${schema}.${indexName};`
+		script.push(dropIndex)
+
+		const createIndex = `CREATE INDEX ${indexName} ON ${schema}.${tablename} (${fieldname});`
+		script.push(createIndex)
+
+
+		return script.join("\n")
+	} catch (err) {
+		throw err
+	}
+
 }
 
 export async function createUniqueIndex(schema, tablename, uniques) {
