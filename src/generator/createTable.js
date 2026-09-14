@@ -77,7 +77,7 @@ export async function createTable(context, options) {
 					}
 
 					const field = entityItems[fieldname]
-					const { data_fieldname, data_type, data_length, data_precision, data_allownull, data_defaultvalue, description } = field
+					const { data_fieldname, data_type, data_length, data_precision, data_allownull, data_defaultvalue, data_isindex, description } = field
 
 					const sql = await ddl.createField(schema, tablename, {
 						fieldname: data_fieldname,
@@ -86,7 +86,8 @@ export async function createTable(context, options) {
 						precision: data_precision,
 						allownull: data_allownull,
 						defaultvalue: data_defaultvalue,
-						description: description
+						description: description,
+						isindex: data_isindex
 					})
 					scriptContent.push(sql)
 				}
@@ -158,7 +159,7 @@ function createRecordColumns() {
 		},
 
 		_timestamp: {
-			data_fieldname: '_timestamp', data_type: 'timestamp', data_allownull: false, data_defaultvalue: 'now()', description: 'data timestamp',
+			data_fieldname: '_timestamp', data_type: 'timestamp', data_allownull: false, data_defaultvalue: 'now()', data_isindex: true, description: 'data timestamp',
 			Reference: { table: '', pk: '' }
 		}
 	}
