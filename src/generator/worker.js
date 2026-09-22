@@ -34,10 +34,11 @@ import { createProgramData } from './createProgramData.js'
 import { createLayoutCss } from './createLayoutCss.js';
 import { createDefData } from './createDefData.js'
 import { VERSION } from 'ejs';
+import { promises } from 'dns';
 
 
 const generatorVersion = "1.2"
-const { generator_id, genFile, dirTarget, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
+const { generator_id, genFile, projectDir, appName, dirTarget, user_id, user_name, ipaddress, ModuleDbContract, jeda } = workerData;
 
 
 main(generator_id)
@@ -53,6 +54,9 @@ async function main(id) {
 
 		const genData = await readFile(genFile, 'utf8');
 		const genJson = JSON.parse(genData);
+
+		genJson.appname = appName
+		genJson.directory = projectDir
 
 		await generate(id, genJson)
 

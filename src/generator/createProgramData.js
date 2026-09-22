@@ -47,7 +47,8 @@ export async function createProgramData(context, options) {
 	try {
 
 		const sql = `select * from ${tablename} where program_name=\${moduleName} and program_variance is null`
-		const row = await db.oneOrNone(sql, { moduleName })
+		const rows = await db.any(sql, { moduleName })
+		const row = rows[0]
 
 		const obj = {
 			program_title: title,
@@ -61,7 +62,7 @@ export async function createProgramData(context, options) {
 		const result = await db.tx(async tx => {
 			sqlUtil.connect(tx)
 
-			if (row == null) {
+			if (rows == null || rows.length == 0) {
 				// insert
 				const sequencer = createSequencerLine(tx, {})
 				const seqdata = await sequencer.yearlyshort('PROG')

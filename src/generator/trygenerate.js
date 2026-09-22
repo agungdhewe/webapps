@@ -12,6 +12,8 @@ console.log('Testing Generator')
 const args = process.argv.slice(2)
 const generator_id = args[0]
 const genFile = args[1]
+const projectDir = args[2]
+const appName = args[3]
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -49,6 +51,8 @@ async function main(generator_id) {
 			workerData: {
 				generator_id,
 				genFile,
+				projectDir,
+				appName,
 				user_id: 1,
 				user_name: 'coredeveloper',
 				ipaddress: 'local-cli',
