@@ -43,12 +43,17 @@ export async function createApiModule(context, options) {
 		// cek apakah di header ada file upload
 		let importbucket = false
 		let headerHasUpload = false
+		let headerJsonFields = []
 		for (var fieldName in entityHeader.Items) {
 			const item = entityHeader.Items[fieldName]
 			const component = item.component
 			if (component == 'Filebox') {
 				headerHasUpload = true
 				importbucket = true
+			}
+
+			if (['json', 'jsonb'].includes(item.data_type)) {
+				headerJsonFields.push(fieldName)
 			}
 		}
 
@@ -63,6 +68,7 @@ export async function createApiModule(context, options) {
 
 			const entity = context.entities[entityName]
 
+			let jsonFields = []
 			let detilHasUpload
 			for (var fieldName in entity.Items) {
 				const item = entity.Items[fieldName]
@@ -71,6 +77,12 @@ export async function createApiModule(context, options) {
 					detilHasUpload = true
 					importbucket = true
 				}
+
+				if (['json', 'jsonb'].includes(item.data_type)) {
+					jsonFields.push(fieldName)
+				}
+
+
 			}
 
 			const e = {
@@ -78,7 +90,8 @@ export async function createApiModule(context, options) {
 				table: entity.table,
 				pk: entity.pk,
 				detilHasUpload: detilHasUpload,
-				fieldsLookup: createLookup(entity.Items)
+				fieldsLookup: createLookup(entity.Items),
+				jsonFields: jsonFields
 			}
 			entitiesDetil.push(e)
 
@@ -109,6 +122,7 @@ export async function createApiModule(context, options) {
 			headerPrimaryKey,
 			headerSearchMap,
 			headerFieldsLookup,
+			headerJsonFields,
 			headerHasUpload,
 			importbucket,
 			entitiesDetil

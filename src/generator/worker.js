@@ -55,8 +55,13 @@ async function main(id) {
 		const genData = await readFile(genFile, 'utf8');
 		const genJson = JSON.parse(genData);
 
-		genJson.appname = appName
-		genJson.directory = projectDir
+		if (appName != null) {
+			genJson.appname = appName
+		}
+
+		if (projectDir != null) {
+			genJson.directory = projectDir
+		}
 
 		await generate(id, genJson)
 

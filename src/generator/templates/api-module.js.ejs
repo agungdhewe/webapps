@@ -231,7 +231,12 @@ async function <%= moduleName %>_headerList(self, body) {
 				const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', row.<%=lookup.fieldname%>)
 				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
 			}
-			<% }) %>
+			<% }) %> <% if (headerJsonFields.length>0) { %>
+			// field dengan tipedata json/jsonb	
+			{<% headerJsonFields.forEach(fieldname => { %>
+				row.<%= fieldname %> = JSON.stringify(row.<%= fieldname %>)
+			<% }) %>}
+			<% } %>
 			// pasang extender di sini
 			if (typeof Extender.headerListRow === 'function') {
 				// export async function headerListRow(self, row, args) {}
@@ -285,8 +290,12 @@ async function <%= moduleName %>_headerOpen(self, body) {
 			const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', data.<%=lookup.fieldname%>)
 			data.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
 		}
-		<% }) %>
-
+		<% }) %> <% if (headerJsonFields.length>0) { %>
+		// field dengan tipedata json/jsonb	
+		{<% headerJsonFields.forEach(fieldname => { %>
+			data.<%= fieldname %> = JSON.stringify(data.<%= fieldname %>)
+		<% }) %>}
+		<% } %>
 		// lookup data createby
 		{
 			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._createby)
@@ -628,8 +637,12 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 				const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', row.<%=lookup.fieldname%>)
 				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
 			}
-			<% }) %>
-
+			<% }) %> <% if (entity.jsonFields.length>0) { %>
+			// field dengan tipedata json/jsonb	
+			{<% entity.jsonFields.forEach(fieldname => { %>
+				row.<%= fieldname %> = JSON.stringify(row.<%= fieldname %>)
+			<% }) %>}
+			<% } %>
 			// pasang extender di sini
 			if (typeof Extender.detilListRow === 'function') {
 				// export async function detilListRow(self, row, args) {}
@@ -691,8 +704,12 @@ async function <%= moduleName %>_<%= entity.name %>Open(self, body) {
 			const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', data.<%=lookup.fieldname%>)
 			data.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
 		}
-		<% }) %>
-
+		<% }) %>  <% if (entity.jsonFields.length>0) { %>
+		// field dengan tipedata json/jsonb	
+		{<% entity.jsonFields.forEach(fieldname => { %>
+			data.<%= fieldname %> = JSON.stringify(data.<%= fieldname %>)
+		<% }) %>}
+		<% } %>
 		// lookup data createby
 		{
 			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._createby)

@@ -239,6 +239,8 @@ function defaultValueOf(datatype, defaultvalue, allownull) {
 				return false
 			}
 		}
+	} else if (['json', 'jsonb'].includes(datatype)) {
+		return null
 	} else {
 		return defaultvalue
 	}
