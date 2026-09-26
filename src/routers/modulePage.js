@@ -103,6 +103,7 @@ export async function modulePage(req, res) {
 			throw err
 		}
 
+		const themeCssUrl = req.app.locals.appConfig.themeCssUrl
 		const variables = {
 			...helper.createDefaultEjsVariable(req),
 			...{
@@ -126,6 +127,7 @@ export async function modulePage(req, res) {
 				setting: req.app.locals.appConfig,
 				useCssBundle,
 				cssBundleFileName,
+				themeCssUrl
 			}
 		}
 
