@@ -18,6 +18,11 @@ body {
 
 }
 
+/* Menghilangkan scrollbar dan mengunci scroll */
+body:has(dialog[open]) {
+	overflow: hidden;
+}
+
 #fRecord-section [name="value"] {
 	user-select: text;
 }
