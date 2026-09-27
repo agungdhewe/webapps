@@ -760,7 +760,7 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 
 			const args = { 
 				section: '<%= entity.name %>', 
-				prefix: '<%= identifierPrefix %>'	
+				doc_id: '<%= identifierPrefix %>'	
 			}
 
 			const sequencer = createSequencerLine(tx, {})
@@ -774,7 +774,7 @@ async function <%= moduleName %>_<%= entity.name %>Create(self, body) {
 			}
 
 
-			const seqdata = await sequencer.increment(args.prefix)
+			const seqdata = await sequencer.increment(args.doc_id)
 			data.<%= entity.pk %> = seqdata.id
 
 			// apabila ada keperluan pengolahan data SEBELUM disimpan
