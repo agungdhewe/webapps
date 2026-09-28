@@ -227,14 +227,16 @@ async function <%= moduleName %>_headerList(self, body) {
 			if (i>max_rows) { break }
 
 			<% headerFieldsLookup.forEach(lookup => { %>// lookup: <%= lookup.bindingDisplay %> dari field <%= lookup.bindingText %> pada table <%= lookup.table %> dimana (<%= lookup.table %>.<%= lookup.bindingValue %> = <%= headerTableName %>.<%=lookup.fieldname%>)
-			{
+			if (row.<%=lookup.fieldname%> !== undefined) {
 				const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', row.<%=lookup.fieldname%>)
-				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
+				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %> ?? null
 			}
 			<% }) %> <% if (headerJsonFields.length>0) { %>
 			// field dengan tipedata json/jsonb	
 			{<% headerJsonFields.forEach(fieldname => { %>
-				row.<%= fieldname %> = JSON.stringify(row.<%= fieldname %>)
+				if (row.<%=lookup.fieldname%>) {
+					row.<%= fieldname %> = JSON.stringify(row.<%= fieldname %>)
+				}
 			<% }) %>}
 			<% } %>
 			// pasang extender di sini
@@ -286,24 +288,26 @@ async function <%= moduleName %>_headerOpen(self, body) {
 		}	
 
 		<% headerFieldsLookup.forEach(lookup => { %>// lookup: <%= lookup.bindingDisplay %> dari field <%= lookup.bindingText %> pada table <%= lookup.table %> dimana (<%= lookup.table %>.<%= lookup.bindingValue %> = <%= headerTableName %>.<%=lookup.fieldname%>)
-		{
+		if (data.<%=lookup.fieldname%> !== undefined) {
 			const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', data.<%=lookup.fieldname%>)
-			data.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
+			data.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %> ?? null
 		}
 		<% }) %> <% if (headerJsonFields.length>0) { %>
 		// field dengan tipedata json/jsonb	
 		{<% headerJsonFields.forEach(fieldname => { %>
-			data.<%= fieldname %> = JSON.stringify(data.<%= fieldname %>)
+			if (data.<%= fieldname %>) {
+				data.<%= fieldname %> = JSON.stringify(data.<%= fieldname %>)
+			}
 		<% }) %>}
 		<% } %>
 		// lookup data createby
-		{
+		if (data._createby !== undefined) {
 			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._createby)
 			data._createby = user_fullname ?? ''
 		}
 
 		// lookup data modifyby
-		{
+		if (data._modifyby !== undefined) {
 			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._modifyby)
 			data._modifyby = user_fullname ?? ''
 		}
@@ -633,14 +637,16 @@ async function <%= moduleName %>_<%= entity.name %>List(self, body) {
 			if (i>max_rows) { break }
 
 			<% entity.fieldsLookup.forEach(lookup => { %>// lookup: <%= lookup.bindingDisplay %> dari field <%= lookup.bindingText %> pada table <%= lookup.table %> dimana (<%= lookup.table %>.<%= lookup.bindingValue %> = <%= headerTableName %>.<%=lookup.fieldname%>)
-			{
+			if (row.<%=lookup.fieldname%> !== undefined) {
 				const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', row.<%=lookup.fieldname%>)
-				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
+				row.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %> ?? null
 			}
 			<% }) %> <% if (entity.jsonFields.length>0) { %>
 			// field dengan tipedata json/jsonb	
 			{<% entity.jsonFields.forEach(fieldname => { %>
-				row.<%= fieldname %> = JSON.stringify(row.<%= fieldname %>)
+				if (row.<%= fieldname %>) {
+					row.<%= fieldname %> = JSON.stringify(row.<%= fieldname %>)
+				}
 			<% }) %>}
 			<% } %>
 			// pasang extender di sini
@@ -700,24 +706,26 @@ async function <%= moduleName %>_<%= entity.name %>Open(self, body) {
 
 
 		<% entity.fieldsLookup.forEach(lookup => { %>// lookup: <%= lookup.bindingDisplay %> dari field <%= lookup.bindingText %> pada table <%= lookup.table %> dimana (<%= lookup.table %>.<%= lookup.bindingValue %> = <%= headerTableName %>.<%=lookup.fieldname%>)
-		{
+		if (data.<%=lookup.fieldname%> !== undefined) {
 			const { <%= lookup.bindingText %> } = await sqlUtil.lookupdb(db, '<%= lookup.table %>', '<%=lookup.bindingValue%>', data.<%=lookup.fieldname%>)
-			data.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %>
+			data.<%= lookup.bindingDisplay %> = <%= lookup.bindingText %> ?? null
 		}
 		<% }) %>  <% if (entity.jsonFields.length>0) { %>
 		// field dengan tipedata json/jsonb	
 		{<% entity.jsonFields.forEach(fieldname => { %>
-			data.<%= fieldname %> = JSON.stringify(data.<%= fieldname %>)
+			if (data.<%= fieldname %>) {
+				data.<%= fieldname %> = JSON.stringify(data.<%= fieldname %>)
+			}
 		<% }) %>}
 		<% } %>
 		// lookup data createby
-		{
+		if (data._createby !== undefined) {
 			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._createby)
 			data._createby = user_fullname ?? ''
 		}
 
 		// lookup data modifyby
-		{
+		if (data._modifyby !== undefined) {
 			const { user_fullname } = await sqlUtil.lookupdb(db, 'core.user', 'user_id', data._modifyby)
 			data._modifyby = user_fullname ?? ''
 		}	
