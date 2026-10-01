@@ -46,7 +46,7 @@ export async function createProgramData(context, options) {
 
 	try {
 
-		const sql = `select * from ${tablename} where program_name=\${moduleName} and program_variance is null`
+		const sql = `select * from ${tablename} where program_name=\${moduleName} and program_variance=''`
 		const rows = await db.any(sql, { moduleName })
 		const row = rows[0]
 
