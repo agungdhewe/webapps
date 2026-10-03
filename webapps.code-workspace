@@ -6,6 +6,15 @@
 	],
 	"settings": {
 		"editor.insertSpaces": false,
-		"codium.codeCompletion.enable": false
+		"keybindings": [],
+		"[html]": {
+			"editor.formatOnSave": false
+		},
+		"[ejs]": {
+			"editor.formatOnSave": false
+		},
+		"files.watcherExclude": {
+			"**/node_modules": true
+		}
 	}
 }

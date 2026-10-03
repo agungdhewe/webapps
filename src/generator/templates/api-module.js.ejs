@@ -6,6 +6,7 @@ import db from '@agung_dhewe/webapps/src/db.js'
 import Api from '@agung_dhewe/webapps/src/api.js'
 import sqlUtil from '@agung_dhewe/pgsqlc'
 import context from '@agung_dhewe/webapps/src/context.js'  
+import { getProgramSetting } from '@agung_dhewe/webapps/src/helper.js'
 import logger from '@agung_dhewe/webapps/src/logger.js'<% if (usesequencer) { %>
 import { createSequencerDocument } from '@agung_dhewe/webapps/src/sequencerdoc.js' <% } %><% if (usesequencerline) { %>
 import { createSequencerLine } from '@agung_dhewe/webapps/src/sequencerline.js' <% } %><% if (importbucket) { %>
@@ -72,6 +73,9 @@ async function <%= moduleName %>_init(self, body) {
 			}
 		}
 
+		const programName = req.params.modulename;
+		const variance = req.query.variance;
+		const programSetting = await getProgramSetting(db, programName, variance)
 		const initialData = {
 			userId: req.session.user.userId,
 			userName: req.session.user.userName,
@@ -81,7 +85,9 @@ async function <%= moduleName %>_init(self, body) {
 			notifierSocket: req.app.locals.appConfig.notifierSocket,
 			appName: req.app.locals.appConfig.appName,
 			appsUrls: appsUrls,
-			setting: {}
+			setting: {
+				program: programSetting
+			}
 		}
 		
 		if (typeof Extender.<%= moduleName %>_init === 'function') {

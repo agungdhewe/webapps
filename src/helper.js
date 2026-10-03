@@ -83,3 +83,32 @@ export function createDefaultEjsVariable(req) {
 
 	return variables
 }
+
+
+export async function getProgramSetting(db, program_name, program_variance = '') {
+	try {
+		const sql = `
+			select B.setting_name, B.setting_value, B.setting_data 
+			from core.program A inner join core.programsetting B on B.program_id=A.program_id
+			where
+			A.program_name = $[program_name] and A.program_variance = $[program_variance]`
+
+		const rows = await db.any(sql, {
+			program_name,
+			program_variance
+		})
+
+		let setting = {}
+		for (let row of rows) {
+			setting[row.setting_name] = {
+				value: row.setting_value,
+				data: row.setting_data
+			}
+		}
+
+		return setting;
+	} catch (err) {
+		throw err
+	}
+
+}
