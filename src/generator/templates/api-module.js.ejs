@@ -240,7 +240,7 @@ async function <%= moduleName %>_headerList(self, body) {
 			<% }) %> <% if (headerJsonFields.length>0) { %>
 			// field dengan tipedata json/jsonb	
 			{<% headerJsonFields.forEach(fieldname => { %>
-				if (row.<%=lookup.fieldname%>) {
+				if (row.<%=fieldname%>) {
 					row.<%= fieldname %> = JSON.stringify(row.<%= fieldname %>)
 				}
 			<% }) %>}
